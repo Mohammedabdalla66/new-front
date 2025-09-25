@@ -9,6 +9,8 @@ import { Reviews } from './pages/Reviews.jsx';
 import { Confirmation } from './pages/Confirmation.jsx';
 import { Profile } from './pages/Profile.jsx';
 import { Settings } from './pages/Settings.jsx';
+import { Messages } from './pages/Messages.jsx';
+import { Wallet } from './pages/Wallet.jsx';
 
 function App() {
   const navigate = useNavigate();
@@ -33,7 +35,11 @@ function App() {
         navigate('/settings');
         break;
       case 'messages':
-      case 'payments':
+        navigate('/messages');
+        break;
+      case 'wallet':
+        navigate('/wallet');
+        break;
       case 'documents':
       case 'help':
       case 'logout':
@@ -53,6 +59,8 @@ function App() {
         <Route path="/confirmation/:id" element={<Confirmation />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/wallet" element={<Wallet />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>

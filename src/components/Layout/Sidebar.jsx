@@ -6,7 +6,7 @@ import {
   Settings, 
   FileText,
   MessageSquare,
-  CreditCard,
+  Wallet,
   HelpCircle,
   LogOut
 } from 'lucide-react';
@@ -16,7 +16,7 @@ const menuItems = [
   { id: 'requests', label: 'My Requests', icon: Calendar },
   { id: 'profile', label: 'Profile', icon: User },
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 3 },
-  { id: 'payments', label: 'Payments', icon: CreditCard },
+  { id: 'wallet', label: 'Wallet', icon: Wallet },
   { id: 'documents', label: 'Documents', icon: FileText },
 ];
 
