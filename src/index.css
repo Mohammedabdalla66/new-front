@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --border: 214.3 31.8% 91.4%;
+  --foreground: 222.2 84% 4.9%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-gray-50 text-foreground;
+  }
+}
+
+@layer components {
+  .form-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+  }
+  
+  .form-error {
+    @apply mt-1 text-sm text-red-600;
+  }
+  
+  .btn-primary {
+    @apply w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 px-4 border border-gray-300 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2;
+  }
+  
+  .auth-card {
+    @apply bg-white rounded-xl shadow-lg border border-gray-200 p-8 w-full max-w-xl mx-auto;
+  }
+  
+  .upload-area {
+    @apply border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-green-500 transition-colors cursor-pointer;
+  }
+  
+  .upload-area.active {
+    @apply border-green-500 bg-green-50;
+  }
+}
+
+/* Custom phone input styling */
+.react-tel-input {
+  @apply w-full;
+}
+
+.react-tel-input .form-control {
+  @apply form-input pl-12;
+}
+
+.react-tel-input .flag-dropdown {
+  @apply border border-gray-300 rounded-l-lg;
+}
+
+.react-tel-input .selected-flag {
+  @apply hover:bg-gray-50;
+}
