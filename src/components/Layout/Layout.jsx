@@ -8,13 +8,13 @@ const mockUser = {
   avatar: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&dpr=2'
 };
 
-export const Layout = ({ children, activeTab, onTabChange }) => {
+export const Layout = ({ children, activeTab, onTabChange, darkMode = false, unreadMessagesCount = 0 }) => {
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar activeTab={activeTab} onTabChange={onTabChange} />
+    <div className={`min-h-screen flex ${darkMode ? 'bg-gray-950' : 'bg-gray-50'}`}>
+      <Sidebar activeTab={activeTab} onTabChange={onTabChange} unreadMessagesCount={unreadMessagesCount} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header user={mockUser} />
-        <main className="flex-1 overflow-y-auto">
+        <main className={`flex-1 overflow-y-auto ${darkMode ? 'bg-gray-950 text-gray-100' : ''}`}>
           {children}
         </main>
       </div>
