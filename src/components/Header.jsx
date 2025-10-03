@@ -86,6 +86,14 @@ const Header = ({ onAddProject }) => {
               </span>
             </button>
 
+            {/* Dashboard */}
+            <Link
+              to="/dashboard"
+              className="text-gray-700 hover:text-blue-700 font-medium transition-colors"
+            >
+              Dashboard
+            </Link>
+
             {/* My Projects */}
             <Link
               to="/projects"
@@ -117,14 +125,14 @@ const Header = ({ onAddProject }) => {
               {isUserMenuOpen && (
                 <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                   <Link
-                    to="/profile"
+                    to="/dashboard"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setIsUserMenuOpen(false)}
                   >
                     {t("profile")}
                   </Link>
                   <Link
-                    to="/settings"
+                    to="/dashboard/settings"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setIsUserMenuOpen(false)}
                   >
@@ -168,6 +176,13 @@ const Header = ({ onAddProject }) => {
                   {t(item.key)}
                 </Link>
               ))}
+              <Link
+                to="/dashboard"
+                className="block px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Dashboard
+              </Link>
               <Link
                 to="/projects"
                 className="block px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"
