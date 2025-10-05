@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import AuthLayout from './components/layout/AuthLayout';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
+// import DashboardPage from './pages/DashboardPage';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
