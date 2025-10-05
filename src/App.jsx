@@ -3,7 +3,7 @@ import React from 'react';
 import AuthLayout from './components/layout/AuthLayout';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
+// import DashboardPage from './pages/DashboardPage';
 import { useAuth } from './hooks/useAuth';
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -18,7 +18,7 @@ function App() {
 
   return (
     <LanguageProvider>
-      <Router>
+      
         <Routes>
 
         <Route path="/" element={<HomePage />} />
@@ -44,7 +44,7 @@ function App() {
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/auth/login" replace />} />
         </Routes>
-      </Router>
+      
     </LanguageProvider>
   );
 }
