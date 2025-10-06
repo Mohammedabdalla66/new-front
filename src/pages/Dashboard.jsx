@@ -1,4 +1,5 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import { StatsCard } from '../components/Dashboard/StatsCard.jsx';
 import { RecentActivity } from '../components/Dashboard/RecentActivity.jsx';
 import { QuickActions } from '../components/Dashboard/QuickActions.jsx';

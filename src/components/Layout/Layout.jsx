@@ -1,4 +1,5 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import { Header } from './Header.jsx';
 import { Sidebar } from './Sidebar.jsx';
 
@@ -15,7 +16,7 @@ export const Layout = ({ children, activeTab, onTabChange, darkMode = false, unr
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header user={mockUser} />
         <main className={`flex-1 overflow-y-auto ${darkMode ? 'bg-gray-950 text-gray-100' : ''}`}>
-          {children}
+          <Outlet/>
         </main>
       </div>
     </div>

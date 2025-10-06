@@ -1,42 +1,48 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for stored auth token
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
-    
-    if (token && userData) {
+    // تحقق من وجود المستخدم في localStorage
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
-      setUser(JSON.parse(userData));
+    } else {
+      setUser(null);
+      setIsAuthenticated(false);
     }
-    
+
     setLoading(false);
   }, []);
 
-  const login = (token, userData) => {
-    localStorage.setItem('authToken', token);
-    localStorage.setItem('userData', JSON.stringify(userData));
-    setIsAuthenticated(true);
+  const role = user?.role || null;
+
+  const login = (userData) => {
+    localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
-    setIsAuthenticated(false);
+    localStorage.removeItem("user");
     setUser(null);
+    setIsAuthenticated(false);
   };
 
   return {
-    isAuthenticated,
     user,
+    isAuthenticated,
     loading,
+    role,
     login,
-    logout
+    logout,
   };
 };
