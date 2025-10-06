@@ -7,7 +7,9 @@ import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-phone-input-2/lib/style.css';
 
-createRoot(document.getElementById('root')).render(
+const rootElement = document.getElementById('root');
+if (rootElement) {
+createRoot(rootElement).render(
   <StrictMode>
     <BrowserRouter>
       <App />
@@ -24,5 +26,6 @@ createRoot(document.getElementById('root')).render(
       />
     </BrowserRouter>
   </StrictMode>
-);
+  );
+}
 

@@ -8,7 +8,6 @@ export default {
         foreground: 'hsl(var(--foreground))',
       },
     },
-
   },
   plugins: [],
 };
