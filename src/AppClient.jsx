@@ -23,7 +23,7 @@ import ContactPage from "./pages/ContactPage";
 
 // Dashboard Layout & Pages
 import { Layout } from './components/Layout/Layout.jsx';
-import { Dashboard } from './pages/Dashboard.jsx';
+import ClientDashboard from './pages/ClientDashboard.jsx';
 import { Requests } from './pages/Requests.jsx';
 import { RequestNew } from './pages/RequestNew.jsx';
 import { RequestDetails } from './pages/RequestDetails.jsx';
@@ -38,7 +38,7 @@ import { Help } from './pages/Help.jsx';
 
 import { useAuth } from './hooks/useAuth';
 
-function App() {
+function AppClient() {
   const { isAuthenticated, role , loading } = useAuth();
   const [darkMode, setDarkMode] = useState(() => {
     try {
@@ -115,7 +115,7 @@ function App() {
             )
           }
         >
-          <Route index element={<Dashboard />} />
+          <Route index element={<ClientDashboard />} />
           <Route path="requests" element={<Requests />} />
           <Route path="request/new" element={<RequestNew />} />
           <Route path="request/:id" element={<RequestDetails />} />
@@ -136,5 +136,4 @@ function App() {
     </LanguageProvider>
   );
 }
-
-export default App;
+export default AppClient;

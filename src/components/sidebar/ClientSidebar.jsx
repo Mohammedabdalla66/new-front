@@ -25,15 +25,14 @@ const bottomItems = [
   { id: 'logout', label: 'Logout', icon: LogOut },
 ];
 
-export const Sidebar = ({ activeTab, onTabChange, unreadMessagesCount = 0 }) => {
+export default function ClientSidebar({ activeTab, onTabChange, unreadMessagesCount = 0 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const containerWidth = isCollapsed ? 'w-20' : 'w-64';
   const labelClass = isCollapsed ? 'md:hidden' : 'hidden md:inline';
 
   return (
-    <div className={`${containerWidth} bg-slate-900 text-slate-300 min-h-screen flex flex-col h-full overflow-hidden`}>
-      {/* Top: Logo + Toggle */}
+    <div className={`${containerWidth} bg-slate-900 text-slate-300 min-h-screen flex flex-col`}>
       <div className="flex items-center justify-between px-3 md:px-4 py-4 border-b border-slate-800">
         <div className="flex items-center space-x-2">
           <div className="w-10 h-10 rounded-full bg-[#0a6308] text-white flex items-center justify-center shadow-sm">AF</div>
@@ -41,17 +40,14 @@ export const Sidebar = ({ activeTab, onTabChange, unreadMessagesCount = 0 }) => 
         </div>
         <button
           onClick={() => setIsCollapsed((v) => !v)}
-          aria-label="Toggle sidebar"
-          className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 transition-colors"
-          title={isCollapsed ? 'Expand' : 'Collapse'}
+          className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="w-5 h-5">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8" className="w-5 h-5">
             <path d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 px-2 md:px-3 py-4">
         <ul className="space-y-1">
           {menuItems.map((item) => {
@@ -81,7 +77,6 @@ export const Sidebar = ({ activeTab, onTabChange, unreadMessagesCount = 0 }) => 
         </ul>
       </nav>
 
-      {/* Bottom Section */}
       <div className="px-2 md:px-3 py-3 border-t border-slate-800">
         <ul className="space-y-1">
           {bottomItems.map((item) => {
@@ -107,4 +102,4 @@ export const Sidebar = ({ activeTab, onTabChange, unreadMessagesCount = 0 }) => 
       </div>
     </div>
   );
-};
+}

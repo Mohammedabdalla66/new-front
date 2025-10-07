@@ -5,7 +5,7 @@ import { RecentActivity } from '../components/Dashboard/RecentActivity.jsx';
 import { QuickActions } from '../components/Dashboard/QuickActions.jsx';
 import { Calendar, DollarSign, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 
-export const Dashboard = () => {
+export const ClientDashboard = () => {
   const stats = [
     {
       title: 'Total Bookings',
@@ -100,3 +100,4 @@ export const Dashboard = () => {
     </div>
   );
 };
+export default ClientDashboard ;
