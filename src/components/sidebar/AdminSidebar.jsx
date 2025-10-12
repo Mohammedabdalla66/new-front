@@ -12,12 +12,12 @@ export default function AdminSidebar() {
   const location = useLocation();
 
   const menuItems = [
-    { icon: LayoutDashboard, label: t('dashboard'), path: '/', active: location.pathname === '/' },
-    { icon: Building2, label: t('firms'), path: '/firms', active: location.pathname === '/firms' },
-    { icon: Users, label: t('clients'), path: '/clients', active: location.pathname === '/clients' },
-    { icon: CreditCard, label: t('transactions'), path: '/transactions', active: location.pathname === '/transactions' },
-    { icon: FileText, label: t('reports'), path: '/reports', active: location.pathname === '/reports' },
-    { icon: Settings, label: t('settings'), path: '/settings', active: location.pathname === '/settings' },
+    { icon: LayoutDashboard, label: t('dashboard'), path: '/admin', active: location.pathname === '/admin' },
+    { icon: Building2, label: t('firms'), path: '/admin/firms', active: location.pathname === '/admin/firms' },
+    { icon: Users, label: t('clients'), path: '/admin/clients', active: location.pathname === '/admin/clients' },
+    { icon: CreditCard, label: t('transactions'), path: '/admin/transactions', active: location.pathname === '/admin/transactions' },
+    { icon: FileText, label: t('reports'), path: '/admin/reports', active: location.pathname === '/admin/reports' },
+    { icon: Settings, label: t('settings'), path: '/admin/settings', active: location.pathname === '/admin/settings' },
   ];
 
   const handleNavigation = (path) => {

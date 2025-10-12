@@ -5,7 +5,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { loginSchema } from '../../utils/validationSchemas';
-import { authAPI } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 
 const LoginPage = () => {
@@ -21,19 +20,25 @@ const LoginPage = () => {
   } = useForm({
     resolver: yupResolver(loginSchema)
   });
+  const GotoRegister = () => {
+    navigate('/auth/register');
+  };
 
+  // Fake auth: set user with selected role and go to landing
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = await authAPI.login(data);
-      
-      // Store auth data and redirect
-      login(response.data.token, response.data.user);
-      toast.success('Login successful!');
-      navigate('/dashboard');
+      const role = data.role || 'client';
+      const fakeUser = {
+        email: data.email,
+        role,
+        name: 'Demo User'
+      };
+      login(fakeUser); // useAuth stores user in localStorage
+      toast.success('Logged in (demo)');
+      navigate('/'); // go to landing; RoleRoute will protect inner areas
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed. Please try again.';
-      toast.error(message);
+      toast.error('Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -91,6 +96,20 @@ const LoginPage = () => {
           )}
         </div>
 
+        {/* Role Selector (Fake Auth) */}
+        <div>
+          <label className="form-label">Role</label>
+          <select
+            {...register('role')}
+            className="form-input"
+            defaultValue="client"
+          >
+            <option value="client">Client</option>
+            <option value="admin">Admin</option>
+            <option value="firm">Firm</option>
+          </select>
+        </div>
+
         {/* Forgot Password Link */}
         <div className="flex justify-end">
           <Link
@@ -119,14 +138,11 @@ const LoginPage = () => {
 
         {/* Register Link */}
         <div className="text-center">
-          <p className="text-sm text-gray-600">
+          <p 
+          onClick={GotoRegister}
+          className="text-sm text-gray-600">
             Don't have an account?{' '}
-            <Link
-              to="/auth/register"
-              className="font-medium text-green-600 hover:text-green-700"
-            >
-              Create an account
-            </Link>
+            <button  className="font-medium text-green-600 hover:text-green-700" >Create an account</button>
           </p>
         </div>
       </form>

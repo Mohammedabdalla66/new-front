@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { StatsCard } from '../components/Dashboard/StatsCard.jsx';
-import { RecentActivity } from '../components/Dashboard/RecentActivity.jsx';
+import StatsCard from '../components/Dashboard/StatsCard.jsx';
+import RecentActivity from '../components/Dashboard/RecentActivity.jsx';
 import { QuickActions } from '../components/Dashboard/QuickActions.jsx';
 import { Calendar, DollarSign, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 
@@ -52,7 +52,7 @@ export const ClientDashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <RecentActivity />
+          <RecentActivity data={[]} />
         </div>
         <div>
           <QuickActions />

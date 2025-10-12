@@ -8,8 +8,8 @@ import {
   Clock 
 } from 'lucide-react';
 
-import Navbar from '../components/Layout/Navbar';
-import Sidebar from '../components/Layout/Sidebar';
+import Navbar from '../components/layout/Navbar';
+import AdminSidebar from '../components/sidebar/AdminSidebar';
 import StatsCard from '../components/Dashboard/StatsCard';
 import RevenueChart from '../components/Dashboard/RevenueChart';
 import ServicePie from '../components/Dashboard/ServicePie';
@@ -102,7 +102,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
-      <Sidebar />
+      <AdminSidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar />

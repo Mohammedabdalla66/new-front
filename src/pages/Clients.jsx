@@ -11,8 +11,8 @@ import {
   Phone,
   Mail
 } from 'lucide-react';
-import Navbar from '../components/Layout/Navbar';
-import Sidebar from '../components/Layout/Sidebar.jsx';
+import Navbar from '../components/layout/Navbar';
+import AdminSidebar from '../components/sidebar/AdminSidebar';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -214,7 +214,7 @@ const Clients = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
-      <Sidebar />
+      <AdminSidebar />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar />

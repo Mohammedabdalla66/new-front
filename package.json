@@ -1,10 +1,5 @@
 {
-<<<<<<< HEAD
-
   "name": "vite-react-tailwind-starter",
-=======
-  "name": "vite-react-jsx-starter",
->>>>>>> origin/wael
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,29 +7,6 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-<<<<<<< HEAD
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
-    "@supabase/supabase-js": "^2.57.4",
-    "axios": "^1.12.2",
-    "lucide-react": "^0.344.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-dropzone": "^14.3.8",
-    "react-hook-form": "^7.62.0",
-    "react-phone-input-2": "^2.15.1",
-    "react-router-dom": "^7.9.1",
-    "react-toastify": "^11.0.5",
-    "yup": "^1.7.0"
-
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.9.1",
-    "@types/react": "^18.3.5",
-    "@types/react-dom": "^18.3.0",
-=======
     "preview": "vite preview",
     "test": "jest",
     "test:watch": "jest --watch"
@@ -46,6 +18,8 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@reduxjs/toolkit": "^2.9.0",
     "@supabase/supabase-js": "^2.57.4",
+    "@hookform/resolvers": "^5.2.2",
+    "axios": "^1.12.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.22",
@@ -53,15 +27,21 @@
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-dropzone": "^14.3.8",
+    "react-hook-form": "^7.62.0",
     "react-i18next": "^16.0.0",
+    "react-phone-input-2": "^2.15.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.2",
+    "react-toastify": "^11.0.5",
     "recharts": "^3.2.1",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "yup": "^1.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
->>>>>>> origin/wael
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.18",
     "eslint": "^9.9.1",
@@ -70,12 +50,8 @@
     "globals": "^15.9.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
-<<<<<<< HEAD
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
-    "vite": "^5.4.2"
-=======
     "vite": "^5.4.20"
->>>>>>> origin/wael
   }
 }
