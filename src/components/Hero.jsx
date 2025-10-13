@@ -69,7 +69,7 @@ const Hero = () => {
 
           {/* Hero Image */}
           <div className="relative">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 relative z-10">
+            <div className="bg-white  rounded-2xl shadow-2xl p-8 relative z-10">
               <img
                 src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=600"
                 alt="Accounting Professional"
@@ -77,7 +77,7 @@ const Hero = () => {
               />
             </div>
             {/* Floating Elements */}
-            <div className="absolute -top-6 -right-6 rtl:-right-auto rtl:-left-6 bg-green-100 rounded-full p-4 shadow-lg">
+            <div className="absolute -top-6 -right-2 md:-right-6 rtl:-right-auto rtl:-left-6 bg-green-100 rounded-full p-4 shadow-lg">
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
             <div className="absolute -bottom-6 -left-6 rtl:-left-auto rtl:-right-6 bg-blue-100 rounded-full p-4 shadow-lg">

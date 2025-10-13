@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Building2, Users, CreditCard, FileText, Settings } from 'lucide-react';
+import { LayoutDashboard, Building2, Users, CreditCard, FileText, Settings, User } from 'lucide-react';
 import { selectSidebarCollapsed } from '../../features/theme/themeSlice';
 
 export default function AdminSidebar() {
@@ -18,6 +18,7 @@ export default function AdminSidebar() {
     { icon: CreditCard, label: t('transactions'), path: '/admin/transactions', active: location.pathname === '/admin/transactions' },
     { icon: FileText, label: t('reports'), path: '/admin/reports', active: location.pathname === '/admin/reports' },
     { icon: Settings, label: t('settings'), path: '/admin/settings', active: location.pathname === '/admin/settings' },
+    { icon: User, label: t('profile'), path: '/admin/profile', active: location.pathname === '/admin/profile' },
   ];
 
   const handleNavigation = (path) => {

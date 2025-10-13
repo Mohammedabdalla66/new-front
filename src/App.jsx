@@ -16,6 +16,9 @@ import RegisterPage from './pages/auth/RegisterPage';
 import AdminRoutes from './routes/AdminRoutes';
 import ClientRoutes from './routes/ClientRoutes';
 
+//profile
+import { ProfileForm } from './components/Profile/ProfileForm';
+
 const getStoredUser = () => {
   try {
     const raw = localStorage.getItem('user');
@@ -53,6 +56,7 @@ function App() {
       <Route path="/accountants" element={<AccountantsPage />} />
       <Route path="/projects" element={<ProjectsPage />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path='/ProfileForm' element={<ProfileForm />} />
 
       {/* Auth */}
       <Route path="/auth/login" element={<LoginPage />} />

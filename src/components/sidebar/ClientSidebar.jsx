@@ -17,6 +17,7 @@ const menuItems = [
   { id: 'messages', label: 'Messages', icon: MessageSquare, badge: 3 },
   { id: 'wallet', label: 'Wallet', icon: Wallet },
   { id: 'documents', label: 'Documents', icon: FileText },
+  { id: 'profile', label: 'My Profile', icon: User },
 ];
 
 const bottomItems = [

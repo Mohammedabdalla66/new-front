@@ -81,7 +81,7 @@ const Header = ({ onAddProject }) => {
               </>
             ) : (
               <>
-                {/* Role-based navigation */}
+                {/* Role-based navigation
                 {user.role === "client" && (
                   <Link
                     to="/client"
@@ -105,7 +105,7 @@ const Header = ({ onAddProject }) => {
                   >
                     {language === "ar" ? "لوحة الشركة" : "Firm Panel"}
                   </Link>
-                )}
+                )} */}
 
                 {/* Notifications */}
                 <button className="relative p-2 text-gray-600 hover:text-blue-700 transition-colors">
@@ -123,13 +123,13 @@ const Header = ({ onAddProject }) => {
                   </span>
                 </button>
 
-                {/* Add Project */}
+                {/* Add Project
                 <button
                   onClick={onAddProject}
                   className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 font-medium transition-colors"
                 >
                   {t("addProject")}
-                </button>
+                </button> */}
 
                 {/* User Menu */}
                 <div className="relative">
@@ -152,13 +152,57 @@ const Header = ({ onAddProject }) => {
                       >
                         {t("profile")}
                       </Link>
-                      <Link
-                        to="/settings"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        {t("settings")}
-                      </Link>
+                      {user.role === "client" && (
+                        <Link
+                          to="client/settings"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          {t("settings")}
+                        </Link>
+                      )}
+                      {user.role === "admin" && (
+                        <Link
+                          to="admin/settings"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          {t("settings")}
+                        </Link>
+                      )}
+                      {user.role === "firm" && (
+                        <Link
+                          to="firm/setting"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          {t("settings")}
+                        </Link>
+                      )}
+                      {user.role === "client" && (
+                        <Link
+                          to="/client"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          {language === "ar" ? "لوحة العميل" : "Client Dashboard"}
+                        </Link>
+                      )}
+                      {user.role === "admin" && (
+                        <Link
+                          to="/admin"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          {language === "ar" ? "لوحة المدير" : "Admin Panel"}
+                        </Link>
+                      )}
+                      {user.role === "firm" && (
+                        <Link
+                          to="/firm"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          {language === "ar" ? "لوحة الشركة" : "Firm Panel"}
+                        </Link>
+                      )}
                       <button
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => {

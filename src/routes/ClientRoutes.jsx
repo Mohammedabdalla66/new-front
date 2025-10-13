@@ -11,6 +11,7 @@ import { Wallet } from '../pages/Wallet.jsx';
 import { Documents } from '../pages/Documents.jsx';
 import { Settings } from '../pages/Settings.jsx';
 import { Help } from '../pages/Help.jsx';
+import ClientProfile from '../pages/ClientProfile.jsx';
 
 export default function ClientRoutes() {
   const [unreadMessagesCount] = useState(3);
@@ -27,6 +28,7 @@ export default function ClientRoutes() {
     if (path.includes('/wallet')) return 'wallet';
     if (path.includes('/documents')) return 'documents';
     if (path.includes('/settings')) return 'settings';
+    if (path.includes('/profile')) return 'profile';
     if (path.includes('/help')) return 'help';
     return 'dashboard';
   };
@@ -61,6 +63,9 @@ export default function ClientRoutes() {
       case 'settings':
         navigate('/client/settings');
         break;
+      case 'profile':
+        navigate('/client/profile');
+        break;
       case 'help':
         navigate('/client/help');
         break;
@@ -84,6 +89,7 @@ export default function ClientRoutes() {
           <Route path="wallet" element={<Wallet />} />
           <Route path="documents" element={<Documents />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="profile" element={<ClientProfile />} />
           <Route path="help" element={<Help />} />
           <Route path="*" element={<Navigate to="." replace />} />
         </Routes>

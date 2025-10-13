@@ -10,7 +10,7 @@ export const ProfileForm = ({ user, onSave }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(localUser);
+    if (onSave) onSave(localUser);
   };
 
   return (
@@ -20,7 +20,7 @@ export const ProfileForm = ({ user, onSave }) => {
           <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
           <input
             type="text"
-            value={localUser.name}
+            value={localUser?.name || ''}
             onChange={(e) => handleChange('name', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
@@ -29,7 +29,7 @@ export const ProfileForm = ({ user, onSave }) => {
           <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
           <input
             type="email"
-            value={localUser.email}
+            value={localUser?.email || ''}
             onChange={(e) => handleChange('email', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
@@ -38,7 +38,7 @@ export const ProfileForm = ({ user, onSave }) => {
           <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
           <input
             type="tel"
-            value={localUser.phone}
+            value={localUser?.phone || ''}
             onChange={(e) => handleChange('phone', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
@@ -47,7 +47,7 @@ export const ProfileForm = ({ user, onSave }) => {
           <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
           <input
             type="text"
-            value={localUser.company}
+            value={localUser?.company || ''}
             onChange={(e) => handleChange('company', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
@@ -56,7 +56,7 @@ export const ProfileForm = ({ user, onSave }) => {
           <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
           <input
             type="text"
-            value={localUser.location}
+            value={localUser?.location || ''}
             onChange={(e) => handleChange('location', e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           />
