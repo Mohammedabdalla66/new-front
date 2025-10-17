@@ -87,12 +87,12 @@ const Header = ({ onAddProject }) => {
             </button>
 
             {/* Dashboard */}
-            <Link
+            {/* <Link
               to="/dashboard"
               className="text-gray-700 hover:text-blue-700 font-medium transition-colors"
             >
               Dashboard
-            </Link>
+            </Link> */}
 
             {/* My Projects */}
             <Link

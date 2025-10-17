@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
+import AddPortfolioModal from "../../components/AddPortfolioModal";
+import ViewPortfolioModal from "../../components/ViewPortfolioModal";
 import {
   Plus,
   Upload,
@@ -16,8 +18,12 @@ import {
 const PortfolioPage = () => {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState("samples");
-
-  const workSamples = [
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
+  const [viewingItem, setViewingItem] = useState(null);
+  const [workSamples, setWorkSamples] = useState([
     {
       id: 1,
       title: "Financial Statements - ABC Company",
@@ -48,9 +54,9 @@ const PortfolioPage = () => {
       thumbnail: "/api/placeholder/300/200",
       type: "document",
     },
-  ];
+  ]);
 
-  const caseStudies = [
+  const [caseStudies, setCaseStudies] = useState([
     {
       id: 1,
       title: "Streamlining Financial Processes for Tech Startup",
@@ -77,9 +83,9 @@ const PortfolioPage = () => {
       ],
       date: "2024-10-15",
     },
-  ];
+  ]);
 
-  const certifications = [
+  const [certifications, setCertifications] = useState([
     {
       id: 1,
       name: "Certified Public Accountant (CPA)",
@@ -107,7 +113,7 @@ const PortfolioPage = () => {
       credentialId: "QB-54321",
       status: "expiring",
     },
-  ];
+  ]);
 
   const tabs = [
     { id: "samples", label: t("workSamples") },
@@ -128,6 +134,113 @@ const PortfolioPage = () => {
     }
   };
 
+  const handleAddItem = (tabType, newItem) => {
+    switch (tabType) {
+      case "samples":
+        setWorkSamples((prev) => [...prev, newItem]);
+        break;
+      case "cases":
+        setCaseStudies((prev) => [...prev, newItem]);
+        break;
+      case "certifications":
+        setCertifications((prev) => [...prev, newItem]);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteItem = (tabType, itemId) => {
+    if (
+      window.confirm(
+        t("confirmDelete") || "Are you sure you want to delete this item?"
+      )
+    ) {
+      switch (tabType) {
+        case "samples":
+          setWorkSamples((prev) => prev.filter((item) => item.id !== itemId));
+          break;
+        case "cases":
+          setCaseStudies((prev) => prev.filter((item) => item.id !== itemId));
+          break;
+        case "certifications":
+          setCertifications((prev) =>
+            prev.filter((item) => item.id !== itemId)
+          );
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  const handleEditItem = (item) => {
+    setEditingItem(item);
+    setIsEditModalOpen(true);
+  };
+
+  const handleViewItem = (item) => {
+    setViewingItem(item);
+    setIsViewModalOpen(true);
+  };
+
+  const handleUpdateItem = (tabType, updatedItem) => {
+    switch (tabType) {
+      case "samples":
+        setWorkSamples((prev) =>
+          prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+        );
+        break;
+      case "cases":
+        setCaseStudies((prev) =>
+          prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+        );
+        break;
+      case "certifications":
+        setCertifications((prev) =>
+          prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+        );
+        break;
+      default:
+        break;
+    }
+    setIsEditModalOpen(false);
+    setEditingItem(null);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingItem(null);
+  };
+
+  const handleCloseViewModal = () => {
+    setIsViewModalOpen(false);
+    setViewingItem(null);
+  };
+
+  // Clean up image URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      workSamples.forEach((sample) => {
+        if (
+          sample.file &&
+          sample.file.type &&
+          sample.file.type.startsWith("image/")
+        ) {
+          URL.revokeObjectURL(URL.createObjectURL(sample.file));
+        }
+      });
+    };
+  }, [workSamples]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -145,7 +258,10 @@ const PortfolioPage = () => {
             <Upload className="w-4 h-4 mr-2" />
             Upload
           </button>
-          <button className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+          <button
+            onClick={handleOpenModal}
+            className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+          >
             <Plus className="w-4 h-4 mr-2" />
             Add New
           </button>
@@ -177,8 +293,23 @@ const PortfolioPage = () => {
               key={sample.id}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
             >
-              <div className="h-48 bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                {sample.type === "document" ? (
+              <div className="h-48 bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                {sample.file &&
+                sample.file.type &&
+                sample.file.type.startsWith("image/") ? (
+                  <img
+                    src={URL.createObjectURL(sample.file)}
+                    alt={sample.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : sample.thumbnail &&
+                  sample.thumbnail !== "/api/placeholder/300/200" ? (
+                  <img
+                    src={sample.thumbnail}
+                    alt={sample.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : sample.type === "document" ? (
                   <FileText className="w-12 h-12 text-gray-400" />
                 ) : (
                   <Image className="w-12 h-12 text-gray-400" />
@@ -190,13 +321,25 @@ const PortfolioPage = () => {
                     {sample.title}
                   </h3>
                   <div className="flex space-x-1">
-                    <button className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <button
+                      onClick={() => handleViewItem(sample)}
+                      className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      title="View"
+                    >
                       <Eye className="w-4 h-4" />
                     </button>
-                    <button className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <button
+                      onClick={() => handleEditItem(sample)}
+                      className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      title="Edit"
+                    >
                       <Edit className="w-4 h-4" />
                     </button>
-                    <button className="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400">
+                    <button
+                      onClick={() => handleDeleteItem("samples", sample.id)}
+                      className="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                      title="Delete"
+                    >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -233,11 +376,26 @@ const PortfolioPage = () => {
                   </p>
                 </div>
                 <div className="flex space-x-2">
-                  <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                  <button
+                    onClick={() => handleViewItem(study)}
+                    className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    title="View"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleEditItem(study)}
+                    className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    title="Edit"
+                  >
                     <Edit className="w-4 h-4" />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                    <Share2 className="w-4 h-4" />
+                  <button
+                    onClick={() => handleDeleteItem("cases", study.id)}
+                    className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                    title="Delete"
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -345,11 +503,28 @@ const PortfolioPage = () => {
                     {cert.status}
                   </span>
                   <div className="flex space-x-2">
-                    <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                      <Download className="w-4 h-4" />
+                    <button
+                      onClick={() => handleViewItem(cert)}
+                      className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      title="View"
+                    >
+                      <Eye className="w-4 h-4" />
                     </button>
-                    <button className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <button
+                      onClick={() => handleEditItem(cert)}
+                      className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      title="Edit"
+                    >
                       <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleDeleteItem("certifications", cert.id)
+                      }
+                      className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -358,6 +533,32 @@ const PortfolioPage = () => {
           ))}
         </div>
       )}
+
+      {/* Add Portfolio Modal */}
+      <AddPortfolioModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        activeTab={activeTab}
+        onAddItem={handleAddItem}
+      />
+
+      {/* Edit Portfolio Modal */}
+      <AddPortfolioModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        activeTab={activeTab}
+        onAddItem={handleUpdateItem}
+        editingItem={editingItem}
+        isEditMode={true}
+      />
+
+      {/* View Portfolio Modal */}
+      <ViewPortfolioModal
+        isOpen={isViewModalOpen}
+        onClose={handleCloseViewModal}
+        item={viewingItem}
+        activeTab={activeTab}
+      />
     </div>
   );
 };
