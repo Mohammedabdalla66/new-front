@@ -145,13 +145,33 @@ const Header = ({ onAddProject }) => {
 
                   {isUserMenuOpen && (
                     <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                      <Link
-                        to="/profile"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsUserMenuOpen(false)}
-                      >
-                        {t("profile")}
-                      </Link>
+                      {user.role === "client" && (
+                        <Link
+                          to="ProfileForm"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          {t("profile")}
+                        </Link>
+                      )}
+                       {user.role === "admin" && (
+                        <Link
+                          to="ProfileForm"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          {t("profile")}
+                        </Link>
+                      )}
+                       {user.role === "firm" && (
+                        <Link
+                          to="ProfileForm"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => setIsUserMenuOpen(false)}
+                        >
+                          {t("profile")}
+                        </Link>
+                      )}
                       {user.role === "client" && (
                         <Link
                           to="client/settings"
