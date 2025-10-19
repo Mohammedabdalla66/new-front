@@ -28,20 +28,41 @@ const LoginPage = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const role = data.role || 'client';
+      // تحديد الدور — لو المستخدم مش محدد نخليه client افتراضياً
+      const role = (data.role || 'client').toLowerCase();
+  
+      // إنشاء بيانات المستخدم الوهمية (هتستبدلها لاحقاً ببيانات حقيقية من API)
       const fakeUser = {
         email: data.email,
         role,
-        name: 'Demo User'
+        name: data.name || 'Demo User',
+        avatar: data.avatar || '/default-avatar.png',
       };
-      login(fakeUser); // useAuth stores user in localStorage
+  
+      // حفظ المستخدم في localStorage عبر دالة login من useAuth
+      login(fakeUser);
+  
       toast.success('Logged in (demo)');
-      navigate('/'); // go to landing; RoleRoute will protect inner areas
+  
+      // 🔹 تحديد الصفحة المناسبة حسب الدور
+      let redirectPath = '/';
+      if (role === 'admin') {
+        redirectPath = '/admin';
+      } else if (role === 'firm') {
+        redirectPath = '/firm/browse'; // الصفحة الرئيسية للـ firm
+      } else if (role === 'client') {
+        redirectPath = '/client/dashboard'; // الصفحة الرئيسية للـ client
+      }
+  
+      // 🔹 التوجيه للصفحة المناسبة
+      navigate(redirectPath, { replace: true });
     } catch (error) {
+      console.error(error);
       toast.error('Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
+    
   };
 
   return (

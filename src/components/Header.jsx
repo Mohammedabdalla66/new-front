@@ -86,14 +86,17 @@ const Header = ({ onAddProject }) => {
                   <Link
                     to="/client"
                     className="text-gray-700 hover:text-blue-700 font-medium"
+
                   >
                     {language === "ar" ? "لوحة العميل" : "Client Dashboard"}
                   </Link>
                 )}
                 {user.role === "admin" && (
                   <Link
+
                     to="/admin"
                     className="text-gray-700 hover:text-blue-700 font-medium"
+
                   >
                     {language === "ar" ? "لوحة المدير" : "Admin Panel"}
                   </Link>
@@ -261,9 +264,13 @@ const Header = ({ onAddProject }) => {
                 >
                   {t(item.key)}
                 </Link>
-              ))}
+              ))};
 
-              {/* Language Toggle */}
+
+            
+
+              
+
               <button
                 onClick={toggleLanguage}
                 className="block px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"

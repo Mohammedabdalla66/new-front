@@ -15,6 +15,7 @@ import RegisterPage from './pages/auth/RegisterPage';
 // Role route trees (ensure these files exist)
 import AdminRoutes from './routes/AdminRoutes';
 import ClientRoutes from './routes/ClientRoutes';
+import FirmRoutes from './routes/FirmRoutes';
 
 //profile
 import { ProfileForm } from './components/Profile/ProfileForm';
@@ -84,13 +85,22 @@ function App() {
           </RoleRoute>
         }
       />
+              <Route
+          path="/firm/*"
+          element={
+            <RoleRoute requiredRole="firm">
+              <FirmRoutes />
+            </RoleRoute>
+          }
+        />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
-  );
-}
 
+      );
+}
 export default App;
+
 
 

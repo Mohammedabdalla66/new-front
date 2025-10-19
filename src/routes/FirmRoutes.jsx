@@ -1,23 +1,34 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-
-// Create a simple placeholder page if none exists yet
-function FirmDashboard() {
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-2">Firm Dashboard</h1>
-      <p>Welcome to the Firm area. Build your firm pages here.</p>
-    </div>
-  );
-}
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import DashboardLayout from "../layouts/DashboardLayout";
+import DashboardPage from "../pages/dashboard/DashboardPage";
+import MyRequestsPage from "../pages/dashboard/MyRequestsPage";
+import MessagesPage from "../pages/dashboard/MessagesPage";
+import WalletPage from "../pages/dashboard/WalletPage";
+import PortfolioPage from "../pages/dashboard/PortfolioPage";
+import BrowseProjectsPage from "../pages/dashboard/BrowseProjectsPage";
+import SettingsPage from "../pages/dashboard/SettingsPage";
+import HelpSupportPage from "../pages/dashboard/HelpSupportPage";
 
 export default function FirmRoutes() {
   return (
     <Routes>
-      <Route index element={<FirmDashboard />} />
-      {/* Add more firm routes here */}
-      <Route path="*" element={<Navigate to="." replace />} />
+      {/* Dashboard Layout */}
+      <Route path="/" element={<DashboardLayout />}>
+        <Route index element={<DashboardPage />} />
+        <Route path="requests" element={<MyRequestsPage />} />
+        <Route path="messages" element={<MessagesPage />} />
+        <Route path="wallet" element={<WalletPage />} />
+        <Route path="portfolio" element={<PortfolioPage />} />
+        <Route path="browse" element={<BrowseProjectsPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+        <Route path="help" element={<HelpSupportPage />} />
+      </Route>
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/firm" replace />} />
     </Routes>
   );
 }
+
 
