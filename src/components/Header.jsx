@@ -30,10 +30,10 @@ const Header = ({ onAddProject }) => {
 
   return (
     <header className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className=" mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 rtl:space-x-reverse">
+          <Link to="/" className="flex items-center ml-2 space-x-2 rtl:space-x-reverse">
             <Calculator className="h-8 w-8 text-blue-700" />
             <span className="font-bold text-xl text-gray-900">
               {language === "ar" ? "حسابي" : "AccountPro"}
@@ -54,7 +54,7 @@ const Header = ({ onAddProject }) => {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
+          <div className="hidden md:flex items-center space-x-4 rtl:space-x-reverse mr-2">
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
@@ -290,7 +290,7 @@ const Header = ({ onAddProject }) => {
                   </Link>
                   <Link
                     to="/auth/register"
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"
+                    className="block px-3 py-2  text-gray-700 hover:text-blue-700 font-medium"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {language === "ar" ? "إنشاء حساب" : "Register"}

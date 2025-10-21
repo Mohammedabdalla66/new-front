@@ -264,12 +264,12 @@ const ServicesPage = () => {
             <p className="text-xl mb-8 max-w-3xl mx-auto leading-relaxed">
               {t("servicesSubtitle")}
             </p>
-            <div className="flex justify-center space-x-4 space-x-reverse">
-              <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center space-x-2 space-x-reverse">
+            <div className="flex justify-center flex-1  ">
+              <button className="bg-white   text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center space-x-2 space-x-reverse">
                 <Phone className="w-5 h-5" />
                 <span>{t("callNow")}</span>
               </button>
-              <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors flex items-center space-x-2 space-x-reverse">
+              <button className="border-2 ms-8 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors flex items-center space-x-2 space-x-reverse">
                 <Mail className="w-5 h-5" />
                 <span>{t("requestConsultation")}</span>
               </button>
@@ -307,7 +307,7 @@ const ServicesPage = () => {
             {filteredServices.map((service) => (
               <div
                 key={service.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 relative"
+                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 relative flex flex-col h-full"
               >
                 {service.popular && (
                   <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center space-x-1 space-x-reverse">
@@ -316,7 +316,7 @@ const ServicesPage = () => {
                   </div>
                 )}
 
-                <div className="p-8">
+                <div className="p-8 flex flex-col flex-1">
                   <h3 className="text-2xl font-bold text-gray-900 mb-4">
                     {service.title}
                   </h3>
@@ -341,7 +341,7 @@ const ServicesPage = () => {
                     </ul>
                   </div>
 
-                  <div className="border-t pt-6">
+                  <div className="border-t pt-6 mt-auto">
                     <div className="flex justify-between items-center mb-4">
                       <div>
                         <p className="text-sm text-gray-500">{t("price")}</p>
