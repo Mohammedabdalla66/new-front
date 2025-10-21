@@ -11,7 +11,7 @@ import {
   Phone,
   Mail
 } from 'lucide-react';
-import Navbar from '../components/layout/Navbar';
+import Navbar from '../components/Layout/Navbar';
 import AdminSidebar from '../components/sidebar/AdminSidebar';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';

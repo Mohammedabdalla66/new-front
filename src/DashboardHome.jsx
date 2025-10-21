@@ -13,7 +13,7 @@ import {
   X
 } from 'lucide-react';
 
-import Navbar from '../src/components/layout/Navbar';
+import Navbar from '../components/Layout/Navbar';
 import Sidebar from './components/Layout/Sidebar';
 import StatsCard from './components/Dashboard/StatsCard';
 import RevenueChart from './components/Dashboard/RevenueChart';

@@ -8,7 +8,7 @@ import {
   Clock 
 } from 'lucide-react';
 
-import Navbar from '../components/layout/Navbar';
+import Navbar from '../components/Layout/Navbar';
 import AdminSidebar from '../components/sidebar/AdminSidebar';
 import StatsCard from '../components/Dashboard/StatsCard';
 import RevenueChart from '../components/Dashboard/RevenueChart';
