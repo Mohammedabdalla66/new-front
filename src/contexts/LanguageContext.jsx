@@ -139,7 +139,6 @@ const translations = {
     allServices: "جميع الخدمات",
     generalAccounting: "المحاسبة العامة",
     financialAudit: "التدقيق المالي",
-    financialConsulting: "الاستشارات المالية",
     taxServices: "الخدمات الضريبية",
     mostRequested: "الأكثر طلباً",
     includes: "ما يشمله:",
@@ -292,7 +291,6 @@ const translations = {
     ctaTitle: "Start Your Accounting Journey Today",
     ctaText:
       "Get started today — whether you need accounting services or want to offer your expertise.",
-    requestService: "Request a Service",
     signUpAccountant: "Sign Up as Accountant",
 
     // Footer
