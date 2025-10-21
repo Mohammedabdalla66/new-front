@@ -176,7 +176,6 @@ const translations = {
       "مراجعة وتدقيق الأنظمة المالية والإدارية لضمان الامتثال والكفاءة",
     externalAudit: "التدقيق الخارجي",
     externalAuditDesc: "تدقيق القوائم المالية من قبل محاسبين قانونيين معتمدين",
-    financialConsultingService: "الاستشارات المالية",
     financialConsultingDesc:
       "استشارات متخصصة في التخطيط المالي وإدارة الاستثمارات",
     budgetPreparation: "إعداد الميزانيات",
@@ -366,7 +365,6 @@ const translations = {
     allServices: "All Services",
     generalAccounting: "General Accounting",
     financialAudit: "Financial Audit",
-    financialConsulting: "Financial Consulting",
     taxServices: "Tax Services",
     mostRequested: "Most Requested",
     includes: "Includes:",
