@@ -6,6 +6,8 @@ import { useAuth } from '../hooks/useAuth';
 
 // Import existing pages with static data
 import { Requests } from '../pages/Requests.jsx';
+import { RequestNew } from '../pages/RequestNew.jsx';
+import { RequestDetails } from '../pages/RequestDetails.jsx';
 import { Messages } from '../pages/Messages.jsx';
 import { Wallet } from '../pages/Wallet.jsx';
 import { Documents } from '../pages/Documents.jsx';
@@ -51,6 +53,9 @@ export default function ClientRoutes() {
       case 'requests':
         navigate('/client/requests');
         break;
+      case 'new request':
+        navigate('/client/request/new');
+        break;
       case 'messages':
         navigate('/client/messages');
         break;
@@ -85,6 +90,8 @@ export default function ClientRoutes() {
         <Routes>
           <Route index element={<ClientDashboard />} />
           <Route path="requests" element={<Requests />} />
+          <Route path="request/new" element={<RequestNew />} />
+          <Route path="request/:id" element={<RequestDetails />} />
           <Route path="messages" element={<Messages />} />
           <Route path="wallet" element={<Wallet />} />
           <Route path="documents" element={<Documents />} />

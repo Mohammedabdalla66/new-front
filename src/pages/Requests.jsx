@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { RequestFilters } from '../components/Requests/RequestFilters.jsx';
 import { RequestsTable } from '../components/Requests/RequestsTable.jsx';
+import { RequestNew } from './RequestNew.jsx';
 
 const mockRequests = [
   {
@@ -52,7 +53,7 @@ export const Requests = () => {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">My Requests</h1>
           <p className="text-gray-600">Create and manage your service requests.</p>
         </div>
-        <button onClick={() => navigate('/request/new')} className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+        <button onClick={() => navigate('/client/request/new')} className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
           <Plus className="w-4 h-4" />
           <span>New Request</span>
         </button>
@@ -61,7 +62,7 @@ export const Requests = () => {
       <RequestFilters filters={filters} onFiltersChange={setFilters} />
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-        <RequestsTable requests={filtered} onViewDetails={(id) => navigate(`/request/${id}`)} />
+        <RequestsTable requests={filtered} onViewDetails={(id) => navigate(`/client/request/${id}`)} />
       </div>
     </div>
   );

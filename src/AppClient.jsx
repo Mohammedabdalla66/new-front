@@ -67,6 +67,8 @@ function AppClient() {
   const path = location.pathname;
   const activeTab =
     path.startsWith('/dashboard/requests') ? 'requests' :
+    path.startsWith('/dashboard/request/new') ? 'requests' :
+    path.startsWith('/dashboard/request/') ? 'requests' :
     path.startsWith('/dashboard/messages') ? 'messages' :
     path.startsWith('/dashboard/wallet') ? 'wallet' :
     path.startsWith('/dashboard/documents') ? 'documents' :

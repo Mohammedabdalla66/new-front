@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header.jsx';
-import { Sidebar } from './Sidebar.jsx';
+import ClientSidebar from '../sidebar/ClientSidebar.jsx';
 
 const mockUser = {
   name: 'John Davidson',
@@ -12,7 +12,7 @@ const mockUser = {
 export const Layout = ({ children, activeTab, onTabChange, darkMode = false, unreadMessagesCount = 0 }) => {
   return (
     <div className={`min-h-screen flex ${darkMode ? 'bg-gray-950' : 'bg-gray-50'}`}>
-      <Sidebar activeTab={activeTab} onTabChange={onTabChange} unreadMessagesCount={unreadMessagesCount} />
+      <ClientSidebar activeTab={activeTab} onTabChange={onTabChange} unreadMessagesCount={unreadMessagesCount} />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header user={mockUser} />
         <main className={`flex-1 overflow-y-auto ${darkMode ? 'bg-gray-950 text-gray-100' : ''}`}>
