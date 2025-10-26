@@ -1,8 +1,13 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 const CTASection = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const GoToLogin = () => {
+    navigate("/auth/login")
+  }
 
   return (
     <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-700">
@@ -15,10 +20,14 @@ const CTASection = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+          <button 
+          onClick={GoToLogin}
+          className="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
             {t("requestService")}
           </button>
-          <button className="bg-transparent text-white px-8 py-4 rounded-lg text-lg font-semibold border-2 border-white hover:bg-white hover:text-blue-600 transition-colors">
+          <button 
+          onClick={GoToLogin}
+          className="bg-transparent text-white px-8 py-4 rounded-lg text-lg font-semibold border-2 border-white hover:bg-white hover:text-blue-600 transition-colors">
             {t("signUpAccountant")}
           </button>
         </div>

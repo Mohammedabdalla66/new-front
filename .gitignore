@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 # Logs
+=======
+>>>>>>> origin/wael
 logs
 *.log
 npm-debug.log*
@@ -12,7 +15,10 @@ dist
 dist-ssr
 *.local
 
+<<<<<<< HEAD
 # Editor directories and files
+=======
+>>>>>>> origin/wael
 .vscode/*
 !.vscode/extensions.json
 .idea

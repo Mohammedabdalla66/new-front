@@ -1,9 +1,14 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { CheckCircle, TrendingUp, Award } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const { t } = useLanguage();
+  const Navigate = useNavigate();
+  const GoToLogin = () => {
+    Navigate ("/auth/login")
+  } 
 
   return (
     <section className="bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
@@ -20,10 +25,14 @@ const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start rtl:lg:justify-end mb-12">
-              <button className="bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              <button 
+              onClick={GoToLogin}
+              className="bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                 {t("findService")}
               </button>
-              <button className="bg-white text-blue-700 px-8 py-4 rounded-lg text-lg font-semibold border-2 border-blue-700 hover:bg-blue-50 transition-colors">
+              <button 
+              onClick={GoToLogin}
+              className="bg-white text-blue-700 px-8 py-4 rounded-lg text-lg font-semibold border-2 border-blue-700 hover:bg-blue-50 transition-colors">
                 {t("joinAsAccountant")}
               </button>
             </div>
@@ -60,7 +69,7 @@ const Hero = () => {
 
           {/* Hero Image */}
           <div className="relative">
-            <div className="bg-white rounded-2xl shadow-2xl p-8 relative z-10">
+            <div className="bg-white  rounded-2xl shadow-2xl p-8 relative z-10">
               <img
                 src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=600"
                 alt="Accounting Professional"
@@ -68,7 +77,7 @@ const Hero = () => {
               />
             </div>
             {/* Floating Elements */}
-            <div className="absolute -top-6 -right-6 rtl:-right-auto rtl:-left-6 bg-green-100 rounded-full p-4 shadow-lg">
+            <div className="absolute -top-6 -right-2 md:-right-6 rtl:-right-auto rtl:-left-6 bg-green-100 rounded-full p-4 shadow-lg">
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
             <div className="absolute -bottom-6 -left-6 rtl:-left-auto rtl:-right-6 bg-blue-100 rounded-full p-4 shadow-lg">

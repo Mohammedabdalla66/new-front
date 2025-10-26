@@ -139,7 +139,6 @@ const translations = {
     allServices: "جميع الخدمات",
     generalAccounting: "المحاسبة العامة",
     financialAudit: "التدقيق المالي",
-    financialConsulting: "الاستشارات المالية",
     taxServices: "الخدمات الضريبية",
     mostRequested: "الأكثر طلباً",
     includes: "ما يشمله:",
@@ -177,7 +176,6 @@ const translations = {
       "مراجعة وتدقيق الأنظمة المالية والإدارية لضمان الامتثال والكفاءة",
     externalAudit: "التدقيق الخارجي",
     externalAuditDesc: "تدقيق القوائم المالية من قبل محاسبين قانونيين معتمدين",
-    financialConsultingService: "الاستشارات المالية",
     financialConsultingDesc:
       "استشارات متخصصة في التخطيط المالي وإدارة الاستثمارات",
     budgetPreparation: "إعداد الميزانيات",
@@ -292,7 +290,6 @@ const translations = {
     ctaTitle: "Start Your Accounting Journey Today",
     ctaText:
       "Get started today — whether you need accounting services or want to offer your expertise.",
-    requestService: "Request a Service",
     signUpAccountant: "Sign Up as Accountant",
 
     // Footer
@@ -368,7 +365,6 @@ const translations = {
     allServices: "All Services",
     generalAccounting: "General Accounting",
     financialAudit: "Financial Audit",
-    financialConsulting: "Financial Consulting",
     taxServices: "Tax Services",
     mostRequested: "Most Requested",
     includes: "Includes:",
