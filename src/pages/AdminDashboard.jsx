@@ -1,20 +1,15 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { 
-  Building2, 
-  Users, 
-  DollarSign, 
-  Clock 
-} from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import { Building2, Users, DollarSign, Clock } from "lucide-react";
 
-import Navbar from '../components/Layout/Navbar';
-import AdminSidebar from '../components/sidebar/AdminSidebar';
-import StatsCard from '../components/Dashboard/StatsCard';
-import RevenueChart from '../components/Dashboard/RevenueChart';
-import ServicePie from '../components/Dashboard/ServicePie';
-import RecentActivity from '../components/Dashboard/RecentActivity';
-import PendingList from '../components/Dashboard/PendingList';
+import Navbar from "../components/Layout/Navbar";
+import AdminSidebar from "../components/sidebar/AdminSidebar";
+import StatsCard from "../components/Dashboard/StatsCard";
+import RevenueChart from "../components/Dashboard/RevenueChart";
+import ServicePie from "../components/Dashboard/ServicePie";
+import RecentActivity from "../components/Dashboard/RecentActivity";
+import PendingList from "../components/Dashboard/PendingList";
 
 import {
   fetchDashboard,
@@ -27,12 +22,13 @@ import {
   selectPendingItems,
   selectDashboardLoading,
   selectDashboardError,
-} from '../features/dashboard/dashboardSlice';
+} from "../features/dashboard/dashboardSlice";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const stats = useSelector(selectDashboardStats);
   const revenueSeries = useSelector(selectRevenueSeries);
   const requestsByService = useSelector(selectRequestsByService);
@@ -47,34 +43,37 @@ const AdminDashboard = () => {
     dispatch(fetchPendingItems());
   }, [dispatch]);
 
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
+
   const statsCards = [
     {
-      title: t('totalFirms'),
+      title: t("totalFirms"),
       value: stats.totalFirms,
       delta: 12.5,
       icon: Building2,
-      format: 'number'
+      format: "number",
     },
     {
-      title: t('activeClients'),
+      title: t("activeClients"),
       value: stats.activeClients,
       delta: 8.2,
       icon: Users,
-      format: 'number'
+      format: "number",
     },
     {
-      title: t('totalRevenue'),
+      title: t("totalRevenue"),
       value: stats.totalRevenue,
       delta: 15.3,
       icon: DollarSign,
-      format: 'currency'
+      format: "currency",
     },
     {
-      title: t('pendingTransactions'),
+      title: t("pendingTransactions"),
       value: stats.pendingTransactions,
       delta: -2.1,
       icon: Clock,
-      format: 'number'
+      format: "number",
     },
   ];
 
@@ -84,11 +83,9 @@ const AdminDashboard = () => {
         <div className="text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-            {t('error')}
+            {t("error")}
           </h2>
-          <p className="text-neutral-600 dark:text-neutral-400 mb-4">
-            {error}
-          </p>
+          <p className="text-neutral-600 dark:text-neutral-400 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -102,11 +99,18 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
-      <AdminSidebar />
-      
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={closeSidebar}
+          role="presentation"
+        />
+      )}
+      <AdminSidebar isMobileOpen={isSidebarOpen} onMobileClose={closeSidebar} />
+
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
-        
+        <Navbar onToggleSidebar={toggleSidebar} />
+
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Stats Cards */}
@@ -126,26 +130,20 @@ const AdminDashboard = () => {
 
             {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RevenueChart 
-                data={revenueSeries} 
-                loading={loading.dashboard}
-              />
-              <ServicePie 
-                data={requestsByService} 
+              <RevenueChart data={revenueSeries} loading={loading.dashboard} />
+              <ServicePie
+                data={requestsByService}
                 loading={loading.dashboard}
               />
             </div>
 
             {/* Activity and Pending Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RecentActivity 
-                data={recentActivity} 
+              <RecentActivity
+                data={recentActivity}
                 loading={loading.activity}
               />
-              <PendingList 
-                data={pendingItems} 
-                loading={loading.pending}
-              />
+              <PendingList data={pendingItems} loading={loading.pending} />
             </div>
           </div>
         </main>

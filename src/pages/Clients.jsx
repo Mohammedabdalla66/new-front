@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import {
   Users,
   Search,
@@ -9,59 +9,84 @@ import {
   Eye,
   ChevronRight,
   Phone,
-  Mail
-} from 'lucide-react';
-import Navbar from '../components/Layout/Navbar';
-import AdminSidebar from '../components/sidebar/AdminSidebar';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Badge } from '../components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../components/ui/dialog';
-import Toast from '../components/ui/toast';
-import AlertDialog from '../components/ui/alert-dialog';
+  Mail,
+} from "lucide-react";
+import Navbar from "../components/Layout/Navbar";
+import AdminSidebar from "../components/sidebar/AdminSidebar";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Badge } from "../components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "../components/ui/dialog";
+import Toast from "../components/ui/toast";
+import AlertDialog from "../components/ui/alert-dialog";
 
 // Mock data
 const initialClients = [
   {
     id: 1,
-    name: 'Alice Johnson',
-    email: 'alice.johnson@example.com',
-    phone: '+1 (555) 101-2020',
-    status: 'Active',
+    name: "Alice Johnson",
+    email: "alice.johnson@example.com",
+    phone: "+1 (555) 101-2020",
+    status: "Active",
   },
   {
     id: 2,
-    name: 'Beta Logistics',
-    email: 'ops@betalogistics.co',
-    phone: '+1 (555) 222-3030',
-    status: 'Pending',
+    name: "Beta Logistics",
+    email: "ops@betalogistics.co",
+    phone: "+1 (555) 222-3030",
+    status: "Pending",
   },
   {
     id: 3,
-    name: 'Carlos Mendes',
-    email: 'c.mendes@domain.com',
-    phone: '+1 (555) 333-4040',
-    status: 'Inactive',
+    name: "Carlos Mendes",
+    email: "c.mendes@domain.com",
+    phone: "+1 (555) 333-4040",
+    status: "Inactive",
   },
   {
     id: 4,
-    name: 'Delta Marketing LLC',
-    email: 'hello@deltamktg.io',
-    phone: '+1 (555) 444-5050',
-    status: 'Active',
+    name: "Delta Marketing LLC",
+    email: "hello@deltamktg.io",
+    phone: "+1 (555) 444-5050",
+    status: "Active",
   },
 ];
 
 const Clients = () => {
   // Data
   const [clients, setClients] = useState(initialClients);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Filters
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   // Dialogs / Modals
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
@@ -76,10 +101,10 @@ const Clients = () => {
 
   // Forms
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    status: 'Pending',
+    name: "",
+    email: "",
+    phone: "",
+    status: "Pending",
   });
 
   // Toast
@@ -88,18 +113,22 @@ const Clients = () => {
   // Helpers
   const getInitials = (name) =>
     name
-      .split(' ')
+      .split(" ")
       .filter(Boolean)
       .map((n) => n[0])
-      .join('')
+      .join("")
       .toUpperCase()
       .slice(0, 2);
+
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   // Derived: filtered list (search + status)
   const filteredClients = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return clients.filter((c) => {
-      const matchesStatus = statusFilter === 'All' ? true : c.status === statusFilter;
+      const matchesStatus =
+        statusFilter === "All" ? true : c.status === statusFilter;
       const matchesSearch = !q
         ? true
         : c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q);
@@ -117,30 +146,44 @@ const Clients = () => {
   const updateClientStatus = (id, status) => {
     setClients((prev) => prev.map((c) => (c.id === id ? { ...c, status } : c)));
     // Keep modal data in sync if it's the same client
-    setSelectedClient((prev) => (prev && prev.id === id ? { ...prev, status } : prev));
+    setSelectedClient((prev) =>
+      prev && prev.id === id ? { ...prev, status } : prev
+    );
   };
 
   const approveClient = (client) => {
-    updateClientStatus(client.id, 'Active');
-    setToast({ open: true, title: 'Client approved', description: `${client.name} is now Active.`, variant: 'success' });
+    updateClientStatus(client.id, "Active");
+    setToast({
+      open: true,
+      title: "Client approved",
+      description: `${client.name} is now Active.`,
+      variant: "success",
+    });
     setTimeout(() => setToast((t) => ({ ...t, open: false })), 2500);
   };
 
   const rejectClient = (client) => {
-    updateClientStatus(client.id, 'Inactive');
-    setToast({ open: true, title: 'Client rejected', description: `${client.name} has been set to Inactive.`, variant: 'destructive' });
+    updateClientStatus(client.id, "Inactive");
+    setToast({
+      open: true,
+      title: "Client rejected",
+      description: `${client.name} has been set to Inactive.`,
+      variant: "destructive",
+    });
     setTimeout(() => setToast((t) => ({ ...t, open: false })), 2500);
   };
 
   // Handlers: Add
   const openAdd = () => {
-    setFormData({ name: '', email: '', phone: '', status: 'Pending' });
+    setFormData({ name: "", email: "", phone: "", status: "Pending" });
     setAddDialogOpen(true);
   };
 
   const saveAdd = () => {
     if (!formData.name || !formData.email || !formData.phone) return;
-    const nextId = clients.length ? Math.max(...clients.map((c) => c.id)) + 1 : 1;
+    const nextId = clients.length
+      ? Math.max(...clients.map((c) => c.id)) + 1
+      : 1;
     const created = {
       id: nextId,
       name: formData.name,
@@ -155,7 +198,12 @@ const Clients = () => {
   // Handlers: Edit
   const openEdit = (client) => {
     setSelectedClient(client);
-    setFormData({ name: client.name, email: client.email, phone: client.phone, status: client.status });
+    setFormData({
+      name: client.name,
+      email: client.email,
+      phone: client.phone,
+      status: client.status,
+    });
     setEditDialogOpen(true);
   };
 
@@ -183,24 +231,34 @@ const Clients = () => {
   // Handlers: Deactivate/Reactivate with confirmation
   const requestDeactivate = (client) => {
     setSelectedClient(client);
-    setConfirmAction('deactivate');
+    setConfirmAction("deactivate");
     setConfirmDialogOpen(true);
   };
 
   const requestReactivate = (client) => {
     setSelectedClient(client);
-    setConfirmAction('reactivate');
+    setConfirmAction("reactivate");
     setConfirmDialogOpen(true);
   };
 
   const onConfirmLifecycle = () => {
     if (!selectedClient || !confirmAction) return;
-    if (confirmAction === 'deactivate') {
-      updateClientStatus(selectedClient.id, 'Inactive');
-      setToast({ open: true, title: 'Client deactivated', description: `${selectedClient.name} has been set to Inactive.`, variant: 'destructive' });
-    } else if (confirmAction === 'reactivate') {
-      updateClientStatus(selectedClient.id, 'Active');
-      setToast({ open: true, title: 'Client reactivated', description: `${selectedClient.name} is now Active.`, variant: 'success' });
+    if (confirmAction === "deactivate") {
+      updateClientStatus(selectedClient.id, "Inactive");
+      setToast({
+        open: true,
+        title: "Client deactivated",
+        description: `${selectedClient.name} has been set to Inactive.`,
+        variant: "destructive",
+      });
+    } else if (confirmAction === "reactivate") {
+      updateClientStatus(selectedClient.id, "Active");
+      setToast({
+        open: true,
+        title: "Client reactivated",
+        description: `${selectedClient.name} is now Active.`,
+        variant: "success",
+      });
     }
     // Close view dialog if it was open (requirement)
     setViewDialogOpen(false);
@@ -214,10 +272,17 @@ const Clients = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
-      <AdminSidebar />
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={closeSidebar}
+          role="presentation"
+        />
+      )}
+      <AdminSidebar isMobileOpen={isSidebarOpen} onMobileClose={closeSidebar} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
+        <Navbar onToggleSidebar={toggleSidebar} />
 
         <main className="flex-1 overflow-y-auto p-6">
           <div className="max-w-7xl mx-auto space-y-6">
@@ -226,15 +291,21 @@ const Clients = () => {
               <div className="flex items-center space-x-2 text-sm text-neutral-600 dark:text-neutral-400">
                 <span>Dashboard</span>
                 <ChevronRight className="w-4 h-4" />
-                <span className="text-neutral-900 dark:text-white font-medium">Clients</span>
+                <span className="text-neutral-900 dark:text-white font-medium">
+                  Clients
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Clients</h1>
-                  <p className="text-neutral-600 dark:text-neutral-400">Manage client accounts and details</p>
+                  <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
+                    Clients
+                  </h1>
+                  <p className="text-neutral-600 dark:text-neutral-400">
+                    Manage client accounts and details
+                  </p>
                 </div>
               </div>
             </div>
@@ -256,7 +327,10 @@ const Clients = () => {
                     </div>
 
                     {/* Status Filter */}
-                    <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v)}>
+                    <Select
+                      value={statusFilter}
+                      onValueChange={(v) => setStatusFilter(v)}
+                    >
                       <SelectTrigger className="w-40">
                         <SelectValue placeholder="Filter by status" />
                       </SelectTrigger>
@@ -312,27 +386,33 @@ const Clients = () => {
                               </span>
                             </div>
                           </TableCell>
-                          <TableCell className="font-medium">{client.name}</TableCell>
+                          <TableCell className="font-medium">
+                            {client.name}
+                          </TableCell>
                           <TableCell>
                             <div className="flex items-center space-x-2">
                               <Mail className="w-4 h-4 text-neutral-400" />
-                              <span className="text-sm text-neutral-600 dark:text-neutral-400">{client.email}</span>
+                              <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                                {client.email}
+                              </span>
                             </div>
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center space-x-2">
                               <Phone className="w-4 h-4 text-neutral-400" />
-                              <span className="text-sm text-neutral-600 dark:text-neutral-400">{client.phone}</span>
+                              <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                                {client.phone}
+                              </span>
                             </div>
                           </TableCell>
                           <TableCell>
                             <Badge
                               variant={
-                                client.status === 'Active'
-                                  ? 'success'
-                                  : client.status === 'Pending'
-                                  ? 'warning'
-                                  : 'secondary'
+                                client.status === "Active"
+                                  ? "success"
+                                  : client.status === "Pending"
+                                  ? "warning"
+                                  : "secondary"
                               }
                             >
                               {client.status}
@@ -349,7 +429,7 @@ const Clients = () => {
                               >
                                 <Eye className="w-4 h-4" />
                               </Button>
-                              {client.status === 'Active' && (
+                              {client.status === "Active" && (
                                 <Button
                                   variant="ghost"
                                   size="sm"
@@ -360,7 +440,7 @@ const Clients = () => {
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
                               )}
-                              {client.status === 'Inactive' && (
+                              {client.status === "Inactive" && (
                                 <Button
                                   variant="ghost"
                                   size="sm"
@@ -411,7 +491,9 @@ const Clients = () => {
                   >
                     <DialogHeader>
                       <DialogTitle>Client Details</DialogTitle>
-                      <DialogDescription>Review client information.</DialogDescription>
+                      <DialogDescription>
+                        Review client information.
+                      </DialogDescription>
                     </DialogHeader>
 
                     <div className="flex items-center space-x-3">
@@ -421,25 +503,31 @@ const Clients = () => {
                         </span>
                       </div>
                       <div>
-                        <div className="text-lg font-semibold text-neutral-900 dark:text-white">{selectedClient.name}</div>
-                        <div className="text-sm text-neutral-600 dark:text-neutral-400">{selectedClient.email}</div>
+                        <div className="text-lg font-semibold text-neutral-900 dark:text-white">
+                          {selectedClient.name}
+                        </div>
+                        <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                          {selectedClient.email}
+                        </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">Phone</div>
-                        <div className="text-sm text-neutral-900 dark:text-neutral-100">{selectedClient.phone}</div>
+                        <div className="text-sm text-neutral-900 dark:text-neutral-100">
+                          {selectedClient.phone}
+                        </div>
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">Status</div>
                         <Badge
                           variant={
-                            selectedClient.status === 'Active'
-                              ? 'success'
-                              : selectedClient.status === 'Pending'
-                              ? 'warning'
-                              : 'secondary'
+                            selectedClient.status === "Active"
+                              ? "success"
+                              : selectedClient.status === "Pending"
+                              ? "warning"
+                              : "secondary"
                           }
                         >
                           {selectedClient.status}
@@ -447,47 +535,70 @@ const Clients = () => {
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">Company</div>
-                        <div className="text-sm text-neutral-900 dark:text-neutral-100">Acme Corp</div>
+                        <div className="text-sm text-neutral-900 dark:text-neutral-100">
+                          Acme Corp
+                        </div>
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">Created</div>
-                        <div className="text-sm text-neutral-900 dark:text-neutral-100">2024-07-12</div>
+                        <div className="text-sm text-neutral-900 dark:text-neutral-100">
+                          2024-07-12
+                        </div>
                       </div>
                       <div className="space-y-1 sm:col-span-2">
                         <div className="text-xs text-neutral-500">Notes</div>
-                        <div className="text-sm text-neutral-700 dark:text-neutral-300">Additional details can go here.</div>
+                        <div className="text-sm text-neutral-700 dark:text-neutral-300">
+                          Additional details can go here.
+                        </div>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between gap-2 pt-2">
                       <div className="text-sm text-neutral-500" />
-                      {selectedClient.status === 'Pending' ? (
+                      {selectedClient.status === "Pending" ? (
                         <div className="flex items-center gap-2">
-                          <Button variant="destructive" onClick={() => rejectClient(selectedClient)}>
+                          <Button
+                            variant="destructive"
+                            onClick={() => rejectClient(selectedClient)}
+                          >
                             Reject
                           </Button>
                           <Button onClick={() => approveClient(selectedClient)}>
                             Approve
                           </Button>
-                          <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
+                          <Button
+                            variant="outline"
+                            onClick={() => setViewDialogOpen(false)}
+                          >
                             Close
                           </Button>
                         </div>
-                      ) : selectedClient.status === 'Active' ? (
+                      ) : selectedClient.status === "Active" ? (
                         <div className="flex items-center gap-2">
-                          <Button variant="destructive" onClick={() => requestDeactivate(selectedClient)}>
+                          <Button
+                            variant="destructive"
+                            onClick={() => requestDeactivate(selectedClient)}
+                          >
                             Deactivate
                           </Button>
-                          <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
+                          <Button
+                            variant="outline"
+                            onClick={() => setViewDialogOpen(false)}
+                          >
                             Close
                           </Button>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <Button onClick={() => requestReactivate(selectedClient)}>
+                          <Button
+                            onClick={() => requestReactivate(selectedClient)}
+                          >
                             Reactivate
                           </Button>
-                          <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
+                          <Button
+                            variant="outline"
+                            onClick={() => setViewDialogOpen(false)}
+                          >
                             Close
                           </Button>
                         </div>
@@ -509,41 +620,54 @@ const Clients = () => {
                 >
                   <DialogHeader>
                     <DialogTitle>Add New Client</DialogTitle>
-                    <DialogDescription>Enter details to create a client.</DialogDescription>
+                    <DialogDescription>
+                      Enter details to create a client.
+                    </DialogDescription>
                   </DialogHeader>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Name *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        Name *
+                      </label>
                       <Input
                         placeholder="Enter client name"
                         value={formData.name}
-                        onChange={(e) => onFormChange('name', e.target.value)}
+                        onChange={(e) => onFormChange("name", e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Email *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        Email *
+                      </label>
                       <Input
                         type="email"
                         placeholder="Enter email address"
                         value={formData.email}
-                        onChange={(e) => onFormChange('email', e.target.value)}
+                        onChange={(e) => onFormChange("email", e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Phone *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        Phone *
+                      </label>
                       <Input
                         placeholder="Enter phone number"
                         value={formData.phone}
-                        onChange={(e) => onFormChange('phone', e.target.value)}
+                        onChange={(e) => onFormChange("phone", e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Status</label>
-                      <Select value={formData.status} onValueChange={(v) => onFormChange('status', v)}>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        Status
+                      </label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(v) => onFormChange("status", v)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
@@ -557,10 +681,18 @@ const Clients = () => {
                   </div>
 
                   <div className="flex items-center justify-end gap-2 pt-2">
-                    <Button variant="outline" onClick={() => setAddDialogOpen(false)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setAddDialogOpen(false)}
+                    >
                       Cancel
                     </Button>
-                    <Button onClick={saveAdd} disabled={!formData.name || !formData.email || !formData.phone}>
+                    <Button
+                      onClick={saveAdd}
+                      disabled={
+                        !formData.name || !formData.email || !formData.phone
+                      }
+                    >
                       Save
                     </Button>
                   </div>
@@ -579,41 +711,54 @@ const Clients = () => {
                 >
                   <DialogHeader>
                     <DialogTitle>Edit Client</DialogTitle>
-                    <DialogDescription>Update client information.</DialogDescription>
+                    <DialogDescription>
+                      Update client information.
+                    </DialogDescription>
                   </DialogHeader>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Name *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        Name *
+                      </label>
                       <Input
                         placeholder="Enter client name"
                         value={formData.name}
-                        onChange={(e) => onFormChange('name', e.target.value)}
+                        onChange={(e) => onFormChange("name", e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Email *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        Email *
+                      </label>
                       <Input
                         type="email"
                         placeholder="Enter email address"
                         value={formData.email}
-                        onChange={(e) => onFormChange('email', e.target.value)}
+                        onChange={(e) => onFormChange("email", e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Phone *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        Phone *
+                      </label>
                       <Input
                         placeholder="Enter phone number"
                         value={formData.phone}
-                        onChange={(e) => onFormChange('phone', e.target.value)}
+                        onChange={(e) => onFormChange("phone", e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Status</label>
-                      <Select value={formData.status} onValueChange={(v) => onFormChange('status', v)}>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                        Status
+                      </label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(v) => onFormChange("status", v)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
@@ -627,10 +772,18 @@ const Clients = () => {
                   </div>
 
                   <div className="flex items-center justify-end gap-2 pt-2">
-                    <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setEditDialogOpen(false)}
+                    >
                       Cancel
                     </Button>
-                    <Button onClick={saveEdit} disabled={!formData.name || !formData.email || !formData.phone}>
+                    <Button
+                      onClick={saveEdit}
+                      disabled={
+                        !formData.name || !formData.email || !formData.phone
+                      }
+                    >
                       Save Changes
                     </Button>
                   </div>
@@ -644,11 +797,15 @@ const Clients = () => {
                 <DialogHeader>
                   <DialogTitle>Delete Client</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to delete this client? This action cannot be undone.
+                    Are you sure you want to delete this client? This action
+                    cannot be undone.
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center justify-end gap-2 pt-2">
-                  <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDeleteDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button variant="destructive" onClick={confirmDelete}>
@@ -671,14 +828,20 @@ const Clients = () => {
         <AlertDialog
           open={confirmDialogOpen}
           onOpenChange={setConfirmDialogOpen}
-          title={confirmAction === 'deactivate' ? 'Deactivate Client' : 'Reactivate Client'}
-          description={
-            confirmAction === 'deactivate'
-              ? 'Are you sure you want to deactivate this client? They will lose access until reactivated.'
-              : 'Are you sure you want to reactivate this client? They will regain access.'
+          title={
+            confirmAction === "deactivate"
+              ? "Deactivate Client"
+              : "Reactivate Client"
           }
-          confirmText={confirmAction === 'deactivate' ? 'Deactivate' : 'Reactivate'}
-          variant={confirmAction === 'deactivate' ? 'destructive' : 'default'}
+          description={
+            confirmAction === "deactivate"
+              ? "Are you sure you want to deactivate this client? They will lose access until reactivated."
+              : "Are you sure you want to reactivate this client? They will regain access."
+          }
+          confirmText={
+            confirmAction === "deactivate" ? "Deactivate" : "Reactivate"
+          }
+          variant={confirmAction === "deactivate" ? "destructive" : "default"}
           onConfirm={onConfirmLifecycle}
         />
       </div>
@@ -687,4 +850,3 @@ const Clients = () => {
 };
 
 export default Clients;
-

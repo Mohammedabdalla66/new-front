@@ -1,12 +1,22 @@
-import React from 'react';
-import { Bell, Search, Settings, User, ChevronDown } from 'lucide-react';
+import React from "react";
+import { Bell, Search, Settings, User, ChevronDown, Menu } from "lucide-react";
 
-export const Header = ({ user }) => {
+export const Header = ({ user, onToggleSidebar }) => {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
+          {onToggleSidebar && (
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              className="inline-flex md:hidden items-center justify-center w-10 h-10 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              aria-label="Toggle menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          )}
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">AF</span>
@@ -16,7 +26,7 @@ export const Header = ({ user }) => {
         </div>
 
         {/* Search Bar */}
-        <div className="flex-1 max-w-lg mx-8">
+        <div className="hidden md:block md:flex-1 md:max-w-lg md:mx-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
@@ -44,7 +54,11 @@ export const Header = ({ user }) => {
           <div className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 rounded-lg p-2 transition-colors duration-200">
             <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center overflow-hidden">
               {user.avatar ? (
-                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                <img
+                  src={user.avatar}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 <User className="w-4 h-4 text-gray-600" />
               )}

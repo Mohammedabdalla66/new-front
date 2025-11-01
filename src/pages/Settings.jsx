@@ -120,5 +120,3 @@ export const Settings = () => {
   );
 };
 export default Settings;
-
-
