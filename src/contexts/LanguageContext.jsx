@@ -227,6 +227,233 @@ const translations = {
     faq: "الأسئلة الشائعة",
     supportForm: "نموذج الدعم",
     clock: "الساعة",
+
+    // FAQ Page
+    faqTitle: "الأسئلة الشائعة",
+    faqSubtitle:
+      "كل ما تحتاج معرفته حول استخدام المنصة وإدارة المشاريع والمدفوعات.",
+    faqCallNow: "اتصل الآن",
+    faqRequestConsultation: "طلب استشارة",
+
+    // FAQ Categories
+    faqCategoryGettingStarted: "البدء",
+    faqCategoryProjects: "المشاريع والعروض",
+    faqCategoryPayments: "المدفوعات والفواتير",
+    faqCategoryAccount: "الحساب والأمان",
+
+    // FAQ Questions - Getting Started
+    faqQ1: "كيف أنشئ عرض مشروعي الأول؟",
+    faqA1:
+      'لإنشاء عرض مشروعك الأول، اذهب إلى صفحة "تصفح المشاريع"، ابحث عن مشروع يناسب مهاراتك، وانقر على "التقدم للمشروع". املأ نموذج العرض بمنهجك والجدول الزمني والتسعير.',
+    faqQ2: "ما المعلومات التي يجب أن أدرجها في ملفي الشخصي؟",
+    faqA2:
+      "يجب أن يتضمن ملفك الشخصي لقبك المهني وخبرتك ومهاراتك وشهاداتك وسيرة ذاتية مقنعة تسلط الضوء على خبرتك. ارفع عينات من أعمالك ودراسات الحالة لعرض قدراتك.",
+    faqQ3: "كيف أحدد معدل الساعة الخاص بي؟",
+    faqA3:
+      "يمكنك تحديد معدل الساعة الخاص بك في إعدادات ملفك الشخصي. ضع في اعتبارك خبرتك وأسعار السوق وتعقيد المشاريع عند تحديد تسعيرك.",
+
+    // FAQ Questions - Projects & Proposals
+    faqQ4: "كم من الوقت لديه العملاء للرد على عرضي؟",
+    faqA4:
+      'عادة ما يكون لدى العملاء 7-14 يومًا للرد على العروض. يمكنك التحقق من حالة عروضك في قسم "طلباتي" في لوحة التحكم الخاصة بك.',
+    faqQ5: "هل يمكنني سحب عرض بعد إرساله؟",
+    faqA5:
+      'نعم، يمكنك سحب عرض قبل أن يرد العميل. اذهب إلى "طلباتي"، ابحث عن العرض، وانقر على "سحب".',
+    faqQ6: "ماذا يحدث إذا لم يرد العميل على عرضي؟",
+    faqA6:
+      "إذا لم يرد العميل خلال الإطار الزمني المحدد، ستنتهي صلاحية العرض تلقائيًا ويمكنك التقدم لمشاريع أخرى.",
+
+    // FAQ Questions - Payments & Billing
+    faqQ7: "كيف أحصل على أجر المشاريع المكتملة؟",
+    faqA7:
+      "بمجرد اكتمال المشروع وموافقة العميل عليه، يتم معالجة الدفع تلقائيًا إلى محفظتك. يمكنك بعد ذلك سحب الأموال إلى حسابك المصرفي.",
+    faqQ8: "ما هي رسوم المنصة؟",
+    faqA8:
+      "رسوم منصتنا هي 10% من كل مشروع مكتمل. وهذا يغطي معالجة المدفوعات وحل النزاعات وصيانة المنصة.",
+    faqQ9: "كم من الوقت يستغرق استلام المدفوعات؟",
+    faqA9:
+      "عادة ما تتم معالجة المدفوعات خلال 24-48 ساعة بعد اكتمال المشروع وموافقة العميل.",
+
+    // FAQ Questions - Account & Security
+    faqQ10: "كيف أتحقق من CaHup؟",
+    faqA10:
+      "للتحقق من حسابك، ارفع بطاقة هوية صادرة عن الحكومة وإثبات أوراق اعتمادك المهنية. عادة ما يستغرق التحقق من 1-3 أيام عمل.",
+    faqQ11: "هل يمكنني تغيير عنوان بريدي الإلكتروني؟",
+    faqA11:
+      "نعم، يمكنك تغيير عنوان بريدك الإلكتروني في إعدادات حسابك. ستحتاج إلى التحقق من عنوان البريد الإلكتروني الجديد قبل أن يصبح نشطًا.",
+    faqQ12: "كيف أحذف CaHup؟",
+    faqA12:
+      "لحذف حسابك، اتصل بفريق الدعم لدينا. يرجى ملاحظة أن هذا الإجراء لا يمكن التراجع عنه وستفقد الوصول إلى جميع بياناتك.",
+
+    // Client Dashboard
+    clientDashboardTitle: "لوحة التحكم",
+    clientDashboardSubtitle: "مرحباً بعودتك! إليك ما يحدث مع حسابك.",
+    totalBookings: "إجمالي الحجوزات",
+    activeProjects: "المشاريع النشطة",
+    completed: "مكتمل",
+    totalSpent: "إجمالي المصروف",
+    upcomingDeadlines: "المواعيد النهائية القادمة",
+    monthlyOverview: "نظرة شهرية",
+    chartVisualization: "سيتم عرض الرسم البياني هنا",
+    urgent: "عاجل",
+    soon: "قريباً",
+    scheduled: "مجدول",
+    dueIn: "مستحق خلال",
+    days: "أيام",
+    week: "أسبوع",
+    weeks: "أسابيع",
+
+    // Client Requests
+    myRequests: "طلباتي",
+    myRequestsSubtitle: "أنشئ وأدر طلبات الخدمة الخاصة بك.",
+    newRequest: "طلب جديد",
+    createAndManage: "أنشئ وأدر طلبات الخدمة الخاصة بك.",
+    searchRequests: "البحث في الطلبات...",
+    all: "الكل",
+    submitted: "مقدم",
+    inProgress: "قيد التنفيذ",
+    requestTitle: "عنوان الطلب",
+    status: "الحالة",
+    offers: "عروض",
+    lastUpdated: "آخر تحديث",
+    viewDetails: "عرض التفاصيل",
+    loading: "جاري التحميل...",
+    failedToLoad: "فشل التحميل",
+    noRequests: "لا توجد طلبات",
+
+    // Request Details
+    requestDetails: "تفاصيل الطلب",
+    backToRequests: "العودة إلى الطلبات",
+    offersTab: "العروض",
+    chatTab: "المحادثة",
+    deliveredTab: "المسلمة",
+    noProposalsYet: "لا توجد عروض بعد. يمكن لمقدمي الخدمات تقديم عروض لهذا الطلب.",
+    loadingProposals: "جاري تحميل العروض...",
+    duration: "المدة",
+    daysLabel: "أيام",
+    accept: "قبول",
+    accepting: "جاري القبول...",
+    noMessagesYet: "لا توجد رسائل بعد. ستظهر الرسائل من مقدمي الخدمات الذين قدموا عروضاً هنا.",
+    loadingMessages: "جاري تحميل الرسائل...",
+    selectConversation: "اختر محادثة",
+    noConversationSelected: "لم يتم اختيار محادثة",
+    selectServiceProvider: "اختر مقدم خدمة لبدء المراسلة",
+    startConversation: "ابدأ المحادثة!",
+    deliveredFiles: "ستظهر الملفات المسلمة هنا بمجرد اكتمال العمل من قبل مقدم الخدمة.",
+
+    // Service Request Form
+    createServiceRequest: "إنشاء طلب خدمة",
+    provideDetails: "قدم التفاصيل حتى يتمكن المزودون من تقديم عروض دقيقة.",
+    serviceTitle: "عنوان الخدمة",
+    serviceTitlePlaceholder: "مثال: مسك الدفاتر الشهري للأعمال الصغيرة",
+    description: "الوصف",
+    descriptionPlaceholder: "اوصف بإيجاز نطاق العمل والنتائج المطلوبة وأي سياق يجب أن يعرفه المزودون.",
+    attachments: "المرفقات",
+    legalFormLabel: "الشكل القانوني للشركة",
+    businessActivityLabel: "النشاط التجاري",
+    registeredCapitalLabel: "رأس المال بالسجل التجاري (ريال)",
+    registeredCapitalPlaceholder: "أدخل رأس المال",
+    estimatedRevenueLabel: "الإيرادات التقديرية (ريال)",
+    estimatedRevenuePlaceholder: "أدخل الإيرادات التقديرية",
+    estimatedExpensesLabel: "المصاريف التقديرية (ريال)",
+    estimatedExpensesPlaceholder: "أدخل المصاريف التقديرية",
+    budgetRange: "نطاق الميزانية (ريال)",
+    selectBudgetRange: "اختر نطاق الميزانية",
+    selectBudgetRangeHelper: "اختر نطاق الميزانية المقدر.",
+    deadline: "الموعد النهائي",
+    selectDeadline: "اختر الموعد النهائي المستهدف.",
+    submitRequest: "إرسال الطلب",
+    submitting: "جاري الإرسال...",
+    requestSubmittedSuccess: "تم إرسال الطلب بنجاح!",
+    redirectingToRequests: "جاري إعادة التوجيه إلى طلباتك...",
+    pleaseVerifyPhone: "يرجى التحقق من رقم هاتفك قبل الإرسال",
+    pleaseUploadDocument: "يرجى رفع مستند واحد على الأقل",
+    failedToSubmit: "فشل إرسال الطلب. يرجى المحاولة مرة أخرى.",
+
+    // Messages
+    messages: "الرسائل",
+    conversations: "المحادثات",
+    noConversationsYet: "لا توجد محادثات بعد. ابدأ محادثة من ملف مقدم الخدمة.",
+    chattingWith: "التحدث مع",
+    selectConversationToStart: "اختر محادثة",
+    serviceProvider: "مقدم الخدمة",
+    writeMessage: "اكتب رسالة... (Enter للإرسال، Shift+Enter للسطر الجديد)",
+    send: "إرسال",
+    attached: "مرفق:",
+    loadingMessagesLabel: "جاري تحميل الرسائل...",
+    failedToLoadMessages: "فشل تحميل الرسائل",
+    failedToSendMessage: "فشل إرسال الرسالة",
+    invalidServiceProviderId: "معرف مقدم الخدمة غير صحيح",
+
+    // Wallet
+    wallet: "المحفظة",
+    currentWalletBalance: "رصيد المحفظة الحالي",
+    updatedJustNow: "تم التحديث للتو",
+    addFunds: "إضافة أموال",
+    amountUSD: "المبلغ (دولار أمريكي)",
+    amountPlaceholder: "مثال: 250",
+    paymentMethod: "طريقة الدفع",
+    cardNumber: "رقم البطاقة",
+    cardNumberPlaceholder: "1234 5678 9012 3456",
+    expiry: "انتهاء الصلاحية",
+    expiryPlaceholder: "MM/YY",
+    cvv: "CVV",
+    fundsAddedSuccess: "تمت إضافة الأموال بنجاح.",
+    failedToAddFunds: "فشل إضافة الأموال",
+    failedToLoadWallet: "فشل تحميل المحفظة",
+    transactions: "المعاملات",
+    date: "التاريخ",
+    description: "الوصف",
+    amount: "المبلغ",
+    completed: "مكتمل",
+    pending: "قيد الانتظار",
+
+    // Documents
+    documents: "المستندات",
+    documentManagementUI: "ستظهر واجهة إدارة المستندات هنا.",
+
+    // Help
+    helpSupport: "المساعدة والدعم",
+    supportContentFAQs: "سيتم عرض محتوى الدعم والأسئلة الشائعة هنا.",
+
+    // Client Profile
+    myProfile: "ملفي الشخصي",
+    updatePersonalDetails: "حدّث تفاصيلك الشخصية والتفضيلات.",
+    totalRequests: "إجمالي الطلبات",
+    totalPaid: "إجمالي المدفوع",
+    pendingDocuments: "المستندات المعلقة",
+
+    // Client Sidebar
+    dashboard: "لوحة التحكم",
+    myRequestsSidebar: "طلباتي",
+    messagesSidebar: "الرسائل",
+    walletSidebar: "المحفظة",
+    documentsSidebar: "المستندات",
+    myProfileSidebar: "ملفي الشخصي",
+    settingsSidebar: "الإعدادات",
+    helpSupportSidebar: "المساعدة والدعم",
+    logout: "تسجيل الخروج",
+
+    // Settings
+    settings: "الإعدادات",
+    manageAccountPreferences: "أدر تفضيلات حسابك وإعدادات الأمان.",
+    notifications: "الإشعارات",
+    security: "الأمان",
+    billing: "الفواتير والمدفوعات",
+    dataPrivacy: "البيانات والخصوصية",
+    appearance: "المظهر",
+    darkMode: "الوضع المظلم",
+    applyDarkTheme: "تطبيق مظهر داكن على التخطيط والشريط الجانبي",
+    on: "تشغيل",
+    off: "إيقاف",
+    billingSettingsAvailable: "ستكون إعدادات الفواتير وطرق الدفع متاحة هنا.",
+    dataManagementAvailable: "ستكون إدارة البيانات وإعدادات الخصوصية متاحة هنا.",
+    language: "اللغة",
+    selectLanguage: "اختر اللغة",
+    arabic: "العربية",
+    english: "الإنجليزية",
+    acceptProposalConfirm: "هل أنت متأكد أنك تريد قبول هذا العرض؟ سيتم إنشاء حجز ووضع الأموال في الضمان.",
+    proposalAccepted: "تم قبول العرض! تم إنشاء الحجز ووضع الأموال في الضمان.",
   },
   en: {
     // Header
@@ -460,14 +687,254 @@ const translations = {
     faq: "FAQ",
     supportForm: "Support Form",
     clock: "Clock",
+
+    // FAQ Page
+    faqTitle: "Frequently Asked Questions (FAQ)",
+    faqSubtitle:
+      "Everything you need to know about using the platform, managing projects, and payments.",
+    faqCallNow: "Call Now",
+    faqRequestConsultation: "Request Consultation",
+
+    // FAQ Categories
+    faqCategoryGettingStarted: "Getting Started",
+    faqCategoryProjects: "Projects & Proposals",
+    faqCategoryPayments: "Payments & Billing",
+    faqCategoryAccount: "Account & Security",
+
+    // FAQ Questions - Getting Started
+    faqQ1: "How do I create my first project proposal?",
+    faqA1:
+      'To create your first project proposal, go to the "Browse Projects" page, find a project that matches your skills, and click "Apply for Project". Fill out the proposal form with your approach, timeline, and pricing.',
+    faqQ2: "What information should I include in my profile?",
+    faqA2:
+      "Your profile should include your professional title, experience, skills, certifications, and a compelling bio that highlights your expertise. Upload work samples and case studies to showcase your capabilities.",
+    faqQ3: "How do I set my hourly rate?",
+    faqA3:
+      "You can set your hourly rate in your profile settings. Consider your experience, market rates, and the complexity of projects when determining your pricing.",
+
+    // FAQ Questions - Projects & Proposals
+    faqQ4: "How long do clients have to respond to my proposal?",
+    faqA4:
+      'Clients typically have 7-14 days to respond to proposals. You can check the status of your proposals in the "My Requests" section of your dashboard.',
+    faqQ5: "Can I withdraw a proposal after submitting it?",
+    faqA5:
+      'Yes, you can withdraw a proposal before the client responds. Go to "My Requests", find the proposal, and click "Withdraw".',
+    faqQ6: "What happens if a client doesn't respond to my proposal?",
+    faqA6:
+      "If a client doesn't respond within the specified timeframe, the proposal will automatically expire and you can apply to other projects.",
+
+    // FAQ Questions - Payments & Billing
+    faqQ7: "How do I get paid for completed projects?",
+    faqA7:
+      "Once a project is completed and approved by the client, payment is automatically processed to your wallet. You can then withdraw funds to your bank account.",
+    faqQ8: "What are the platform fees?",
+    faqA8:
+      "Our platform fee is 10% of each completed project. This covers payment processing, dispute resolution, and platform maintenance.",
+    faqQ9: "How long does it take to receive payments?",
+    faqA9:
+      "Payments are typically processed within 24-48 hours after project completion and client approval.",
+
+    // FAQ Questions - Account & Security
+    faqQ10: "How do I verify my account?",
+    faqA10:
+      "To verify your account, upload a government-issued ID and proof of your professional credentials. Verification typically takes 1-3 business days.",
+    faqQ11: "Can I change my email address?",
+    faqA11:
+      "Yes, you can change your email address in your account settings. You'll need to verify the new email address before it becomes active.",
+    faqQ12: "How do I delete my account?",
+    faqA12:
+      "To delete your account, contact our support team. Please note that this action is irreversible and you'll lose access to all your data.",
+
+    // Client Dashboard
+    clientDashboardTitle: "Dashboard Overview",
+    clientDashboardSubtitle: "Welcome back! Here's what's happening with your account.",
+    totalBookings: "Total Bookings",
+    activeProjects: "Active Projects",
+    completed: "Completed",
+    totalSpent: "Total Spent",
+    upcomingDeadlines: "Upcoming Deadlines",
+    monthlyOverview: "Monthly Overview",
+    chartVisualization: "Chart visualization would go here",
+    urgent: "Urgent",
+    soon: "Soon",
+    scheduled: "Scheduled",
+    dueIn: "Due in",
+    days: "days",
+    week: "week",
+    weeks: "weeks",
+
+    // Client Requests
+    myRequests: "My Requests",
+    myRequestsSubtitle: "Create and manage your service requests.",
+    newRequest: "New Request",
+    createAndManage: "Create and manage your service requests.",
+    searchRequests: "Search requests...",
+    all: "All",
+    submitted: "Submitted",
+    inProgress: "In Progress",
+    requestTitle: "Request Title",
+    status: "Status",
+    offers: "Offers",
+    lastUpdated: "Last Updated",
+    viewDetails: "View Details",
+    loading: "Loading...",
+    failedToLoad: "Failed to load",
+    noRequests: "No requests",
+
+    // Request Details
+    requestDetails: "Request Details",
+    backToRequests: "Back to Requests",
+    offersTab: "Offers",
+    chatTab: "Chat",
+    deliveredTab: "Delivered",
+    noProposalsYet: "No proposals yet. Service providers can submit proposals for this request.",
+    loadingProposals: "Loading proposals...",
+    duration: "Duration",
+    daysLabel: "days",
+    accept: "Accept",
+    accepting: "Accepting...",
+    noMessagesYet: "No messages yet. Messages from service providers who have submitted proposals will appear here.",
+    loadingMessages: "Loading messages...",
+    selectConversation: "Select a conversation",
+    noConversationSelected: "No conversation selected",
+    selectServiceProvider: "Select a service provider to start messaging",
+    startConversation: "Start the conversation!",
+    deliveredFiles: "Delivered files will appear here once the service provider completes the work.",
+
+    // Service Request Form
+    createServiceRequest: "Create Service Request",
+    provideDetails: "Provide details so providers can make accurate offers.",
+    serviceTitle: "Service Title",
+    serviceTitlePlaceholder: "E.g. Monthly Bookkeeping for Small Business",
+    description: "Description",
+    descriptionPlaceholder: "Briefly describe the work scope, required deliverables, and any context providers should know.",
+    attachments: "Attachments",
+    legalFormLabel: "Legal Form",
+    businessActivityLabel: "Business Activity",
+    registeredCapitalLabel: "Registered Capital (OMR)",
+    registeredCapitalPlaceholder: "Enter registered capital",
+    estimatedRevenueLabel: "Estimated Revenue (OMR)",
+    estimatedRevenuePlaceholder: "Enter estimated revenue",
+    estimatedExpensesLabel: "Estimated Expenses (OMR)",
+    estimatedExpensesPlaceholder: "Enter estimated expenses",
+    budgetRange: "Budget Range (OMR)",
+    selectBudgetRange: "Select a budget range",
+    selectBudgetRangeHelper: "Select an estimated budget range.",
+    deadline: "Deadline",
+    selectDeadline: "Select a target due date.",
+    submitRequest: "Submit Request",
+    submitting: "Submitting...",
+    requestSubmittedSuccess: "Request submitted successfully!",
+    redirectingToRequests: "Redirecting to your requests...",
+    pleaseVerifyPhone: "Please verify your phone number before submitting",
+    pleaseUploadDocument: "Please upload at least one document",
+    failedToSubmit: "Failed to submit request. Please try again.",
+
+    // Messages
+    messages: "Messages",
+    conversations: "Conversations",
+    noConversationsYet: "No conversations yet. Start a conversation from a service provider profile.",
+    chattingWith: "Chatting with",
+    selectConversationToStart: "Select a conversation",
+    serviceProvider: "Service Provider",
+    writeMessage: "Write a message... (Enter to send, Shift+Enter for new line)",
+    send: "Send",
+    attached: "Attached:",
+    loadingMessagesLabel: "Loading messages...",
+    failedToLoadMessages: "Failed to load messages",
+    failedToSendMessage: "Failed to send message",
+    invalidServiceProviderId: "Invalid service provider ID",
+
+    // Wallet
+    wallet: "Wallet",
+    currentWalletBalance: "Current Wallet Balance",
+    updatedJustNow: "Updated just now",
+    addFunds: "Add Funds",
+    amountUSD: "Amount (USD)",
+    amountPlaceholder: "e.g. 250",
+    paymentMethod: "Payment Method",
+    cardNumber: "Card Number",
+    cardNumberPlaceholder: "1234 5678 9012 3456",
+    expiry: "Expiry",
+    expiryPlaceholder: "MM/YY",
+    cvv: "CVV",
+    fundsAddedSuccess: "Funds added successfully.",
+    failedToAddFunds: "Failed to add funds",
+    failedToLoadWallet: "Failed to load wallet",
+    transactions: "Transactions",
+    date: "Date",
+    description: "Description",
+    amount: "Amount",
+    completed: "Completed",
+    pending: "Pending",
+
+    // Documents
+    documents: "Documents",
+    documentManagementUI: "Document management UI will appear here.",
+
+    // Help
+    helpSupport: "Help & Support",
+    supportContentFAQs: "Support content and FAQs will be shown here.",
+
+    // Client Profile
+    myProfile: "My Profile",
+    updatePersonalDetails: "Update your personal details and preferences.",
+    totalRequests: "Total Requests",
+    totalPaid: "Total Paid",
+    pendingDocuments: "Pending Documents",
+
+    // Client Sidebar
+    dashboard: "Dashboard",
+    myRequestsSidebar: "My Requests",
+    messagesSidebar: "Messages",
+    walletSidebar: "Wallet",
+    documentsSidebar: "Documents",
+    myProfileSidebar: "My Profile",
+    settingsSidebar: "Settings",
+    helpSupportSidebar: "Help & Support",
+    logout: "Logout",
+
+    // Settings
+    settings: "Settings",
+    manageAccountPreferences: "Manage your account preferences and security settings.",
+    notifications: "Notifications",
+    security: "Security",
+    billing: "Billing & Payments",
+    dataPrivacy: "Data & Privacy",
+    appearance: "Appearance",
+    darkMode: "Dark Mode",
+    applyDarkTheme: "Apply a dark theme to the layout and sidebar",
+    on: "On",
+    off: "Off",
+    billingSettingsAvailable: "Billing settings and payment methods will be available here.",
+    dataManagementAvailable: "Data management and privacy settings will be available here.",
+    language: "Language",
+    selectLanguage: "Select Language",
+    arabic: "Arabic",
+    english: "English",
+    acceptProposalConfirm: "Are you sure you want to accept this proposal? This will create a booking and place funds in escrow.",
+    proposalAccepted: "Proposal accepted! Booking created and funds placed in escrow.",
   },
 };
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState("en");
+  // Load language from localStorage or default to "en"
+  const [language, setLanguage] = useState(() => {
+    try {
+      return localStorage.getItem("language") || "en";
+    } catch {
+      return "en";
+    }
+  });
 
   const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "ar" ? "en" : "ar"));
+    setLanguage((prev) => {
+      const newLang = prev === "ar" ? "en" : "ar";
+      try {
+        localStorage.setItem("language", newLang);
+      } catch {}
+      return newLang;
+    });
   };
 
   const t = (key) => {

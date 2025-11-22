@@ -5,8 +5,10 @@ import { RequestFilters } from "../components/Requests/RequestFilters.jsx";
 import { RequestsTable } from "../components/Requests/RequestsTable.jsx";
 import { RequestNew } from "./RequestNew.jsx";
 import { requestsAPI } from "../services/api.js";
+import { useLanguage } from "../contexts/LanguageContext.jsx";
 
 export const Requests = () => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [filters, setFilters] = useState({
@@ -81,18 +83,18 @@ export const Requests = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-4">
         <div className="min-w-0 flex-1">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            My Requests
+            {t("myRequests")}
           </h1>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-            Create and manage your service requests.
+            {t("myRequestsSubtitle")}
           </p>
         </div>
         <button
           onClick={() => navigate("/client/request/new")}
-          className="flex items-center justify-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto"
+          className="flex items-center justify-center space-x-2 space-x-reverse bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto"
         >
           <Plus className="w-4 h-4" />
-          <span className="text-sm sm:text-base">New Request</span>
+          <span className="text-sm sm:text-base">{t("newRequest")}</span>
         </button>
       </div>
 
@@ -104,10 +106,10 @@ export const Requests = () => {
       {/* Table Section */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-3 sm:p-4 overflow-hidden">
         {loading && (
-          <div className="p-4 text-sm text-gray-600">Loading...</div>
+          <div className="p-4 text-sm text-gray-600 dark:text-gray-400">{t("loading")}</div>
         )}
         {error && (
-          <div className="p-4 text-sm text-red-600">{error}</div>
+          <div className="p-4 text-sm text-red-600 dark:text-red-400">{error || t("failedToLoad")}</div>
         )}
         <RequestsTable
           requests={filtered}

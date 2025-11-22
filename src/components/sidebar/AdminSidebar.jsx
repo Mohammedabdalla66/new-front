@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { selectSidebarCollapsed } from "../../features/theme/themeSlice";
 import { useAuth } from "../../hooks/useAuth";
+import CaHupLogo from "../CaHupLogo";
 
 export default function AdminSidebar({
   isMobileOpen = false,
@@ -113,12 +114,10 @@ export default function AdminSidebar({
     >
       <div className="p-4 flex items-center justify-between border-b border-neutral-200 dark:border-neutral-700">
         <div className="flex items-center space-x-3 rtl:space-x-reverse">
-          <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-            <Building2 className="w-5 h-5 text-white" />
-          </div>
+          <CaHupLogo className="h-8 w-8" />
           {(!collapsed || isMobileOpen) && (
             <span className="font-bold text-lg text-neutral-900 dark:text-white">
-              AccountHub
+              CaHup
             </span>
           )}
         </div>

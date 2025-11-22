@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ProfileForm } from "../components/Profile/ProfileForm.jsx";
+import { useLanguage } from "../contexts/LanguageContext.jsx";
 
 const mockClient = {
   id: "client-1",
@@ -15,6 +16,7 @@ const mockClient = {
 };
 
 export default function ClientProfile() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(mockClient);
 
   const handleSave = (updatedUser) => {
@@ -27,10 +29,10 @@ export default function ClientProfile() {
       {/* Header */}
       <div className="mb-4 sm:mb-6">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          My Profile
+          {t("myProfile")}
         </h1>
         <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-          Update your personal details and preferences.
+          {t("updatePersonalDetails")}
         </p>
       </div>
 
@@ -44,7 +46,7 @@ export default function ClientProfile() {
             24
           </div>
           <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-            Total Requests
+            {t("totalRequests")}
           </div>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sm:p-6 text-center">
@@ -52,7 +54,7 @@ export default function ClientProfile() {
             $1,820
           </div>
           <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-            Total Paid
+            {t("totalPaid")}
           </div>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sm:p-6 text-center">
@@ -60,7 +62,7 @@ export default function ClientProfile() {
             3
           </div>
           <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-            Pending Documents
+            {t("pendingDocuments")}
           </div>
         </div>
       </div>

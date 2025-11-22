@@ -4,7 +4,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 // Public pages
 import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
-import AccountantsPage from './pages/AccountantsPage';
+import FaqPage from './pages/FaqPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ContactPage from './pages/ContactPage';
 
@@ -62,7 +62,7 @@ function App() {
       {/* Public routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/services" element={<ServicesPage />} />
-      <Route path="/accountants" element={<AccountantsPage />} />
+      <Route path="/FAQ" element={<FaqPage />} />
       <Route path="/projects" element={<ProjectsPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path='/ProfileForm' element={<ProfileForm />} />

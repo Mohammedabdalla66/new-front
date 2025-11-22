@@ -1,38 +1,114 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { requestsAPI } from "../../services/api";
+import { useLanguage } from "../../contexts/LanguageContext.jsx";
 
 export const ServiceRequestForm = () => {
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
-  const location = useLocation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState([]);
   const [budget, setBudget] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [legalForm, setLegalForm] = useState(""); // New state for legal form
+  const [businessActivity, setBusinessActivity] = useState(""); // New state for business activity
+  const [registeredCapital, setRegisteredCapital] = useState(""); // New state for registered capital
+  const [estimatedRevenue, setEstimatedRevenue] = useState(""); // New state for estimated revenue
+  const [estimatedExpenses, setEstimatedExpenses] = useState(""); // New state for estimated expenses
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
-  const [requestId, setRequestId] = useState(null);
 
-  // Check if we're editing a rejected request
-  useEffect(() => {
-    if (location.state?.editRequest) {
-      const request = location.state.editRequest;
-      setIsEditing(true);
-      setRequestId(request._id || request.id);
-      setTitle(request.title || "");
-      setDescription(request.description || "");
-      setBudget(request.budget ? String(request.budget) : "");
-      if (request.deadline) {
-        const date = new Date(request.deadline);
-        setDeadline(date.toISOString().split('T')[0]);
-      }
-      // Note: Files from previous submission are not pre-filled as they're already uploaded
-    }
-  }, [location.state]);
+  // Legal form options
+  const LEGAL_FORM_OPTIONS = [
+    {
+      value: "",
+      label:
+        language === "ar" ? "اختر الشكل القانوني للشركة" : "Select Legal Form",
+    },
+    {
+      value: "individual_trader",
+      label: language === "ar" ? "تاجر فرد" : "Individual Trader",
+    },
+    {
+      value: "sole_partner",
+      label: language === "ar" ? "الشريك الواحد" : "Sole Partner",
+    },
+    {
+      value: "limited_liability",
+      label: language === "ar" ? "محدودية المسؤولية" : "Limited Liability",
+    },
+    {
+      value: "public_company",
+      label: language === "ar" ? "مساهمة عامة" : "Public Company",
+    },
+    {
+      value: "closed_company",
+      label: language === "ar" ? "مساهمة مغلقة" : "Closed Company",
+    },
+    {
+      value: "limited_partnership",
+      label: language === "ar" ? "توصية" : "Limited Partnership",
+    },
+    {
+      value: "solidarity_company",
+      label: language === "ar" ? "تضامنية" : "Solidarity Company",
+    },
+  ];
+
+  // Business activity options
+  const BUSINESS_ACTIVITY_OPTIONS = [
+    {
+      value: "",
+      label:
+        language === "ar" ? "اختر النشاط التجاري" : "Select Business Activity",
+    },
+    {
+      value: "financial_sector",
+      label: language === "ar" ? "القطاع المالي" : "Financial Sector",
+    },
+    {
+      value: "industrial_sector",
+      label: language === "ar" ? "القطاع الصناعي" : "Industrial Sector",
+    },
+    {
+      value: "oil_gas_sector",
+      label: language === "ar" ? "قطاع النفط والغاز" : "Oil & Gas Sector",
+    },
+    {
+      value: "tourism_sector",
+      label: language === "ar" ? "القطاع السياحي" : "Tourism Sector",
+    },
+    {
+      value: "service_sector",
+      label: language === "ar" ? "القطاع الخدمي" : "Service Sector",
+    },
+    {
+      value: "construction_sector",
+      label: language === "ar" ? "البناء والإنشاءات" : "Construction Sector",
+    },
+    {
+      value: "retail_sector",
+      label: language === "ar" ? "قطاع التجزئة" : "Retail Sector",
+    },
+    {
+      value: "telecommunications_it",
+      label:
+        language === "ar"
+          ? "الاتصالات وتقنية المعلومات"
+          : "Telecommunications & IT",
+    },
+    {
+      value: "education_sector",
+      label: language === "ar" ? "التعليم" : "Education Sector",
+    },
+    {
+      value: "public_sector",
+      label: language === "ar" ? "قطاع عام" : "Public Sector",
+    },
+  ];
 
   const handleFilesChange = (e) => {
     const list = Array.from(e.target.files || []);
@@ -43,47 +119,47 @@ export const ServiceRequestForm = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    
+
     try {
       // If files are present, use FormData for multipart upload to Cloudinary
       if (files.length > 0) {
         const formData = new FormData();
-        formData.append('title', title);
-        formData.append('description', description);
-        formData.append('budget', budget || '0');
+        formData.append("title", title);
+        formData.append("description", description);
+        formData.append("budget", budget || "");
+        formData.append("legalForm", legalForm || "");
+        formData.append("businessActivity", businessActivity || "");
+        formData.append("registeredCapital", registeredCapital || "");
+        formData.append("estimatedRevenue", estimatedRevenue || "");
+        formData.append("estimatedExpenses", estimatedExpenses || "");
         if (deadline) {
-          formData.append('deadline', deadline);
+          formData.append("deadline", deadline);
         }
-        
+
         // Append files - backend expects 'documents' field name from multer config
         files.forEach((file) => {
-          formData.append('documents', file);
+          formData.append("documents", file);
         });
-        
+
         // Log FormData for debugging (in development only)
-        if (process.env.NODE_ENV === 'development') {
-          console.log('FormData entries:');
+        if (process.env.NODE_ENV === "development") {
+          console.log("FormData entries:");
           for (let pair of formData.entries()) {
             if (pair[1] instanceof File) {
-              console.log(`${pair[0]}: [File] ${pair[1].name} (${pair[1].size} bytes)`);
+              console.log(
+                `${pair[0]}: [File] ${pair[1].name} (${pair[1].size} bytes)`
+              );
             } else {
               console.log(`${pair[0]}: ${pair[1]}`);
             }
           }
         }
-        
-        let response;
-        if (isEditing && requestId) {
-          // Update existing request
-          response = await requestsAPI.update(requestId, formData);
-          toast.success("Request updated and resubmitted successfully!");
-        } else {
-          // Create new request
-          response = await requestsAPI.createWithFiles(formData);
-          toast.success("Request submitted successfully!");
-        }
+
+        const response = await requestsAPI.createWithFiles(formData);
+
+        toast.success(t("requestSubmittedSuccess"));
         setSubmitted(true);
-        
+
         // Redirect to Requests page after 1.5 seconds
         setTimeout(() => {
           navigate("/client/requests");
@@ -93,22 +169,20 @@ export const ServiceRequestForm = () => {
         const payload = {
           title,
           description,
-          budget: budget ? parseFloat(budget) : 0,
+          budget: budget || "", // Send budget range as string
+          legalForm: legalForm || "",
+          businessActivity: businessActivity || "",
+          registeredCapital: registeredCapital || "",
+          estimatedRevenue: estimatedRevenue || "",
+          estimatedExpenses: estimatedExpenses || "",
           deadline: deadline || undefined,
         };
-        
-        let response;
-        if (isEditing && requestId) {
-          // Update existing request
-          response = await requestsAPI.update(requestId, payload);
-          toast.success("Request updated and resubmitted successfully!");
-        } else {
-          // Create new request
-          response = await requestsAPI.create(payload);
-          toast.success("Request submitted successfully!");
-        }
+
+        const response = await requestsAPI.create(payload);
+
+        toast.success(t("requestSubmittedSuccess"));
         setSubmitted(true);
-        
+
         // Redirect to Requests page after 1.5 seconds
         setTimeout(() => {
           navigate("/client/requests");
@@ -116,7 +190,10 @@ export const ServiceRequestForm = () => {
       }
     } catch (err) {
       console.error("Error submitting request:", err);
-      const errorMessage = err?.response?.data?.message || err?.response?.data?.error || "Failed to submit request. Please try again.";
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        t("failedToSubmit");
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -130,22 +207,20 @@ export const ServiceRequestForm = () => {
         {/* Header */}
         <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 dark:border-gray-700">
           <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-            {isEditing ? "Update & Resubmit Request" : "Create Service Request"}
+            {t("createServiceRequest")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1 text-xs sm:text-sm">
-            {isEditing 
-              ? "Update your request based on the admin's feedback and resubmit for review."
-              : "Provide details so providers can make accurate offers."}
+            {t("provideDetails")}
           </p>
         </div>
 
         {/* Success Message */}
         {submitted && (
           <div className="mx-4 sm:mx-6 mt-4 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 p-3 text-xs sm:text-sm text-green-800 dark:text-green-200">
-            Request submitted successfully! Redirecting to your requests...
+            {t("requestSubmittedSuccess")} {t("redirectingToRequests")}
           </div>
         )}
-        
+
         {/* Error Message */}
         {error && (
           <div className="mx-4 sm:mx-6 mt-4 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-3 text-xs sm:text-sm text-red-800 dark:text-red-200">
@@ -161,13 +236,13 @@ export const ServiceRequestForm = () => {
           {/* Service Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Service Title
+              {t("serviceTitle")}
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="E.g. Monthly Bookkeeping for Small Business"
+              placeholder={t("serviceTitlePlaceholder")}
               className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
@@ -176,13 +251,13 @@ export const ServiceRequestForm = () => {
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Description
+              {t("description")}
             </label>
             <textarea
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Briefly describe the work scope, required deliverables, and any context providers should know."
+              placeholder={t("descriptionPlaceholder")}
               className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               required
             />
@@ -191,7 +266,7 @@ export const ServiceRequestForm = () => {
           {/* Attachments */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Attachments
+              {t("attachments")}
             </label>
             <input
               type="file"
@@ -211,23 +286,106 @@ export const ServiceRequestForm = () => {
             )}
           </div>
 
+          {/* Legal Form and Business Activity */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                {t("legalFormLabel")}
+              </label>
+              <select
+                value={legalForm}
+                onChange={(e) => setLegalForm(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {LEGAL_FORM_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                النشاط التجاري
+              </label>
+              <select
+                value={businessActivity}
+                onChange={(e) => setBusinessActivity(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                {BUSINESS_ACTIVITY_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Registered Capital, Estimated Revenue, and Estimated Expenses */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                رأس المال بالسجل التجاري (ريال)
+              </label>
+              <input
+                type="number"
+                value={registeredCapital}
+                onChange={(e) => setRegisteredCapital(e.target.value)}
+                placeholder="أدخل رأس المال"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                الإيرادات التقديرية (ريال)
+              </label>
+              <input
+                type="number"
+                value={estimatedRevenue}
+                onChange={(e) => setEstimatedRevenue(e.target.value)}
+                placeholder="أدخل الإيرادات التقديرية"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                المصاريف التقديرية (ريال)
+              </label>
+              <input
+                type="number"
+                value={estimatedExpenses}
+                onChange={(e) => setEstimatedExpenses(e.target.value)}
+                placeholder="أدخل المصاريف التقديرية"
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
           {/* Budget and Deadline */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Budget
+                Budget Range (ريال)
               </label>
-              <input
-                type="number"
-                min="0"
-                step="50"
+              <select
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
-                placeholder="e.g. 1500"
-                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+                className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select a budget range</option>
+                <option value="10-50">٠ - ٥٠ ريال</option>
+                <option value="50-100">٥٠ - ٠٠ ريال</option>
+                <option value="100-250">٢٠٠ - ٢٥٠ ريال</option>
+                <option value="250-500">٢٥٠ - ٥٠٠ ريال</option>
+                <option value="500-1000">٥٠٠ - ٢٠٠٠ ريال</option>
+                <option value="1000-2500">٢٠٠٠ - ٢٥٠٠ ريال</option>
+                <option value="2500-5000">٢٥٠٠ - ٥٠٠٠ ريال</option>
+                <option value="5000-10000">٥٠٠٠ - ٢٠٠٠٠ ريال</option>
+                <option value="10000+">٢٠٠٠٠ - فأكثر ريال</option>
+              </select>
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Enter an estimated budget (USD).
+                Select an estimated budget range.
               </p>
             </div>
             <div>

@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { walletAPI } from "../services/api";
+import { useLanguage } from "../contexts/LanguageContext.jsx";
 
 export const Wallet = () => {
+  const { t } = useLanguage();
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState("Visa");
   const [cardNumber, setCardNumber] = useState("");
@@ -41,7 +43,7 @@ export const Wallet = () => {
         }
       } catch (e) {
         console.error(e);
-        if (mounted) setError(e?.response?.data?.message || "Failed to load wallet");
+        if (mounted) setError(e?.response?.data?.message || t("failedToLoadWallet"));
       } finally {
         if (mounted) setLoading(false);
       }
@@ -61,7 +63,7 @@ export const Wallet = () => {
         cvv: isCard ? cvv : undefined,
       };
       await walletAPI.deposit(payload);
-      setNotice("Funds added successfully.");
+      setNotice(t("fundsAddedSuccess"));
       // refresh wallet
       const res = await walletAPI.get();
       const data = res.data || {};
@@ -82,7 +84,7 @@ export const Wallet = () => {
     } catch (e) {
       console.error(e);
       setNotice("");
-      setError(e?.response?.data?.message || "Failed to add funds");
+      setError(e?.response?.data?.message || t("failedToAddFunds"));
       setTimeout(() => setError(""), 4000);
     } finally {
       if (!error) setTimeout(() => setNotice(""), 4000);
@@ -97,14 +99,14 @@ export const Wallet = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between">
             <div>
               <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                Current Wallet Balance
+                {t("currentWalletBalance")}
               </div>
               <div className="mt-1 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                {loading ? "Loading..." : `$${Number(balance).toLocaleString()}`}
+                {loading ? t("loading") : `$${Number(balance).toLocaleString()}`}
               </div>
             </div>
             <div className="mt-2 sm:mt-0 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-              Updated just now
+              {t("updatedJustNow")}
             </div>
           </div>
         </div>
@@ -116,7 +118,7 @@ export const Wallet = () => {
         <div className="lg:col-span-1 order-2 lg:order-1">
           <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Add Funds
+              {t("addFunds")}
             </h2>
             {notice && (
               <div className="mb-3 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 p-2 text-xs sm:text-sm text-green-800 dark:text-green-200">
@@ -131,7 +133,7 @@ export const Wallet = () => {
             <form onSubmit={onSubmit} className="space-y-3 sm:space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Amount (USD)
+                  {t("amountUSD")}
                 </label>
                 <input
                   type="number"
@@ -139,14 +141,14 @@ export const Wallet = () => {
                   step="1"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder="e.g. 250"
+                  placeholder={t("amountPlaceholder")}
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Payment Method
+                  {t("paymentMethod")}
                 </label>
                 <select
                   value={method}
@@ -164,12 +166,12 @@ export const Wallet = () => {
                 <div className="space-y-3 sm:space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Card Number
+                      {t("cardNumber")}
                     </label>
                     <input
                       type="text"
                       inputMode="numeric"
-                      placeholder="1234 5678 9012 3456"
+                      placeholder={t("cardNumberPlaceholder")}
                       value={cardNumber}
                       onChange={(e) => setCardNumber(e.target.value)}
                       className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -178,11 +180,11 @@ export const Wallet = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Expiry
+                        {t("expiry")}
                       </label>
                       <input
                         type="text"
-                        placeholder="MM/YY"
+                        placeholder={t("expiryPlaceholder")}
                         value={expiry}
                         onChange={(e) => setExpiry(e.target.value)}
                         className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -190,7 +192,7 @@ export const Wallet = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        CVV
+                        {t("cvv")}
                       </label>
                       <input
                         type="password"
@@ -208,7 +210,7 @@ export const Wallet = () => {
                 type="submit"
                 className="w-full rounded-lg bg-blue-600 px-4 py-2 text-sm sm:text-base text-white hover:bg-blue-700 transition-colors"
               >
-                Add Funds
+                {t("addFunds")}
               </button>
             </form>
           </div>
@@ -218,7 +220,7 @@ export const Wallet = () => {
         <div className="lg:col-span-2 order-1 lg:order-2">
           <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sm:p-6">
             <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Transactions
+              {t("transactions")}
             </h2>
             <div className="overflow-x-auto">
               {/* Desktop Table */}
@@ -226,16 +228,16 @@ export const Wallet = () => {
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Date
+                      {t("date")}
                     </th>
                     <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Description
+                      {t("description")}
                     </th>
                     <th className="px-3 lg:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Amount
+                      {t("amount")}
                     </th>
                     <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Status
+                      {t("status")}
                     </th>
                   </tr>
                 </thead>
@@ -271,7 +273,7 @@ export const Wallet = () => {
                               : "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200"
                           }`}
                         >
-                          {t.status}
+                          {t.status === "Completed" ? t("completed") : t.status === "Pending" ? t("pending") : t.status}
                         </span>
                       </td>
                     </tr>

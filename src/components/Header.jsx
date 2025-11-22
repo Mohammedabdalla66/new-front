@@ -2,15 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../hooks/useAuth";
-import {
-  Menu,
-  X,
-  Bell,
-  MessageCircle,
-  User,
-  ChevronDown,
-  Calculator,
-} from "lucide-react";
+import CaHupLogo from "./CaHupLogo";
+import { Menu, X, Bell, MessageCircle, User, ChevronDown } from "lucide-react";
 
 const Header = ({ onAddProject }) => {
   const { language, toggleLanguage, t } = useLanguage();
@@ -24,7 +17,7 @@ const Header = ({ onAddProject }) => {
   const navItems = [
     { key: "home", path: "/" },
     { key: "services", path: "/services" },
-    { key: "accountants", path: "/accountants" },
+    { key: "FAQ", path: "/FAQ" },
     { key: "contact", path: "/contact" },
   ];
 
@@ -33,10 +26,13 @@ const Header = ({ onAddProject }) => {
       <div className=" mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center ml-2 space-x-2 rtl:space-x-reverse">
-            <Calculator className="h-8 w-8 text-blue-700" />
+          <Link
+            to="/"
+            className="flex items-center ml-2 space-x-2 rtl:space-x-reverse"
+          >
+            <CaHupLogo className="h-8 w-8" />
             <span className="font-bold text-xl text-gray-900">
-              {language === "ar" ? "حسابي" : "AccountPro"}
+              {language === "ar" ? "CaHup" : "CaHup"}
             </span>
           </Link>
 
@@ -128,7 +124,7 @@ const Header = ({ onAddProject }) => {
                           {t("profile")}
                         </Link>
                       )}
-                       {user.role === "admin" && (
+                      {user.role === "admin" && (
                         <Link
                           to="ProfileForm"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -137,7 +133,7 @@ const Header = ({ onAddProject }) => {
                           {t("profile")}
                         </Link>
                       )}
-                       {user.role === "serviceProvider" && (
+                      {user.role === "serviceProvider" && (
                         <Link
                           to="ProfileForm"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -178,7 +174,9 @@ const Header = ({ onAddProject }) => {
                           to="/client"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
-                          {language === "ar" ? "لوحة العميل" : "Dashboard"}
+                          {language === "ar"
+                            ? "لوحة العميل"
+                            : "Client Dashboard"}
                         </Link>
                       )}
                       {user.role === "admin" && (
@@ -218,7 +216,11 @@ const Header = ({ onAddProject }) => {
             onClick={toggleMobileMenu}
             className="md:hidden p-2 text-gray-600 hover:text-blue-700"
           >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
 
@@ -235,13 +237,8 @@ const Header = ({ onAddProject }) => {
                 >
                   {t(item.key)}
                 </Link>
-              ))};
-
-
-            
-
-              
-
+              ))}
+              ;
               <button
                 onClick={toggleLanguage}
                 className="block px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"

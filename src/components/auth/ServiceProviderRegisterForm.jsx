@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,16 +17,60 @@ const SERVICE_PROVIDER_TYPES = [
   { value: 'partnership', label: 'Partnership' },
   { value: 'sole_proprietorship', label: 'Sole Proprietorship' },
   { value: 'other', label: 'Other' }
+=======
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigate } from "react-router-dom";
+import { PhoneInput } from "react-international-phone";
+import { toast } from "react-toastify";
+import { Eye, EyeOff, Upload, X } from "lucide-react";
+import { companyRegisterSchema } from "../../utils/validationSchemas";
+import { authAPI } from "../../services/api";
+import FileUploadArea from "../common/FileUploadArea";
+
+const SERVICE_PROVIDER_TYPES = [
+  { value: "", label: "اختر قطاع النشاط التجاري" },
+  { value: "commercial_activities", label: "الأنشطة التجارية" },
+  { value: "financial_sector", label: "القطاع المالي" },
+  { value: "industrial_sector", label: "القطاع الصناعي" },
+  { value: "oil_gas_sector", label: "قطاع النفط والغاز" },
+  { value: "tourism_sector", label: "القطاع السياحي" },
+  { value: "service_sector", label: "القطاع الخدمي" },
+  { value: "construction_sector", label: "البناء والإنشاءات" },
+  { value: "retail_sector", label: "قطاع التجزئة" },
+  { value: "telecommunications_it", label: "الاتصالات وتقنية المعلومات" },
+  { value: "education_sector", label: "التعليم" },
+  { value: "public_sector", label: "قطاع عام" },
+];
+
+const LEGAL_FORMS = [
+  { value: "", label: "اختر الشكل القانوني للشركة" },
+  { value: "individual_trader", label: "تاجر فرد" },
+  { value: "sole_partner", label: "الشريك الواحد" },
+  { value: "limited_liability", label: "محدودية المسؤولية" },
+  { value: "public_company", label: "مساهمة عامة" },
+  { value: "closed_company", label: "مساهمة مغلقة" },
+  { value: "limited_partnership", label: "توصية" },
+  { value: "solidarity_company", label: "تضامنية" },
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
 ];
 
 const ServiceProviderRegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
   const [phoneNumber, setPhoneNumber] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [verificationSent, setVerificationSent] = useState(false);
   const [code, setCode] = useState('');
+=======
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [code, setCode] = useState("");
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
   const navigate = useNavigate();
@@ -35,76 +80,88 @@ const ServiceProviderRegisterForm = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-    watch
+    watch,
   } = useForm({
     resolver: yupResolver(companyRegisterSchema),
     defaultValues: {
-      phoneNumber: ''
-    }
+      phoneNumber: "",
+    },
   });
 
-  const termsAccepted = watch('termsAccepted');
+  const termsAccepted = watch("termsAccepted");
 
   const handlePhoneChange = (value) => {
     setPhoneNumber(value);
-    setValue('phoneNumber', value);
+    setValue("phoneNumber", value);
     setVerified(false);
   };
 
   const onSendCode = async () => {
     if (!phoneNumber) {
-      toast.error('Enter phone number first');
+      toast.error("Enter phone number first");
       return;
     }
     try {
-      const response = await authAPI.sendPhoneCode(phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`);
+      const response = await authAPI.sendPhoneCode(
+        phoneNumber.startsWith("+") ? phoneNumber : `+${phoneNumber}`
+      );
       setVerificationSent(true);
-      
+
       // Handle skipped verification (Twilio not configured or trial account)
       if (response.data?.skipped) {
         setVerified(true); // Auto-verify if skipped
-        toast.warning(response.data?.message || 'Phone verification skipped (service not configured)');
+        toast.warning(
+          response.data?.message ||
+            "Phone verification skipped (service not configured)"
+        );
       } else {
-        toast.success('Verification code sent');
+        toast.success("Verification code sent");
       }
     } catch (e) {
       // If error but response indicates skip, allow it
       if (e?.response?.data?.skipped) {
         setVerified(true);
-        toast.warning(e.response.data.message || 'Phone verification skipped');
+
+        toast.warning(e.response.data.message || "Phone verification skipped");
       } else {
-        toast.error(e?.response?.data?.message || 'Failed to send code');
+        toast.error(e?.response?.data?.message || "Failed to send code");
       }
     }
   };
 
   const onVerifyCode = async () => {
     if (!code) {
-      toast.error('Enter the verification code');
+
+      toast.error("Enter the verification code");
       return;
     }
     setVerifying(true);
     try {
-      const res = await authAPI.verifyPhoneCode(phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`, code);
+
+      const res = await authAPI.verifyPhoneCode(
+        phoneNumber.startsWith("+") ? phoneNumber : `+${phoneNumber}`,
+        code
+      );
       if (res.data?.verified || res.data?.skipped) {
         setVerified(true);
         if (res.data?.skipped) {
-          toast.warning('Phone verification skipped (service not configured)');
+          toast.warning("Phone verification skipped (service not configured)");
         } else {
-          toast.success('Phone verified');
+          toast.success("Phone verified");
         }
       } else {
         setVerified(false);
-        toast.error('Invalid code');
+        toast.error("Invalid code");
       }
     } catch (e) {
       // If error but response indicates skip, allow it
       if (e?.response?.data?.skipped) {
         setVerified(true);
-        toast.warning('Phone verification skipped');
+
+        toast.warning("Phone verification skipped");
       } else {
         setVerified(false);
-        toast.error(e?.response?.data?.message || 'Verification failed');
+        toast.error(e?.response?.data?.message || "Verification failed");
       }
     } finally {
       setVerifying(false);
@@ -117,11 +174,13 @@ const ServiceProviderRegisterForm = () => {
 
   const onSubmit = async (data) => {
     if (!verified) {
-      toast.error('Please verify your phone number before submitting');
+
+      toast.error("Please verify your phone number before submitting");
       return;
     }
     if (uploadedFiles.length === 0) {
-      toast.error('Please upload at least one document');
+      toast.error("Please upload at least one document");
+
       return;
     }
 
@@ -129,97 +188,111 @@ const ServiceProviderRegisterForm = () => {
     try {
       // Create FormData for file upload
       const formData = new FormData();
-      
+
       // Append required fields (matching backend expectations)
       // Support both new (serviceProviderName) and old (companyName) field names for backward compatibility
-      formData.append('serviceProviderName', data.companyName);
-      formData.append('serviceProviderEmail', data.companyEmail);
+      formData.append("serviceProviderName", data.companyName);
+      formData.append("serviceProviderEmail", data.companyEmail);
       // Also append legacy fields for backward compatibility
-      formData.append('companyName', data.companyName);
-      formData.append('companyEmail', data.companyEmail);
-      formData.append('password', data.password);
-      formData.append('phoneNumber', phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`);
-      
+      formData.append("companyName", data.companyName);
+      formData.append("companyEmail", data.companyEmail);
+      formData.append("password", data.password);
+      formData.append(
+        "phoneNumber",
+        phoneNumber.startsWith("+") ? phoneNumber : `+${phoneNumber}`
+      );
+
       // Append optional fields if they exist
       if (data.commercialRegistrationNumber) {
-        formData.append('taxId', data.commercialRegistrationNumber);
+        formData.append("taxId", data.commercialRegistrationNumber);
       }
       if (data.taxNumber) {
-        formData.append('licenseNumber', data.taxNumber);
+        formData.append("licenseNumber", data.taxNumber);
       }
       if (data.city && data.street && data.zipCode) {
-        formData.append('address', `${data.street}, ${data.city}, ${data.zipCode}`);
+        formData.append(
+          "address",
+          `${data.street}, ${data.city}, ${data.zipCode}`
+        );
       }
       if (data.contactPersonName) {
-        // Store contact person name if needed
+        formData.append("contactPersonName", data.contactPersonName);
       }
       if (data.companyType) {
-        // Store company type if needed
+        formData.append("companyType", data.companyType);
       }
-      
+      if (data.legalForm) {
+        formData.append("legalForm", data.legalForm);
+      }
+
       // Append files - MUST use 'documents' as field name (matches backend multer config)
       uploadedFiles.forEach((file) => {
-        formData.append('documents', file); // Field name must match: upload.array('documents')
+        formData.append("documents", file); // Field name must match: upload.array('documents')
       });
-      
+
       // Add verification status
-      formData.append('verified', 'true');
-      
+      formData.append("verified", "true");
+
       // Log FormData for debugging (in development only)
-      if (process.env.NODE_ENV === 'development') {
-        console.log('FormData entries:');
+      if (process.env.NODE_ENV === "development") {
+        console.log("FormData entries:");
         for (let pair of formData.entries()) {
           if (pair[1] instanceof File) {
-            console.log(`${pair[0]}: [File] ${pair[1].name} (${pair[1].size} bytes)`);
+            console.log(
+              `${pair[0]}: [File] ${pair[1].name} (${pair[1].size} bytes)`
+            );
+
           } else {
             console.log(`${pair[0]}: ${pair[1]}`);
           }
         }
       }
 
-      console.log('Sending service provider registration request...');
+      console.log("Sending service provider registration request...");
       const response = await authAPI.registerServiceProvider(formData);
-      
-      console.log('Registration response:', response.data);
-      
+
+      console.log("Registration response:", response.data);
+
       // Store tokens and user if provided
       if (response.data?.accessToken) {
-        localStorage.setItem('authToken', response.data.accessToken);
+        localStorage.setItem("authToken", response.data.accessToken);
         if (response.data.refreshToken) {
-          localStorage.setItem('refreshToken', response.data.refreshToken);
+          localStorage.setItem("refreshToken", response.data.refreshToken);
         }
         if (response.data.user) {
-          localStorage.setItem('authUser', JSON.stringify(response.data.user));
-          localStorage.setItem('user', JSON.stringify(response.data.user));
+          localStorage.setItem("authUser", JSON.stringify(response.data.user));
+          localStorage.setItem("user", JSON.stringify(response.data.user));
         }
       }
-      
+
       // Get user role from response
-      const userRole = response.data?.user?.role || response.data?.role || 'serviceProvider';
-      
-      toast.success('Service Provider registration successful! Redirecting...');
+      const userRole =
+        response.data?.user?.role || response.data?.role || "serviceProvider";
+
+      toast.success("Service Provider registration successful! Redirecting...");
       setTimeout(() => {
         // Redirect service provider to browse projects page
-        navigate('/dashboard/browse');
+        navigate("/dashboard/browse");
       }, 1500);
     } catch (error) {
-      console.error('Registration error:', error);
-      console.error('Error response:', error.response?.data);
-      
+      console.error("Registration error:", error);
+      console.error("Error response:", error.response?.data);
+
       const errorData = error.response?.data || {};
-      const message = errorData.message || 
-                      errorData.errors?.join(', ') ||
-                      error.message || 
-                      'Registration failed. Please try again.';
-      
+      const message =
+        errorData.message ||
+        errorData.errors?.join(", ") ||
+        error.message ||
+        "Registration failed. Please try again.";
+
       toast.error(message);
-      
+
       // Show additional error details in console for debugging
       if (errorData.error) {
-        console.error('Error type:', errorData.error);
+        console.error("Error type:", errorData.error);
       }
       if (errorData.details) {
-        console.error('Error details:', errorData.details);
+        console.error("Error details:", errorData.details);
       }
     } finally {
       setLoading(false);
@@ -242,7 +315,8 @@ const ServiceProviderRegisterForm = () => {
         <label className="form-label">Service Provider Name *</label>
         <input
           type="text"
-          {...register('companyName')}
+
+          {...register("companyName")}
           className="form-input"
           placeholder="Enter your service provider name"
         />
@@ -256,12 +330,16 @@ const ServiceProviderRegisterForm = () => {
         <label className="form-label">Commercial Registration Number *</label>
         <input
           type="text"
-          {...register('commercialRegistrationNumber')}
+
+          {...register("commercialRegistrationNumber")}
           className="form-input"
           placeholder="Enter registration number"
         />
         {errors.commercialRegistrationNumber && (
-          <p className="form-error">{errors.commercialRegistrationNumber.message}</p>
+
+          <p className="form-error">
+            {errors.commercialRegistrationNumber.message}
+          </p>
         )}
       </div>
 
@@ -270,7 +348,8 @@ const ServiceProviderRegisterForm = () => {
         <label className="form-label">Tax Number</label>
         <input
           type="text"
-          {...register('taxNumber')}
+
+          {...register("taxNumber")}
           className="form-input"
           placeholder="Enter tax number (optional)"
         />
@@ -284,7 +363,11 @@ const ServiceProviderRegisterForm = () => {
         <label className="form-label">Service Provider Email *</label>
         <input
           type="email"
+<<<<<<< HEAD
           {...register('companyEmail')}
+=======
+          {...register("companyEmail")}
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
           className="form-input"
           placeholder="Enter service provider email address"
         />
@@ -306,7 +389,15 @@ const ServiceProviderRegisterForm = () => {
           <p className="form-error">{errors.phoneNumber.message}</p>
         )}
         <div className="mt-2 flex items-center gap-2">
+<<<<<<< HEAD
           <button type="button" onClick={onSendCode} className="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50">
+=======
+          <button
+            type="button"
+            onClick={onSendCode}
+            className="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
+          >
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
             Send Code
           </button>
           <input
@@ -316,10 +407,22 @@ const ServiceProviderRegisterForm = () => {
             placeholder="Enter code"
             className="flex-1 form-input"
           />
+<<<<<<< HEAD
           <button type="button" disabled={verifying} onClick={onVerifyCode} className="px-3 py-1.5 text-sm rounded-md bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-300">
             {verifying ? 'Verifying...' : 'Verify'}
           </button>
           {verified && <span className="text-green-600 text-sm">Verified</span>}
+=======
+          <button
+            type="button"
+            disabled={verifying}
+            onClick={onVerifyCode}
+            className="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300"
+          >
+            {verifying ? "Verifying..." : "Verify"}
+          </button>
+          {verified && <span className="text-blue-600 text-sm">Verified</span>}
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
         </div>
       </div>
 
@@ -328,7 +431,11 @@ const ServiceProviderRegisterForm = () => {
         <label className="form-label">Contact Person Name *</label>
         <input
           type="text"
+<<<<<<< HEAD
           {...register('contactPersonName')}
+=======
+          {...register("contactPersonName")}
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
           className="form-input"
           placeholder="Enter contact person full name"
         />
@@ -340,11 +447,16 @@ const ServiceProviderRegisterForm = () => {
       {/* Service Provider Type */}
       <div>
         <label className="form-label">Service Provider Type *</label>
+<<<<<<< HEAD
         <select
           {...register('companyType')}
           className="form-input"
         >
           {SERVICE_PROVIDER_TYPES.map(type => (
+=======
+        <select {...register("companyType")} className="form-input">
+          {SERVICE_PROVIDER_TYPES.map((type) => (
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
             <option key={type.value} value={type.value}>
               {type.label}
             </option>
@@ -355,12 +467,31 @@ const ServiceProviderRegisterForm = () => {
         )}
       </div>
 
+<<<<<<< HEAD
+=======
+      {/* Legal Form */}
+      <div>
+        <label className="form-label">Service Provider Legal Form*</label>
+        <select {...register("legalForm")} className="form-input">
+          {LEGAL_FORMS.map((form) => (
+            <option key={form.value} value={form.value}>
+              {form.label}
+            </option>
+          ))}
+        </select>
+        {errors.legalForm && (
+          <p className="form-error">{errors.legalForm.message}</p>
+        )}
+      </div>
+
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
       {/* Address Fields */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="form-label">City *</label>
           <input
             type="text"
+<<<<<<< HEAD
             {...register('city')}
             className="form-input"
             placeholder="City"
@@ -368,12 +499,23 @@ const ServiceProviderRegisterForm = () => {
           {errors.city && (
             <p className="form-error">{errors.city.message}</p>
           )}
+=======
+            {...register("city")}
+            className="form-input"
+            placeholder="City"
+          />
+          {errors.city && <p className="form-error">{errors.city.message}</p>}
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
         </div>
         <div>
           <label className="form-label">Street *</label>
           <input
             type="text"
+<<<<<<< HEAD
             {...register('street')}
+=======
+            {...register("street")}
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
             className="form-input"
             placeholder="Street"
           />
@@ -382,12 +524,21 @@ const ServiceProviderRegisterForm = () => {
           )}
         </div>
         <div>
+<<<<<<< HEAD
           <label className="form-label">Zip Code *</label>
           <input
             type="text"
             {...register('zipCode')}
             className="form-input"
             placeholder="Zip Code"
+=======
+          <label className="form-label">Postal Code*</label>
+          <input
+            type="text"
+            {...register("zipCode")}
+            className="form-input"
+            placeholder="Postal Code"
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
           />
           {errors.zipCode && (
             <p className="form-error">{errors.zipCode.message}</p>
@@ -401,8 +552,13 @@ const ServiceProviderRegisterForm = () => {
           <label className="form-label">Password *</label>
           <div className="relative">
             <input
+<<<<<<< HEAD
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
+=======
+              type={showPassword ? "text" : "password"}
+              {...register("password")}
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
               className="form-input pr-10"
               placeholder="Create password"
             />
@@ -426,8 +582,13 @@ const ServiceProviderRegisterForm = () => {
           <label className="form-label">Confirm Password *</label>
           <div className="relative">
             <input
+<<<<<<< HEAD
               type={showConfirmPassword ? 'text' : 'password'}
               {...register('confirmPassword')}
+=======
+              type={showConfirmPassword ? "text" : "password"}
+              {...register("confirmPassword")}
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
               className="form-input pr-10"
               placeholder="Confirm password"
             />
@@ -456,10 +617,18 @@ const ServiceProviderRegisterForm = () => {
           onFilesSelected={handleFilesSelected}
           maxFiles={5}
           maxSize={5 * 1024 * 1024} // 5MB
+<<<<<<< HEAD
           acceptedTypes={['.pdf', '.doc', '.docx', '.jpg', '.jpeg']}
         />
         <p className="mt-2 text-xs text-gray-500">
           Upload your license and official documents (PDF, DOCX, JPG - Max 5MB each)
+=======
+          acceptedTypes={[".pdf", ".doc", ".docx", ".jpg", ".jpeg"]}
+        />
+        <p className="mt-2 text-xs text-gray-500">
+          Upload your license and official documents (PDF, DOCX, JPG - Max 5MB
+          each)
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
         </p>
       </div>
 
@@ -468,18 +637,38 @@ const ServiceProviderRegisterForm = () => {
         <div className="flex items-center h-5">
           <input
             type="checkbox"
+<<<<<<< HEAD
             {...register('termsAccepted')}
             className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+=======
+            {...register("termsAccepted")}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
           />
         </div>
         <div className="ml-3 text-sm">
           <label className="text-gray-700">
+<<<<<<< HEAD
             I accept the{' '}
             <a href="#" className="text-green-600 hover:text-green-700 font-medium">
               Terms and Conditions
             </a>{' '}
             and{' '}
             <a href="#" className="text-green-600 hover:text-green-700 font-medium">
+=======
+            I accept the{" "}
+            <a
+              href="#"
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Terms and Conditions
+            </a>{" "}
+            and{" "}
+            <a
+              href="#"
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
               Privacy Policy
             </a>
           </label>
@@ -501,11 +690,19 @@ const ServiceProviderRegisterForm = () => {
             Creating Account...
           </div>
         ) : (
+<<<<<<< HEAD
           'Create Service Provider Account'
+=======
+          "Create Service Provider Account"
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
         )}
       </button>
     </form>
   );
 };
 
+<<<<<<< HEAD
 export default ServiceProviderRegisterForm;
+=======
+export default ServiceProviderRegisterForm;
+>>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f

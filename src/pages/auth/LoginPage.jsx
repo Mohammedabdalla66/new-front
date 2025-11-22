@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import { loginSchema } from '../../utils/validationSchemas';
 import { useAuth } from '../../hooks/useAuth';
 import { authAPI } from '../../services/api.js';
+import CaHupLogo from "../../components/CaHupLogo";
+
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -84,8 +86,8 @@ const LoginPage = () => {
   return (
     <div className="auth-card">
       <div className="text-center mb-8">
-        <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-          <LogIn className="w-6 h-6 text-green-600" />
+      <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+          <CaHupLogo className="w-11 h-11 text-blue-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
         <p className="text-gray-600">Sign in to your account to continue</p>

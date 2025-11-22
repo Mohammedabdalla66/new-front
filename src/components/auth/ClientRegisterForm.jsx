@@ -228,10 +228,10 @@ const ClientRegisterForm = () => {
             placeholder="Enter code"
             className="flex-1 form-input"
           />
-          <button type="button" disabled={verifying} onClick={onVerifyCode} className="px-3 py-1.5 text-sm rounded-md bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-300">
+          <button type="button" disabled={verifying} onClick={onVerifyCode} className="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-green-700 disabled:bg-gray-300">
             {verifying ? 'Verifying...' : 'Verify'}
           </button>
-          {verified && <span className="text-green-600 text-sm">Verified</span>}
+          {verified && <span className="text-blue-600 text-sm">Verified</span>}
         </div>
       </div>
 
@@ -333,11 +333,11 @@ const ClientRegisterForm = () => {
         <div className="ml-3 text-sm">
           <label className="text-gray-700">
             I accept the{' '}
-            <a href="#" className="text-green-600 hover:text-green-700 font-medium">
+            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
               Terms and Conditions
             </a>{' '}
             and{' '}
-            <a href="#" className="text-green-600 hover:text-green-700 font-medium">
+            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
               Privacy Policy
             </a>
           </label>
