@@ -1,23 +1,4 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate } from 'react-router-dom';
-import { PhoneInput } from 'react-international-phone';
-import { toast } from 'react-toastify';
-import { Eye, EyeOff, Upload, X } from 'lucide-react';
-import { companyRegisterSchema } from '../../utils/validationSchemas';
-import { authAPI } from '../../services/api';
-import FileUploadArea from '../common/FileUploadArea';
 
-const SERVICE_PROVIDER_TYPES = [
-  { value: '', label: 'Select Service Provider Type' },
-  { value: 'llc', label: 'Limited Liability Company (LLC)' },
-  { value: 'corporation', label: 'Corporation' },
-  { value: 'partnership', label: 'Partnership' },
-  { value: 'sole_proprietorship', label: 'Sole Proprietorship' },
-  { value: 'other', label: 'Other' }
-=======
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -53,24 +34,18 @@ const LEGAL_FORMS = [
   { value: "closed_company", label: "مساهمة مغلقة" },
   { value: "limited_partnership", label: "توصية" },
   { value: "solidarity_company", label: "تضامنية" },
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
+
 ];
 
 const ServiceProviderRegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-<<<<<<< HEAD
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [verificationSent, setVerificationSent] = useState(false);
-  const [code, setCode] = useState('');
-=======
+
   const [phoneNumber, setPhoneNumber] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [verificationSent, setVerificationSent] = useState(false);
   const [code, setCode] = useState("");
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
   const navigate = useNavigate();
@@ -363,11 +338,7 @@ const ServiceProviderRegisterForm = () => {
         <label className="form-label">Service Provider Email *</label>
         <input
           type="email"
-<<<<<<< HEAD
-          {...register('companyEmail')}
-=======
           {...register("companyEmail")}
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
           className="form-input"
           placeholder="Enter service provider email address"
         />
@@ -389,15 +360,11 @@ const ServiceProviderRegisterForm = () => {
           <p className="form-error">{errors.phoneNumber.message}</p>
         )}
         <div className="mt-2 flex items-center gap-2">
-<<<<<<< HEAD
-          <button type="button" onClick={onSendCode} className="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50">
-=======
           <button
             type="button"
             onClick={onSendCode}
             className="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50"
           >
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
             Send Code
           </button>
           <input
@@ -407,12 +374,6 @@ const ServiceProviderRegisterForm = () => {
             placeholder="Enter code"
             className="flex-1 form-input"
           />
-<<<<<<< HEAD
-          <button type="button" disabled={verifying} onClick={onVerifyCode} className="px-3 py-1.5 text-sm rounded-md bg-green-600 text-white hover:bg-green-700 disabled:bg-gray-300">
-            {verifying ? 'Verifying...' : 'Verify'}
-          </button>
-          {verified && <span className="text-green-600 text-sm">Verified</span>}
-=======
           <button
             type="button"
             disabled={verifying}
@@ -422,7 +383,6 @@ const ServiceProviderRegisterForm = () => {
             {verifying ? "Verifying..." : "Verify"}
           </button>
           {verified && <span className="text-blue-600 text-sm">Verified</span>}
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
         </div>
       </div>
 
@@ -431,11 +391,7 @@ const ServiceProviderRegisterForm = () => {
         <label className="form-label">Contact Person Name *</label>
         <input
           type="text"
-<<<<<<< HEAD
-          {...register('contactPersonName')}
-=======
           {...register("contactPersonName")}
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
           className="form-input"
           placeholder="Enter contact person full name"
         />
@@ -447,16 +403,8 @@ const ServiceProviderRegisterForm = () => {
       {/* Service Provider Type */}
       <div>
         <label className="form-label">Service Provider Type *</label>
-<<<<<<< HEAD
-        <select
-          {...register('companyType')}
-          className="form-input"
-        >
-          {SERVICE_PROVIDER_TYPES.map(type => (
-=======
         <select {...register("companyType")} className="form-input">
           {SERVICE_PROVIDER_TYPES.map((type) => (
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
             <option key={type.value} value={type.value}>
               {type.label}
             </option>
@@ -467,8 +415,6 @@ const ServiceProviderRegisterForm = () => {
         )}
       </div>
 
-<<<<<<< HEAD
-=======
       {/* Legal Form */}
       <div>
         <label className="form-label">Service Provider Legal Form*</label>
@@ -484,38 +430,23 @@ const ServiceProviderRegisterForm = () => {
         )}
       </div>
 
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
       {/* Address Fields */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label className="form-label">City *</label>
           <input
             type="text"
-<<<<<<< HEAD
-            {...register('city')}
-            className="form-input"
-            placeholder="City"
-          />
-          {errors.city && (
-            <p className="form-error">{errors.city.message}</p>
-          )}
-=======
             {...register("city")}
             className="form-input"
             placeholder="City"
           />
           {errors.city && <p className="form-error">{errors.city.message}</p>}
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
         </div>
         <div>
           <label className="form-label">Street *</label>
           <input
             type="text"
-<<<<<<< HEAD
-            {...register('street')}
-=======
             {...register("street")}
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
             className="form-input"
             placeholder="Street"
           />
@@ -524,21 +455,12 @@ const ServiceProviderRegisterForm = () => {
           )}
         </div>
         <div>
-<<<<<<< HEAD
-          <label className="form-label">Zip Code *</label>
-          <input
-            type="text"
-            {...register('zipCode')}
-            className="form-input"
-            placeholder="Zip Code"
-=======
           <label className="form-label">Postal Code*</label>
           <input
             type="text"
             {...register("zipCode")}
             className="form-input"
             placeholder="Postal Code"
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
           />
           {errors.zipCode && (
             <p className="form-error">{errors.zipCode.message}</p>
@@ -552,13 +474,8 @@ const ServiceProviderRegisterForm = () => {
           <label className="form-label">Password *</label>
           <div className="relative">
             <input
-<<<<<<< HEAD
-              type={showPassword ? 'text' : 'password'}
-              {...register('password')}
-=======
               type={showPassword ? "text" : "password"}
               {...register("password")}
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
               className="form-input pr-10"
               placeholder="Create password"
             />
@@ -582,13 +499,8 @@ const ServiceProviderRegisterForm = () => {
           <label className="form-label">Confirm Password *</label>
           <div className="relative">
             <input
-<<<<<<< HEAD
-              type={showConfirmPassword ? 'text' : 'password'}
-              {...register('confirmPassword')}
-=======
               type={showConfirmPassword ? "text" : "password"}
               {...register("confirmPassword")}
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
               className="form-input pr-10"
               placeholder="Confirm password"
             />
@@ -617,18 +529,11 @@ const ServiceProviderRegisterForm = () => {
           onFilesSelected={handleFilesSelected}
           maxFiles={5}
           maxSize={5 * 1024 * 1024} // 5MB
-<<<<<<< HEAD
-          acceptedTypes={['.pdf', '.doc', '.docx', '.jpg', '.jpeg']}
-        />
-        <p className="mt-2 text-xs text-gray-500">
-          Upload your license and official documents (PDF, DOCX, JPG - Max 5MB each)
-=======
           acceptedTypes={[".pdf", ".doc", ".docx", ".jpg", ".jpeg"]}
         />
         <p className="mt-2 text-xs text-gray-500">
           Upload your license and official documents (PDF, DOCX, JPG - Max 5MB
           each)
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
         </p>
       </div>
 
@@ -637,25 +542,12 @@ const ServiceProviderRegisterForm = () => {
         <div className="flex items-center h-5">
           <input
             type="checkbox"
-<<<<<<< HEAD
-            {...register('termsAccepted')}
-            className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-=======
             {...register("termsAccepted")}
             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
           />
         </div>
         <div className="ml-3 text-sm">
           <label className="text-gray-700">
-<<<<<<< HEAD
-            I accept the{' '}
-            <a href="#" className="text-green-600 hover:text-green-700 font-medium">
-              Terms and Conditions
-            </a>{' '}
-            and{' '}
-            <a href="#" className="text-green-600 hover:text-green-700 font-medium">
-=======
             I accept the{" "}
             <a
               href="#"
@@ -668,7 +560,6 @@ const ServiceProviderRegisterForm = () => {
               href="#"
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
               Privacy Policy
             </a>
           </label>
@@ -690,19 +581,11 @@ const ServiceProviderRegisterForm = () => {
             Creating Account...
           </div>
         ) : (
-<<<<<<< HEAD
-          'Create Service Provider Account'
-=======
           "Create Service Provider Account"
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
         )}
       </button>
     </form>
   );
 };
 
-<<<<<<< HEAD
 export default ServiceProviderRegisterForm;
-=======
-export default ServiceProviderRegisterForm;
->>>>>>> 2bd6fc0526c3e63b44c2852c1eaf48d39d12e21f
