@@ -48,8 +48,8 @@ const AdminDashboard = () => {
 
   const statsCards = [
     {
-      title: t("totalFirms"),
-      value: stats.totalFirms,
+      title: t("totalServiceProviders") || "Total Service Providers",
+      value: stats.totalServiceProviders || stats.totalFirms || 0,
       delta: 12.5,
       icon: Building2,
       format: "number",

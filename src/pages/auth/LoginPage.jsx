@@ -6,6 +6,9 @@ import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { loginSchema } from '../../utils/validationSchemas';
 import { useAuth } from '../../hooks/useAuth';
+import { authAPI } from '../../services/api.js';
+import CaHupLogo from "../../components/CaHupLogo";
+
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,41 +27,56 @@ const LoginPage = () => {
     navigate('/auth/register');
   };
 
-  // Fake auth: set user with selected role and go to landing
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      // تحديد الدور — لو المستخدم مش محدد نخليه client افتراضياً
-      const role = (data.role || 'client').toLowerCase();
-  
-      // إنشاء بيانات المستخدم الوهمية (هتستبدلها لاحقاً ببيانات حقيقية من API)
-      const fakeUser = {
-        email: data.email,
-        role,
-        name: data.name || 'Demo User',
-        avatar: data.avatar || '/default-avatar.png',
-      };
-  
-      // حفظ المستخدم في localStorage عبر دالة login من useAuth
-      login(fakeUser);
-  
-      toast.success('Logged in (demo)');
-  
-      // 🔹 تحديد الصفحة المناسبة حسب الدور
+      const payload = { email: data.email, password: data.password };
+      console.log('Login payload:', payload); // Debug log
+      const res = await authAPI.login(payload);
+      const token = res?.data?.token || res?.data?.accessToken;
+      const userFromApi = res?.data?.user || res?.data?.data?.user;
+
+      if (token) {
+        localStorage.setItem('authToken', token);
+      }
+
+      if (userFromApi) {
+        // Store in legacy key used across the app
+        login(userFromApi);
+        // Also store with new spec key for compatibility
+        try {
+          localStorage.setItem('authUser', JSON.stringify(userFromApi));
+        } catch {}
+      }
+
+      toast.success('Logged in successfully');
+
+      const role = (userFromApi?.type || userFromApi?.role || 'client').toLowerCase();
       let redirectPath = '/';
       if (role === 'admin') {
         redirectPath = '/admin';
-      } else if (role === 'firm') {
-        redirectPath = '/firm/browse'; // الصفحة الرئيسية للـ firm
+      } else if (role === 'firm' || role === 'serviceprovider') {
+        redirectPath = '/firm';
       } else if (role === 'client') {
-        redirectPath = '/client/dashboard'; // الصفحة الرئيسية للـ client
+        redirectPath = '/client';
       }
-  
-      // 🔹 التوجيه للصفحة المناسبة
+
       navigate(redirectPath, { replace: true });
     } catch (error) {
-      console.error(error);
-      toast.error('Login failed. Please try again.');
+      console.error('Login error:', error);
+      // Extract error message from response
+      const errorMessage = error?.response?.data?.message || 
+                          error?.message || 
+                          'Login failed. Please try again.';
+      
+      // Check if it's a 403 (pending account) or 401 (invalid credentials)
+      if (error?.response?.status === 403) {
+        toast.error(errorMessage || 'Your account is under review. Please wait for admin approval.');
+      } else if (error?.response?.status === 401) {
+        toast.error(errorMessage || 'Invalid email or password.');
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -68,8 +86,8 @@ const LoginPage = () => {
   return (
     <div className="auth-card">
       <div className="text-center mb-8">
-        <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-          <LogIn className="w-6 h-6 text-green-600" />
+      <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+          <CaHupLogo className="w-11 h-11 text-blue-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
         <p className="text-gray-600">Sign in to your account to continue</p>

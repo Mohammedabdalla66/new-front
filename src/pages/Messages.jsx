@@ -1,84 +1,20 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { messagesAPI } from "../services/api";
+import { useLanguage } from "../contexts/LanguageContext.jsx";
 
-const mockConversations = [
-  {
-    id: "c1",
-    company: "TaxExperts LLC",
-    lastMessage: "We can deliver in 10 days.",
-    time: "9:12 AM",
-  },
-  {
-    id: "c2",
-    company: "AccountPro Firm",
-    lastMessage: "Attached our proposal PDF.",
-    time: "Yesterday",
-  },
-  {
-    id: "c3",
-    company: "AuditWise Agency",
-    lastMessage: "Thanks for the details!",
-    time: "Mon",
-  },
-];
-
-const mockMessagesByConv = {
-  c1: [
-    {
-      id: "m1",
-      sender: "TaxExperts LLC",
-      side: "left",
-      text: "Hello! We reviewed your request.",
-      time: "9:05 AM",
-    },
-    {
-      id: "m2",
-      sender: "You",
-      side: "right",
-      text: "Great, what timeline are you thinking?",
-      time: "9:08 AM",
-    },
-    {
-      id: "m3",
-      sender: "TaxExperts LLC",
-      side: "left",
-      text: "We can deliver in 10 days.",
-      time: "9:12 AM",
-    },
-  ],
-  c2: [
-    {
-      id: "m4",
-      sender: "AccountPro Firm",
-      side: "left",
-      text: "Hi! Here is our proposal.",
-      time: "Yesterday",
-      file: { name: "proposal.pdf", url: "#", type: "pdf" },
-    },
-    {
-      id: "m5",
-      sender: "You",
-      side: "right",
-      text: "Thanks, I will review it soon.",
-      time: "Yesterday",
-    },
-  ],
-  c3: [
-    {
-      id: "m6",
-      sender: "AuditWise Agency",
-      side: "left",
-      text: "Thanks for the details! We will revert.",
-      time: "Mon",
-    },
-  ],
-};
+// Empty conversations - will be populated from API when endpoint is available
+const placeholderConversations = [];
 
 export const Messages = () => {
-  const [activeId, setActiveId] = useState("c1");
+  const { t } = useLanguage();
+  const [activeId, setActiveId] = useState(null); // No active conversation by default
   const [text, setText] = useState("");
   const [attach, setAttach] = useState(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const endRef = useRef(null);
 
   // Handle window resize
@@ -94,10 +30,59 @@ export const Messages = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const messages = useMemo(
-    () => mockMessagesByConv[activeId] || [],
-    [activeId]
-  );
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      if (!activeId) {
+        setMessages([]);
+        return;
+      }
+
+      // Validate ObjectId format before making request
+      const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+      if (!objectIdRegex.test(activeId)) {
+        setError(t("invalidServiceProviderId"));
+        setMessages([]);
+        return;
+      }
+
+      setLoading(true);
+      setError("");
+      try {
+        const res = await messagesAPI.getConversation(activeId);
+        const data = Array.isArray(res.data) ? res.data : [];
+        const mapped = data.map((m) => ({
+          id: m._id,
+          sender: m.sender === "client" ? "You" : "Service Provider",
+          side: m.sender === "client" ? "right" : "left",
+          text: m.text,
+          time: new Date(m.createdAt).toLocaleTimeString(),
+          file: m.file
+            ? {
+                name: m.file.name || m.file,
+                url: m.file.url || "#",
+                type: m.file.type || "file",
+              }
+            : undefined,
+        }));
+        if (mounted) setMessages(mapped);
+      } catch (e) {
+        console.error(e);
+        if (mounted) {
+          const errorMsg =
+            e?.response?.data?.message || t("failedToLoadMessages");
+          setError(errorMsg);
+          setMessages([]);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, [activeId]);
 
   // Auto-scroll to bottom when messages change
   React.useEffect(() => {
@@ -106,17 +91,27 @@ export const Messages = () => {
     }
   }, [messages]);
 
-  const onSend = () => {
+  const onSend = async () => {
     if (!text && !attach) return;
-    const payload = {
-      to: activeId,
-      text,
-      file: attach ? attach.name : undefined,
-      at: new Date().toISOString(),
-    };
-    console.log("Send message:", payload);
-    setText("");
-    setAttach(null);
+    try {
+      const payload = { text, file: attach ? attach.name : undefined };
+      const res = await messagesAPI.send(activeId, payload);
+      const m = res.data;
+      const mapped = {
+        id: m._id,
+        sender: "You",
+        side: "right",
+        text: m.text,
+        time: new Date(m.createdAt).toLocaleTimeString(),
+        file: m.file ? { name: m.file, url: "#", type: "file" } : undefined,
+      };
+      setMessages((prev) => [...prev, mapped]);
+      setText("");
+      setAttach(null);
+    } catch (e) {
+      console.error(e);
+      setError(e?.response?.data?.message || t("failedToSendMessage"));
+    }
     // Reset textarea height
     const textarea = document.querySelector("textarea");
     if (textarea) {
@@ -168,10 +163,12 @@ export const Messages = () => {
                 />
               </svg>
             </button>
-            <h1 className="text-lg font-semibold text-gray-900">Messages</h1>
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+              {t("messages")}
+            </h1>
           </div>
-          <div className="text-sm text-gray-500">
-            {mockConversations.find((c) => c.id === activeId)?.company}
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            {activeId ? t("serviceProvider") : t("noConversationSelected")}
           </div>
         </div>
       )}
@@ -183,33 +180,39 @@ export const Messages = () => {
             isMobile ? "hidden" : "flex"
           } w-80 flex-col bg-white border-r border-gray-200`}
         >
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Conversations
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              {t("conversations")}
             </h2>
           </div>
           <div className="flex-1 overflow-y-auto">
-            {mockConversations.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setActiveId(c.id)}
-                className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                  activeId === c.id
-                    ? "bg-blue-50 border-r-2 border-r-blue-500"
-                    : ""
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-gray-900 truncate">
-                    {c.company}
+            {placeholderConversations.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+                {t("noConversationsYet")}
+              </div>
+            ) : (
+              placeholderConversations.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setActiveId(c.id)}
+                  className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+                    activeId === c.id
+                      ? "bg-blue-50 border-r-2 border-r-blue-500"
+                      : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="font-medium text-gray-900 truncate">
+                      {c.company}
+                    </div>
+                    <div className="text-xs text-gray-400 ml-2">{c.time}</div>
                   </div>
-                  <div className="text-xs text-gray-400 ml-2">{c.time}</div>
-                </div>
-                <div className="mt-1 text-sm text-gray-600 truncate">
-                  {c.lastMessage}
-                </div>
-              </button>
-            ))}
+                  <div className="mt-1 text-sm text-gray-600 truncate">
+                    {c.lastMessage}
+                  </div>
+                </button>
+              ))
+            )}
           </div>
         </div>
 
@@ -247,28 +250,36 @@ export const Messages = () => {
                 </button>
               </div>
               <div className="overflow-y-auto h-full">
-                {mockConversations.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => {
-                      setActiveId(c.id);
-                      setShowSidebar(false);
-                    }}
-                    className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                      activeId === c.id ? "bg-blue-50" : ""
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-gray-900 truncate">
-                        {c.company}
+                {placeholderConversations.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    No conversations yet.
+                  </div>
+                ) : (
+                  placeholderConversations.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        setActiveId(c.id);
+                        setShowSidebar(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+                        activeId === c.id ? "bg-blue-50" : ""
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="font-medium text-gray-900 truncate">
+                          {c.company}
+                        </div>
+                        <div className="text-xs text-gray-400 ml-2">
+                          {c.time}
+                        </div>
                       </div>
-                      <div className="text-xs text-gray-400 ml-2">{c.time}</div>
-                    </div>
-                    <div className="mt-1 text-sm text-gray-600 truncate">
-                      {c.lastMessage}
-                    </div>
-                  </button>
-                ))}
+                      <div className="mt-1 text-sm text-gray-600 truncate">
+                        {c.lastMessage}
+                      </div>
+                    </button>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -280,9 +291,13 @@ export const Messages = () => {
           {!isMobile && (
             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
               <div>
-                <div className="text-sm text-gray-500">Chatting with</div>
-                <div className="text-lg font-semibold text-gray-900">
-                  {mockConversations.find((c) => c.id === activeId)?.company}
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {t("chattingWith")}
+                </div>
+                <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {activeId
+                    ? t("serviceProvider")
+                    : t("selectConversationToStart")}
                 </div>
               </div>
             </div>
@@ -290,43 +305,67 @@ export const Messages = () => {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-50">
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex ${
-                  m.side === "right" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3 sm:px-4 py-2 shadow-sm ${
-                    m.side === "right"
-                      ? "bg-blue-600 text-white rounded-br-md"
-                      : "bg-white text-gray-900 border border-gray-100 rounded-bl-md"
-                  }`}
-                >
-                  <div className="text-xs opacity-80 mb-1">
-                    {m.sender} • {m.time}
-                  </div>
-                  {m.text && (
-                    <div className="text-sm leading-relaxed break-words">
-                      {m.text}
-                    </div>
-                  )}
-                  {m.file && (
-                    <a
-                      href={m.file.url}
-                      className={`mt-2 inline-flex items-center text-xs px-2 py-1 rounded-md border ${
-                        m.side === "right"
-                          ? "border-white/50"
-                          : "border-gray-200"
-                      } ${m.side === "right" ? "bg-white/10" : "bg-gray-50"}`}
-                    >
-                      📎 {m.file.name}
-                    </a>
-                  )}
+            {!activeId && (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center text-gray-500 dark:text-gray-400">
+                  <p className="text-lg mb-2">{t("noConversationSelected")}</p>
+                  <p className="text-sm">{t("selectServiceProvider")}</p>
                 </div>
               </div>
-            ))}
+            )}
+            {activeId && loading && (
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {t("loadingMessagesLabel")}
+              </div>
+            )}
+            {activeId && error && (
+              <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
+                {error || t("failedToLoadMessages")}
+              </div>
+            )}
+            {activeId && messages.length === 0 && !loading && !error && (
+              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
+                <p>{t("startConversation")}</p>
+              </div>
+            )}
+            {activeId &&
+              messages.map((m) => (
+                <div
+                  key={m.id}
+                  className={`flex ${
+                    m.side === "right" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3 sm:px-4 py-2 shadow-sm ${
+                      m.side === "right"
+                        ? "bg-blue-600 text-white rounded-br-md"
+                        : "bg-white text-gray-900 border border-gray-100 rounded-bl-md"
+                    }`}
+                  >
+                    <div className="text-xs opacity-80 mb-1">
+                      {m.sender} • {m.time}
+                    </div>
+                    {m.text && (
+                      <div className="text-sm leading-relaxed break-words">
+                        {m.text}
+                      </div>
+                    )}
+                    {m.file && (
+                      <a
+                        href={m.file.url}
+                        className={`mt-2 inline-flex items-center text-xs px-2 py-1 rounded-md border ${
+                          m.side === "right"
+                            ? "border-white/50"
+                            : "border-gray-200"
+                        } ${m.side === "right" ? "bg-white/10" : "bg-gray-50"}`}
+                      >
+                        📎 {m.file.name}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
             <div ref={endRef} />
           </div>
 
@@ -352,7 +391,7 @@ export const Messages = () => {
                   onChange={handleTextareaChange}
                   onKeyPress={handleKeyPress}
                   rows={1}
-                  placeholder="Write a message... (Enter to send, Shift+Enter for new line)"
+                  placeholder={t("writeMessage")}
                   className="w-full resize-none rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[40px] max-h-32"
                   style={{ minHeight: "40px" }}
                 />
@@ -362,12 +401,12 @@ export const Messages = () => {
                 disabled={!text.trim() && !attach}
                 className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed whitespace-nowrap"
               >
-                Send
+                {t("send")}
               </button>
             </div>
             {attach && (
-              <div className="mt-2 text-xs text-gray-600 flex items-center gap-2">
-                <span>📎 Attached:</span>
+              <div className="mt-2 text-xs text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                <span>📎 {t("attached")}</span>
                 <span className="truncate">{attach.name}</span>
                 <button
                   onClick={() => setAttach(null)}

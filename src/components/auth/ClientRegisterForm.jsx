@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
-import PhoneInput from 'react-phone-input-2';
+import { PhoneInput } from 'react-international-phone';
 import { toast } from 'react-toastify';
 import { Eye, EyeOff } from 'lucide-react';
 import { clientRegisterSchema } from '../../utils/validationSchemas';
@@ -30,6 +30,11 @@ const ClientRegisterForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [code, setCode] = useState('');
+  const [verifying, setVerifying] = useState(false);
+  const [verified, setVerified] = useState(false);
+
   const navigate = useNavigate();
 
   const {
@@ -47,21 +52,114 @@ const ClientRegisterForm = () => {
   const handlePhoneChange = (value) => {
     setPhoneNumber(value);
     setValue('phoneNumber', value);
+    setVerified(false);
+  };
+
+  const onSendCode = async () => {
+    if (!phoneNumber) {
+      toast.error('Enter phone number first');
+      return;
+    }
+    try {
+      const response = await authAPI.sendPhoneCode(phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`);
+      setVerificationSent(true);
+      
+      // Handle skipped verification (Twilio not configured or trial account)
+      if (response.data?.skipped) {
+        setVerified(true); // Auto-verify if skipped
+        toast.warning(response.data?.message || 'Phone verification skipped (service not configured)');
+      } else {
+        toast.success('Verification code sent');
+      }
+    } catch (e) {
+      // If error but response indicates skip, allow it
+      if (e?.response?.data?.skipped) {
+        setVerified(true);
+        toast.warning(e.response.data.message || 'Phone verification skipped');
+      } else {
+        toast.error(e?.response?.data?.message || 'Failed to send code');
+      }
+    }
+  };
+
+  const onVerifyCode = async () => {
+    if (!code) {
+      toast.error('Enter the verification code');
+      return;
+    }
+    setVerifying(true);
+    try {
+      const res = await authAPI.verifyPhoneCode(phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`, code);
+      if (res.data?.verified || res.data?.skipped) {
+        setVerified(true);
+        if (res.data?.skipped) {
+          toast.warning('Phone verification skipped (service not configured)');
+        } else {
+          toast.success('Phone verified');
+        }
+      } else {
+        setVerified(false);
+        toast.error('Invalid code');
+      }
+    } catch (e) {
+      // If error but response indicates skip, allow it
+      if (e?.response?.data?.skipped) {
+        setVerified(true);
+        toast.warning('Phone verification skipped');
+      } else {
+        setVerified(false);
+        toast.error(e?.response?.data?.message || 'Verification failed');
+      }
+    } finally {
+      setVerifying(false);
+    }
   };
 
   const onSubmit = async (data) => {
+    if (!verified) {
+      toast.error('Please verify your phone number before submitting');
+      return;
+    }
     setLoading(true);
     try {
       // Remove confirmPassword from data before sending
       const { confirmPassword, ...submitData } = data;
       submitData.type = 'client';
+      submitData.phoneNumber = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
+      submitData.verified = true;
 
+      console.log('Sending registration data:', { ...submitData, password: '***' });
       const response = await authAPI.registerClient(submitData);
       
-      toast.success('Client registration successful! Please check your email for verification.');
-      navigate('/auth/login');
+      console.log('Registration response:', response.data);
+      
+      // Store tokens and user if provided
+      if (response.data?.accessToken) {
+        localStorage.setItem('authToken', response.data.accessToken);
+        if (response.data.refreshToken) {
+          localStorage.setItem('refreshToken', response.data.refreshToken);
+        }
+        if (response.data.user) {
+          localStorage.setItem('authUser', JSON.stringify(response.data.user));
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+        }
+      }
+      
+      // Get user role from response
+      const userRole = response.data?.user?.role || response.data?.role || 'client';
+      
+      toast.success('Client registration successful! Redirecting...');
+      setTimeout(() => {
+        // Redirect client to requests page
+        navigate('/dashboard/requests');
+      }, 1500);
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed. Please try again.';
+      console.error('Registration error:', error);
+      console.error('Error response:', error.response?.data);
+      const message = error.response?.data?.message || 
+                      error.response?.data?.errors?.join(', ') ||
+                      error.message || 
+                      'Registration failed. Please try again.';
       toast.error(message);
     } finally {
       setLoading(false);
@@ -111,18 +209,30 @@ const ClientRegisterForm = () => {
       <div>
         <label className="form-label">Phone Number *</label>
         <PhoneInput
-          country={'om'}
+          defaultCountry="om"
           value={phoneNumber}
           onChange={handlePhoneChange}
-          inputProps={{
-            name: 'phoneNumber',
-            required: true,
-            className: 'form-input pl-12'
-          }}
+          className="w-full"
         />
         {errors.phoneNumber && (
           <p className="form-error">{errors.phoneNumber.message}</p>
         )}
+        <div className="mt-2 flex items-center gap-2">
+          <button type="button" onClick={onSendCode} className="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50">
+            Send Code
+          </button>
+          <input
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="Enter code"
+            className="flex-1 form-input"
+          />
+          <button type="button" disabled={verifying} onClick={onVerifyCode} className="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-green-700 disabled:bg-gray-300">
+            {verifying ? 'Verifying...' : 'Verify'}
+          </button>
+          {verified && <span className="text-blue-600 text-sm">Verified</span>}
+        </div>
       </div>
 
       {/* Nationality */}
@@ -223,11 +333,11 @@ const ClientRegisterForm = () => {
         <div className="ml-3 text-sm">
           <label className="text-gray-700">
             I accept the{' '}
-            <a href="#" className="text-green-600 hover:text-green-700 font-medium">
+            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
               Terms and Conditions
             </a>{' '}
             and{' '}
-            <a href="#" className="text-green-600 hover:text-green-700 font-medium">
+            <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
               Privacy Policy
             </a>
           </label>

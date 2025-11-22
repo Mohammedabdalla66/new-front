@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLanguage } from "../../contexts/LanguageContext";
+import CaHupLogo from "../CaHupLogo";
 import {
   LayoutDashboard,
   FileText,
@@ -117,9 +118,7 @@ const Sidebar = ({ isOpen, onClose, currentPath }) => {
         {/* Header */}
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">A</span>
-            </div>
+            <CaHupLogo className="h-8 w-8" />
             <span className="ml-3 text-xl font-semibold text-gray-800 dark:text-white">
               {t("accountingPlatform")}
             </span>

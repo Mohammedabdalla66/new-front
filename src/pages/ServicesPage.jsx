@@ -20,60 +20,162 @@ const ServicesPage = () => {
   const { t, language } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const serviceCategories = [
-    {
-      id: "all",
-      name: t("allServices"),
-      icon: <Calculator className="w-5 h-5" />,
-    },
-    {
-      id: "accounting",
-      name: t("generalAccounting"),
-      icon: <FileText className="w-5 h-5" />,
-    },
-    {
-      id: "audit",
-      name: t("financialAudit"),
-      icon: <Shield className="w-5 h-5" />,
-    },
-    {
-      id: "consulting",
-      name: t("financialConsulting"),
-      icon: <TrendingUp className="w-5 h-5" />,
-    },
-    { id: "tax", name: t("taxServices"), icon: <Users className="w-5 h-5" /> },
-  ];
-
   const services = [
     {
       id: 1,
-      category: "accounting",
-      title: t("financialStatementsPrep"),
-      description: t("financialStatementsDesc"),
+      category: "consulting",
+      title: language === "ar" ? "الاستشارات المالية" : "Financial Consultancy",
+      description:
+        language === "ar"
+          ? "نقدم استشارات مالية متخصصة لمساعدة الشركات على اتخاذ قرارات مالية سليمة وتحقيق أهدافها الاستراتيجية"
+          : "We provide specialized financial consulting to help companies make sound financial decisions and achieve their strategic goals",
       features:
         language === "ar"
           ? [
-              "قائمة المركز المالي",
-              "قائمة الدخل",
-              "قائمة التدفقات النقدية",
-              "الإيضاحات المتممة",
+              "تحليل مالي شامل",
+              "تخطيط استراتيجي",
+              "إدارة السيولة",
+              "تقييم الاستثمارات",
             ]
           : [
-              "Balance Sheet",
-              "Income Statement",
-              "Cash Flow Statement",
-              "Notes to Financial Statements",
+              "Comprehensive Financial Analysis",
+              "Strategic Planning",
+              "Liquidity Management",
+              "Investment Evaluation",
             ],
       price:
-        language === "ar" ? "يبدأ من 500 ريال عماني" : "Starting from 500 OMR",
-      duration: language === "ar" ? "5-7 أيام عمل" : "5-7 business days",
+        language === "ar" ? "يبدأ من 300 ريال عماني" : "Starting from 300 OMR",
+      duration: language === "ar" ? "3-7 أيام عمل" : "3-7 business days",
       popular: true,
     },
     {
       id: 2,
+      category: "consulting",
+      title:
+        language === "ar"
+          ? "إستشارات الحوكمة وإدارة المخاطر"
+          : "Governance Services",
+      description:
+        language === "ar"
+          ? "نساعد المؤسسات على تطبيق معايير الحوكمة وإدارة المخاطر المالية والتشغيلية بفعالية"
+          : "We help organizations implement governance standards and manage financial and operational risks effectively",
+      features:
+        language === "ar"
+          ? [
+              "تقييم المخاطر",
+              "سياسات الحوكمة",
+              "الامتثال التنظيمي",
+              "إدارة الأزمات",
+            ]
+          : [
+              "Risk Assessment",
+              "Governance Policies",
+              "Regulatory Compliance",
+              "Crisis Management",
+            ],
+      price:
+        language === "ar" ? "يبدأ من 500 ريال عماني" : "Starting from 500 OMR",
+      duration: language === "ar" ? "7-10 أيام عمل" : "7-10 business days",
+      popular: false,
+    },
+    {
+      id: 3,
+      category: "consulting",
+      title:
+        language === "ar"
+          ? "التقييم التجاري للشركات"
+          : "Business Valuation services",
+      description:
+        language === "ar"
+          ? "تقييم دقيق للشركات والأعمال التجارية باستخدام أحدث المعايير والطرق المعترف بها دولياً"
+          : "Accurate valuation of companies and businesses using the latest internationally recognized standards and methods",
+      features:
+        language === "ar"
+          ? [
+              "تقييم الأصول",
+              "تحليل السوق",
+              "القيمة العادلة",
+              "تقارير تقييم معتمدة",
+            ]
+          : [
+              "Asset Valuation",
+              "Market Analysis",
+              "Fair Value",
+              "Certified Valuation Reports",
+            ],
+      price:
+        language === "ar" ? "يبدأ من 800 ريال عماني" : "Starting from 800 OMR",
+      duration: language === "ar" ? "10-15 يوم عمل" : "10-15 business days",
+      popular: true,
+    },
+    {
+      id: 4,
+      category: "audit",
+      title:
+        language === "ar"
+          ? "التدقيق الخارجي وعمل الميزانيات السنوية"
+          : "External Auditing",
+      description:
+        language === "ar"
+          ? "مراجعة خارجية معتمدة للقوائم المالية وإعداد الميزانيات السنوية وفقاً للمعايير المحاسبية"
+          : "Certified external audit of financial statements and preparation of annual budgets according to accounting standards",
+      features:
+        language === "ar"
+          ? [
+              "تدقيق معتمد",
+              "تقرير المدقق",
+              "القوائم المالية السنوية",
+              "شهادة الامتثال",
+            ]
+          : [
+              "Certified Audit",
+              "Auditor's Report",
+              "Annual Financial Statements",
+              "Compliance Certificate",
+            ],
+      price:
+        language === "ar"
+          ? "يبدأ من 1200 ريال عماني"
+          : "Starting from 1200 OMR",
+      duration: language === "ar" ? "15-20 يوم عمل" : "15-20 business days",
+      popular: true,
+    },
+    {
+      id: 5,
+      category: "audit",
+      title: language === "ar" ? "التدقيق الداخلي" : "Internal Auditing",
+      description:
+        language === "ar"
+          ? "مراجعة داخلية شاملة للعمليات المالية والإدارية لتحسين الكفاءة وتقليل المخاطر"
+          : "Comprehensive internal review of financial and administrative operations to improve efficiency and reduce risks",
+      features:
+        language === "ar"
+          ? [
+              "مراجعة النظم المالية",
+              "تقييم الضوابط الداخلية",
+              "تقارير التدقيق",
+              "التوصيات العملية",
+            ]
+          : [
+              "Financial Systems Review",
+              "Internal Controls Assessment",
+              "Audit Reports",
+              "Practical Recommendations",
+            ],
+      price:
+        language === "ar" ? "يبدأ من 700 ريال عماني" : "Starting from 700 OMR",
+      duration: language === "ar" ? "10-12 يوم عمل" : "10-12 business days",
+      popular: false,
+    },
+    {
+      id: 6,
       category: "accounting",
-      title: t("bookkeepingService"),
-      description: t("bookkeepingDesc"),
+      title:
+        language === "ar" ? "مسك الدفاتر المحاسبية" : "Accounting bookkeeping",
+      description:
+        language === "ar"
+          ? "إدارة شاملة للسجلات المحاسبية اليومية وإعداد التقارير المالية الدورية"
+          : "Comprehensive management of daily accounting records and preparation of periodic financial reports",
       features:
         language === "ar"
           ? ["قيود يومية", "ميزان المراجعة", "تقارير شهرية", "متابعة الحسابات"]
@@ -88,144 +190,77 @@ const ServicesPage = () => {
           ? "يبدأ من 200 ريال عماني شهرياً"
           : "Starting from 200 OMR monthly",
       duration: language === "ar" ? "خدمة شهرية" : "Monthly service",
-      popular: false,
-    },
-    {
-      id: 3,
-      category: "audit",
-      title: t("internalAudit"),
-      description: t("internalAuditDesc"),
-      features:
-        language === "ar"
-          ? [
-              "مراجعة النظم المالية",
-              "تقييم المخاطر",
-              "تقارير التدقيق",
-              "التوصيات العملية",
-            ]
-          : [
-              "Financial Systems Review",
-              "Risk Assessment",
-              "Audit Reports",
-              "Practical Recommendations",
-            ],
-      price:
-        language === "ar" ? "يبدأ من 800 ريال عماني" : "Starting from 800 OMR",
-      duration: language === "ar" ? "10-15 يوم عمل" : "10-15 business days",
-      popular: false,
-    },
-    {
-      id: 4,
-      category: "audit",
-      title: t("externalAudit"),
-      description: t("externalAuditDesc"),
-      features:
-        language === "ar"
-          ? ["تدقيق معتمد", "تقرير المدقق", "شهادة الامتثال", "ضمان الجودة"]
-          : [
-              "Certified Audit",
-              "Auditor Report",
-              "Compliance Certificate",
-              "Quality Assurance",
-            ],
-      price:
-        language === "ar"
-          ? "يبدأ من 1200 ريال عماني"
-          : "Starting from 1200 OMR",
-      duration: language === "ar" ? "15-20 يوم عمل" : "15-20 business days",
       popular: true,
-    },
-    {
-      id: 5,
-      category: "consulting",
-      title: t("financialConsultingService"),
-      description: t("financialConsultingDesc"),
-      features:
-        language === "ar"
-          ? ["تحليل مالي", "تخطيط استراتيجي", "دراسات الجدوى", "إدارة المخاطر"]
-          : [
-              "Financial Analysis",
-              "Strategic Planning",
-              "Feasibility Studies",
-              "Risk Management",
-            ],
-      price:
-        language === "ar" ? "يبدأ من 300 ريال عماني" : "Starting from 300 OMR",
-      duration: language === "ar" ? "3-5 أيام عمل" : "3-5 business days",
-      popular: false,
-    },
-    {
-      id: 6,
-      category: "consulting",
-      title: t("budgetPreparation"),
-      description: t("budgetPreparationDesc"),
-      features:
-        language === "ar"
-          ? [
-              "ميزانية تشغيلية",
-              "ميزانية رأسمالية",
-              "تحليل الانحرافات",
-              "متابعة دورية",
-            ]
-          : [
-              "Operational Budget",
-              "Capital Budget",
-              "Variance Analysis",
-              "Periodic Follow-up",
-            ],
-      price:
-        language === "ar" ? "يبدأ من 400 ريال عماني" : "Starting from 400 OMR",
-      duration: language === "ar" ? "7-10 أيام عمل" : "7-10 business days",
-      popular: false,
     },
     {
       id: 7,
-      category: "tax",
-      title: t("taxReturns"),
-      description: t("taxReturnsDesc"),
+      category: "consulting",
+      title:
+        language === "ar"
+          ? "دراسات الجدوى الإقتصادية"
+          : "Economic Feasibility Studies",
+      description:
+        language === "ar"
+          ? "إعداد دراسات جدوى شاملة للمشاريع الجديدة لتقييم الجدوى الاقتصادية والمالية"
+          : "Preparation of comprehensive feasibility studies for new projects to assess economic and financial viability",
       features:
         language === "ar"
           ? [
-              "ضريبة الدخل",
-              "ضريبة القيمة المضافة",
-              "الامتثال الضريبي",
-              "التخطيط الضريبي",
+              "دراسة السوق",
+              "التحليل المالي",
+              "تقدير التكاليف",
+              "تحليل العائد على الاستثمار",
             ]
-          : ["Income Tax", "Value Added Tax", "Tax Compliance", "Tax Planning"],
+          : [
+              "Market Study",
+              "Financial Analysis",
+              "Cost Estimation",
+              "ROI Analysis",
+            ],
       price:
-        language === "ar" ? "يبدأ من 250 ريال عماني" : "Starting from 250 OMR",
-      duration: language === "ar" ? "3-5 أيام عمل" : "3-5 business days",
-      popular: true,
+        language === "ar" ? "يبدأ من 600 ريال عماني" : "Starting from 600 OMR",
+      duration: language === "ar" ? "10-14 يوم عمل" : "10-14 business days",
+      popular: false,
     },
     {
       id: 8,
-      category: "tax",
-      title: t("taxConsulting"),
-      description: t("taxConsultingDesc"),
+      category: "consulting",
+      title:
+        language === "ar"
+          ? "تقارير الملاءة المالية"
+          : "Financial Solvency Reports",
+      description:
+        language === "ar"
+          ? "إعداد تقارير متخصصة لتقييم الملاءة المالية والقدرة على الوفاء بالالتزامات"
+          : "Preparation of specialized reports to assess financial solvency and ability to meet obligations",
       features:
         language === "ar"
           ? [
-              "تفسير القوانين",
-              "التخطيط الضريبي",
-              "حل المنازعات",
-              "التمثيل أمام الهيئات",
+              "تحليل السيولة",
+              "نسب الملاءة المالية",
+              "تقييم المديونية",
+              "تقرير معتمد",
             ]
           : [
-              "Law Interpretation",
-              "Tax Planning",
-              "Dispute Resolution",
-              "Representation before Authorities",
+              "Liquidity Analysis",
+              "Solvency Ratios",
+              "Debt Assessment",
+              "Certified Report",
             ],
       price:
-        language === "ar" ? "يبدأ من 350 ريال عماني" : "Starting from 350 OMR",
-      duration: language === "ar" ? "2-4 أيام عمل" : "2-4 business days",
+        language === "ar" ? "يبدأ من 400 ريال عماني" : "Starting from 400 OMR",
+      duration: language === "ar" ? "5-7 أيام عمل" : "5-7 business days",
       popular: false,
     },
     {
       id: 9,
       category: "accounting",
-      title: t("companyFormation"),
-      description: t("companyFormationDesc"),
+      title:
+        language === "ar" ? "تأسيس الشركات وادارة الأعمال" : "Business Setup",
+      description:
+        language === "ar"
+          ? "خدمات متكاملة لتأسيس الشركات وتصميم الأنظمة المحاسبية وإدارة الأعمال"
+          : "Integrated services for company formation, accounting system design, and business management",
       features:
         language === "ar"
           ? [
@@ -237,13 +272,190 @@ const ServicesPage = () => {
           : [
               "Formation Procedures",
               "Accounting System Design",
-              "Accounting Manual Preparation",
+              "Accounting Manual",
               "Initial Training",
             ],
       price:
-        language === "ar" ? "يبدأ من 600 ريال عماني" : "Starting from 600 OMR",
+        language === "ar" ? "يبدأ من 650 ريال عماني" : "Starting from 650 OMR",
       duration: language === "ar" ? "10-14 يوم عمل" : "10-14 business days",
       popular: true,
+    },
+    {
+      id: 10,
+      category: "tax",
+      title:
+        language === "ar"
+          ? "خدمات الضرائب وتقييم ضريبة القيمة المضافة"
+          : "Tax and VAT Assessment Services",
+      description:
+        language === "ar"
+          ? "خدمات ضريبية شاملة تشمل إعداد الإقرارات وتقييم ضريبة القيمة المضافة والامتثال الضريبي"
+          : "Comprehensive tax services including tax return preparation, VAT assessment, and tax compliance",
+      features:
+        language === "ar"
+          ? [
+              "ضريبة الدخل",
+              "ضريبة القيمة المضافة",
+              "الامتثال الضريبي",
+              "التخطيط الضريبي",
+            ]
+          : ["Income Tax", "Value Added Tax", "Tax Compliance", "Tax Planning"],
+      price:
+        language === "ar" ? "يبدأ من 300 ريال عماني" : "Starting from 300 OMR",
+      duration: language === "ar" ? "3-5 أيام عمل" : "3-5 business days",
+      popular: true,
+    },
+    {
+      id: 11,
+      category: "accounting",
+      title:
+        language === "ar"
+          ? "التصفيات وإغلاق السجل التجاري"
+          : "Liquidation of the companies",
+      description:
+        language === "ar"
+          ? "إدارة إجراءات تصفية الشركات وإغلاق السجلات التجارية وفقاً للأنظمة القانونية"
+          : "Managing company liquidation procedures and commercial registry closure according to legal regulations",
+      features:
+        language === "ar"
+          ? [
+              "تصفية الأصول",
+              "تسوية الالتزامات",
+              "إنهاء التراخيص",
+              "إغلاق السجل التجاري",
+            ]
+          : [
+              "Asset Liquidation",
+              "Liability Settlement",
+              "License Termination",
+              "Registry Closure",
+            ],
+      price:
+        language === "ar" ? "يبدأ من 550 ريال عماني" : "Starting from 550 OMR",
+      duration: language === "ar" ? "15-25 يوم عمل" : "15-25 business days",
+      popular: false,
+    },
+    {
+      id: 12,
+      category: "audit",
+      title:
+        language === "ar"
+          ? "المحاسبة الجنائية والتحقيق في الاحتيال المالي وتقارير إساءة الأمانة"
+          : "Forensic Accounting, Financial Fraud Investigations, and Reports of Abuse of Trust",
+      description:
+        language === "ar"
+          ? "تحقيقات متخصصة في حالات الاحتيال المالي وإساءة الأمانة وإعداد تقارير قانونية"
+          : "Specialized investigations in financial fraud and embezzlement cases with legal report preparation",
+      features:
+        language === "ar"
+          ? [
+              "التحقيق الجنائي",
+              "كشف الاحتيال",
+              "تحليل المعاملات",
+              "تقارير قانونية",
+            ]
+          : [
+              "Forensic Investigation",
+              "Fraud Detection",
+              "Transaction Analysis",
+              "Legal Reports",
+            ],
+      price:
+        language === "ar"
+          ? "يبدأ من 1000 ريال عماني"
+          : "Starting from 1000 OMR",
+      duration: language === "ar" ? "20-30 يوم عمل" : "20-30 business days",
+      popular: false,
+    },
+    {
+      id: 13,
+      category: "audit",
+      title:
+        language === "ar"
+          ? "تدقيق الامتثال والأداء"
+          : "ISO Compliance Services",
+      description:
+        language === "ar"
+          ? "مراجعة مدى الامتثال للأنظمة واللوائح وتقييم أداء المؤسسة وكفاءة العمليات"
+          : "Review compliance with regulations and laws, and evaluate institutional performance and operational efficiency",
+      features:
+        language === "ar"
+          ? [
+              "تدقيق الامتثال",
+              "تقييم الأداء",
+              "مراجعة السياسات",
+              "مؤشرات الأداء",
+            ]
+          : [
+              "Compliance Audit",
+              "Performance Evaluation",
+              "Policy Review",
+              "Performance Indicators",
+            ],
+      price:
+        language === "ar" ? "يبدأ من 750 ريال عماني" : "Starting from 750 OMR",
+      duration: language === "ar" ? "12-18 يوم عمل" : "12-18 business days",
+      popular: false,
+    },
+    {
+      id: 14,
+      category: "consulting",
+      title: language === "ar" ? "خدمات أخرى" : "Other Services",
+      description:
+        language === "ar"
+          ? "نقدم مجموعة متنوعة من الخدمات المحاسبية والمالية المتخصصة حسب احتياجات العملاء"
+          : "We offer a diverse range of specialized accounting and financial services according to client needs",
+      features:
+        language === "ar"
+          ? ["استشارات مخصصة", "حلول مبتكرة", "خدمات متخصصة", "دعم فني"]
+          : [
+              "Customized Consulting",
+              "Innovative Solutions",
+              "Specialized Services",
+              "Technical Support",
+            ],
+      price: language === "ar" ? "حسب الطلب" : "Upon Request",
+      duration: language === "ar" ? "حسب المشروع" : "Per Project",
+      popular: false,
+    },
+  ];
+
+  // Calculate service counts for each category
+  const getServiceCount = (categoryId) => {
+    if (categoryId === "all") return services.length;
+    return services.filter((service) => service.category === categoryId).length;
+  };
+
+  const serviceCategories = [
+    {
+      id: "all",
+      name: language === "ar" ? "جميع الخدمات" : "All Services",
+      icon: <Calculator className="w-5 h-5" />,
+      count: getServiceCount("all"),
+    },
+    {
+      id: "consulting",
+      name: language === "ar" ? "الاستشارات المالية" : "Financial Consulting",
+      icon: <TrendingUp className="w-5 h-5" />,
+      count: getServiceCount("consulting"),
+    },
+    {
+      id: "audit",
+      name: language === "ar" ? "التدقيق والمراجعة" : "Audit & Review",
+      icon: <Shield className="w-5 h-5" />,
+      count: getServiceCount("audit"),
+    },
+    {
+      id: "accounting",
+      name: language === "ar" ? "المحاسبة والدفاتر" : "Accounting & Books",
+      icon: <FileText className="w-5 h-5" />,
+      count: getServiceCount("accounting"),
+    },
+    {
+      id: "tax",
+      name: language === "ar" ? "الضرائب" : "Tax Services",
+      icon: <Users className="w-5 h-5" />,
+      count: getServiceCount("tax"),
     },
   ];
 
@@ -295,6 +507,15 @@ const ServicesPage = () => {
                 >
                   {category.icon}
                   <span>{category.name}</span>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                      selectedCategory === category.id
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-gray-600"
+                    }`}
+                  >
+                    {category.count}
+                  </span>
                 </button>
               ))}
             </div>

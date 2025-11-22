@@ -1,5 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { messagesAPI } from "../../services/api";
+import { socket } from "../../services/socket";
+import { useAuth } from "../../hooks/useAuth";
+import { toast } from "react-toastify";
 import {
   Search,
   Send,
@@ -16,10 +20,16 @@ import {
 
 const MessagesPage = () => {
   const { t } = useLanguage();
-  const [selectedChat, setSelectedChat] = useState(1);
+  const { user } = useAuth();
+  const [selectedChat, setSelectedChat] = useState(null);
   const [message, setMessage] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [conversations, setConversations] = useState([]);
+  const [messages, setMessages] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef(null);
 
   // Handle window resize
   React.useEffect(() => {
@@ -34,115 +44,125 @@ const MessagesPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const conversations = [
-    {
-      id: 1,
-      client: "Sarah Johnson",
-      company: "ABC Company",
-      lastMessage: "Thank you for the financial statements. They look great!",
-      timestamp: "2 hours ago",
-      unread: 2,
-      avatar: "SJ",
-      online: true,
-    },
-    {
-      id: 2,
-      client: "Michael Chen",
-      company: "XYZ Corp",
-      lastMessage: "Can we schedule a call for tomorrow?",
-      timestamp: "4 hours ago",
-      unread: 0,
-      avatar: "MC",
-      online: false,
-    },
-    {
-      id: 3,
-      client: "Emily Davis",
-      company: "DEF Ltd",
-      lastMessage: "I have some questions about the tax filing process.",
-      timestamp: "1 day ago",
-      unread: 1,
-      avatar: "ED",
-      online: true,
-    },
-    {
-      id: 4,
-      client: "Robert Wilson",
-      company: "GHI Industries",
-      lastMessage: "The audit documents are ready for review.",
-      timestamp: "2 days ago",
-      unread: 0,
-      avatar: "RW",
-      online: false,
-    },
-  ];
+  // Load conversations list (for service provider, we need to get list of clients they've messaged)
+  // For now, we'll create a simple endpoint or fetch from existing messages
+  useEffect(() => {
+    // TODO: Create endpoint to list conversations for service provider
+    // For now, conversations will be populated when user selects a client
+    setLoading(false);
+  }, []);
 
-  const messages = {
-    1: [
-      {
-        id: 1,
-        sender: "client",
-        message: "Hi, I need help with my Q4 financial statements.",
-        timestamp: "10:30 AM",
-        avatar: "SJ",
-      },
-      {
-        id: 2,
-        sender: "provider",
-        message:
-          "Hello Sarah! I'd be happy to help you with your financial statements. Can you tell me more about your requirements?",
-        timestamp: "10:32 AM",
-        avatar: "JD",
-      },
-      {
-        id: 3,
-        sender: "client",
-        message:
-          "We need a complete set of financial statements including balance sheet, income statement, and cash flow statement.",
-        timestamp: "10:35 AM",
-        avatar: "SJ",
-      },
-      {
-        id: 4,
-        sender: "provider",
-        message:
-          "Perfect! I can prepare all three statements for you. What's your preferred timeline?",
-        timestamp: "10:37 AM",
-        avatar: "JD",
-      },
-      {
-        id: 5,
-        sender: "client",
-        message: "We need them by December 31st. Is that feasible?",
-        timestamp: "10:40 AM",
-        avatar: "SJ",
-      },
-      {
-        id: 6,
-        sender: "provider",
-        message:
-          "Absolutely! I can have them ready by December 30th to give you time for review. I'll send you a detailed proposal shortly.",
-        timestamp: "10:42 AM",
-        avatar: "JD",
-      },
-      {
-        id: 7,
-        sender: "client",
-        message: "Thank you for the financial statements. They look great!",
-        timestamp: "2 hours ago",
-        avatar: "SJ",
-      },
-    ],
-  };
+  // Load messages for selected conversation
+  useEffect(() => {
+    if (selectedChat) {
+      const loadMessages = async () => {
+        try {
+          const response = await messagesAPI.getConversationForServiceProvider(selectedChat);
+          if (response.data.success) {
+            const msgs = response.data.data || [];
+            setMessages(prev => ({
+              ...prev,
+              [selectedChat]: msgs.map(msg => ({
+                id: msg._id,
+                sender: msg.sender === 'serviceProvider' ? 'provider' : 'client',
+                message: msg.text || '',
+                timestamp: new Date(msg.createdAt).toLocaleTimeString(),
+                avatar: msg.sender === 'serviceProvider' ? 'SP' : 'C',
+                file: msg.file,
+              })),
+            }));
+          }
+        } catch (err) {
+          console.error('Error loading messages:', err);
+          toast.error('Failed to load messages');
+        }
+      };
+      loadMessages();
+    }
+  }, [selectedChat]);
 
-  const currentMessages = messages[selectedChat] || [];
+  // Socket listeners for real-time messages
+  useEffect(() => {
+    const handleChatMessage = (data) => {
+      if (data.to === (user?._id || user?.id)) {
+        // Message is for current user
+        const clientId = data.from;
+        setMessages(prev => ({
+          ...prev,
+          [clientId]: [
+            ...(prev[clientId] || []),
+            {
+              id: data.id || Date.now(),
+              sender: 'client',
+              message: data.text || '',
+              timestamp: new Date(data.timestamp || Date.now()).toLocaleTimeString(),
+              avatar: 'C',
+              file: data.file,
+            },
+          ],
+        }));
+        // Scroll to bottom
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    };
 
-  const handleSendMessage = (e) => {
+    socket.on('chat:message', handleChatMessage);
+
+    return () => {
+      socket.off('chat:message', handleChatMessage);
+    };
+  }, [user]);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (selectedChat && messages[selectedChat]) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [messages, selectedChat]);
+
+  const currentMessages = selectedChat ? (messages[selectedChat] || []) : [];
+
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (message.trim()) {
-      // Handle sending message
-      console.log("Sending message:", message);
-      setMessage("");
+    if (!message.trim() || !selectedChat || sending) return;
+
+    try {
+      setSending(true);
+      const response = await messagesAPI.sendFromServiceProvider(selectedChat, {
+        text: message.trim(),
+      });
+
+      if (response.data.success) {
+        const newMsg = response.data.data;
+        setMessages(prev => ({
+          ...prev,
+          [selectedChat]: [
+            ...(prev[selectedChat] || []),
+            {
+              id: newMsg._id,
+              sender: 'provider',
+              message: newMsg.text || '',
+              timestamp: new Date(newMsg.createdAt).toLocaleTimeString(),
+              avatar: 'SP',
+              file: newMsg.file,
+            },
+          ],
+        }));
+        setMessage("");
+        // Scroll to bottom
+        setTimeout(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    } catch (err) {
+      console.error('Error sending message:', err);
+      toast.error('Failed to send message');
+    } finally {
+      setSending(false);
     }
   };
 
@@ -199,7 +219,13 @@ const MessagesPage = () => {
 
         {/* Conversations */}
         <div className="flex-1 overflow-y-auto">
-          {conversations.map((conversation) => (
+          {conversations.length === 0 ? (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              <p>No conversations yet</p>
+              <p className="text-sm mt-2">Start messaging clients from your bookings or proposals</p>
+            </div>
+          ) : (
+            conversations.map((conversation) => (
             <div
               key={conversation.id}
                 onClick={() => handleChatSelect(conversation.id)}
@@ -241,7 +267,8 @@ const MessagesPage = () => {
                   )}
                 </div>
               </div>
-            ))}
+            ))
+          )}
           </div>
         </div>
 
@@ -406,7 +433,17 @@ const MessagesPage = () => {
 
             {/* Messages */}
               <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-50 dark:bg-gray-900">
-              {currentMessages.map((msg) => (
+              {loading ? (
+                <div className="text-center py-8">
+                  <div className="inline-block w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              ) : currentMessages.length === 0 ? (
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <p>No messages yet</p>
+                  <p className="text-sm mt-2">Start the conversation!</p>
+                </div>
+              ) : (
+                currentMessages.map((msg) => (
                 <div
                   key={msg.id}
                   className={`flex ${
@@ -431,7 +468,9 @@ const MessagesPage = () => {
                       </p>
                   </div>
                 </div>
-              ))}
+                ))
+              )}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Message Input */}
@@ -463,10 +502,14 @@ const MessagesPage = () => {
                 </button>
                 <button
                   type="submit"
-                    disabled={!message.trim()}
+                    disabled={!message.trim() || sending || !selectedChat}
                     className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-lg"
                 >
-                    <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                    {sending ? (
+                      <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                    )}
                 </button>
               </form>
             </div>

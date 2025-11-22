@@ -1,13 +1,7 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
-import {
-  Calculator,
-  Facebook,
-  Linkedin,
-  Twitter,
-  Mail,
-  Phone,
-} from "lucide-react";
+import CaHupLogo from "./CaHupLogo";
+import { Facebook, Linkedin, Twitter, Mail, Phone } from "lucide-react";
 
 const Footer = () => {
   const { t, language } = useLanguage();
@@ -32,9 +26,9 @@ const Footer = () => {
           {/* Brand */}
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 rtl:space-x-reverse mb-4">
-              <Calculator className="h-8 w-8 text-blue-400" />
+              <CaHupLogo className="h-8 w-8 text-blue-400" />
               <span className="font-bold text-xl">
-                {language === "ar" ? "حسابي" : "AccountPro"}
+                {language === "ar" ? "CaHup" : "CaHup"}
               </span>
             </div>
             <p className="text-gray-400 mb-4 leading-relaxed">

@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import StatsCard from "../components/Dashboard/StatsCard.jsx";
 import RecentActivity from "../components/Dashboard/RecentActivity.jsx";
 import { QuickActions } from "../components/Dashboard/QuickActions.jsx";
+import { useLanguage } from "../contexts/LanguageContext.jsx";
 import {
   Calendar,
   DollarSign,
@@ -12,30 +13,32 @@ import {
 } from "lucide-react";
 
 export const ClientDashboard = () => {
+  const { t } = useLanguage();
+  
   const stats = [
     {
-      title: "Total Bookings",
+      title: t("totalBookings"),
       value: 24,
       change: { value: "+12%", type: "increase" },
       icon: Calendar,
       color: "blue",
     },
     {
-      title: "Active Projects",
+      title: t("activeProjects"),
       value: 8,
       change: { value: "+3", type: "increase" },
       icon: Clock,
       color: "yellow",
     },
     {
-      title: "Completed",
+      title: t("completed"),
       value: 16,
       change: { value: "+8", type: "increase" },
       icon: CheckCircle,
       color: "green",
     },
     {
-      title: "Total Spent",
+      title: t("totalSpent"),
       value: "$45,280",
       change: { value: "+18%", type: "increase" },
       icon: DollarSign,
@@ -48,10 +51,10 @@ export const ClientDashboard = () => {
       {/* Header Section */}
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-          Dashboard Overview
+          {t("clientDashboardTitle")}
         </h1>
         <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-          Welcome back! Here's what's happening with your account.
+          {t("clientDashboardSubtitle")}
         </p>
       </div>
 
@@ -77,7 +80,7 @@ export const ClientDashboard = () => {
         {/* Upcoming Deadlines Card */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sm:p-6">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Upcoming Deadlines
+            {t("upcomingDeadlines")}
           </h3>
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
@@ -86,11 +89,11 @@ export const ClientDashboard = () => {
                   Q4 Tax Filing
                 </p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                  Due in 3 days
+                  {t("dueIn")} 3 {t("days")}
                 </p>
               </div>
               <span className="text-red-600 dark:text-red-400 font-medium text-xs sm:text-sm ml-2">
-                Urgent
+                {t("urgent")}
               </span>
             </div>
             <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
@@ -99,11 +102,11 @@ export const ClientDashboard = () => {
                   Monthly Bookkeeping
                 </p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                  Due in 1 week
+                  {t("dueIn")} 1 {t("week")}
                 </p>
               </div>
               <span className="text-yellow-600 dark:text-yellow-400 font-medium text-xs sm:text-sm ml-2">
-                Soon
+                {t("soon")}
               </span>
             </div>
             <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -112,11 +115,11 @@ export const ClientDashboard = () => {
                   Payroll Processing
                 </p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                  Due in 2 weeks
+                  {t("dueIn")} 2 {t("weeks")}
                 </p>
               </div>
               <span className="text-blue-600 dark:text-blue-400 font-medium text-xs sm:text-sm ml-2">
-                Scheduled
+                {t("scheduled")}
               </span>
             </div>
           </div>
@@ -125,13 +128,13 @@ export const ClientDashboard = () => {
         {/* Monthly Overview Card */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 sm:p-6">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Monthly Overview
+            {t("monthlyOverview")}
           </h3>
           <div className="h-32 sm:h-48 bg-gray-50 dark:bg-gray-700 rounded-lg flex items-center justify-center">
             <div className="text-center p-4">
               <TrendingUp className="w-8 h-8 sm:w-12 sm:h-12 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
               <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                Chart visualization would go here
+                {t("chartVisualization")}
               </p>
             </div>
           </div>

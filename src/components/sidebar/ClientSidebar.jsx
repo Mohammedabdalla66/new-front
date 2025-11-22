@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   LayoutDashboard,
@@ -12,21 +11,8 @@ import {
   LogOut,
   X,
 } from "lucide-react";
-
-const menuItems = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "requests", label: "My Requests", icon: Calendar },
-  { id: "messages", label: "Messages", icon: MessageSquare, badge: 3 },
-  { id: "wallet", label: "Wallet", icon: Wallet },
-  { id: "documents", label: "Documents", icon: FileText },
-  { id: "profile", label: "My Profile", icon: User },
-];
-
-const bottomItems = [
-  { id: "settings", label: "Settings", icon: Settings },
-  { id: "help", label: "Help & Support", icon: HelpCircle },
-  { id: "logout", label: "Logout", icon: LogOut },
-];
+import CaHupLogo from "../CaHupLogo";
+import { useLanguage } from "../../contexts/LanguageContext.jsx";
 
 export default function ClientSidebar({
   activeTab,
@@ -35,6 +21,23 @@ export default function ClientSidebar({
   isMobileOpen = false,
   onMobileClose = () => {},
 }) {
+  const { t } = useLanguage();
+  
+  const menuItems = [
+    { id: "dashboard", label: t("dashboard"), icon: LayoutDashboard },
+    { id: "requests", label: t("myRequestsSidebar"), icon: Calendar },
+    { id: "messages", label: t("messagesSidebar"), icon: MessageSquare, badge: 3 },
+    { id: "wallet", label: t("walletSidebar"), icon: Wallet },
+    { id: "documents", label: t("documentsSidebar"), icon: FileText },
+    { id: "profile", label: t("myProfileSidebar"), icon: User },
+  ];
+
+  const bottomItems = [
+    { id: "settings", label: t("settingsSidebar"), icon: Settings },
+    { id: "help", label: t("helpSupportSidebar"), icon: HelpCircle },
+    { id: "logout", label: t("logout"), icon: LogOut },
+  ];
+
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const containerWidth = isCollapsed ? "w-20" : "w-64";
@@ -52,13 +55,11 @@ export default function ClientSidebar({
     >
       <div className="flex items-center justify-between px-3 md:px-4 py-4 border-b border-slate-800">
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 rounded-full bg-[#0a6308] text-white flex items-center justify-center shadow-sm">
-            AF
-          </div>
+          <CaHupLogo className="h-10 w-10" />
           <span
             className={`${labelClass} text-sm font-semibold text-white bg-slate-700 rounded-full px-3 py-1`}
           >
-            AccounTax Pro
+            CaHup
           </span>
         </div>
         <div className="flex items-center gap-2">

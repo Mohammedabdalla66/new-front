@@ -48,6 +48,9 @@ import {
 } from "../components/ui/dialog";
 import AlertDialog from "../components/ui/alert-dialog";
 import Toast from "../components/ui/toast";
+import { adminAPI } from "../services/adminApi";
+import { toast as toastNotify } from "react-toastify";
+import { Loader2 } from "lucide-react";
 
 // Recharts
 import {
@@ -74,7 +77,7 @@ const mockSummary = [
     id: "firm-1",
     name: "Delta Marketing LLC",
     email: "hello@deltamktg.io",
-    type: "Firm",
+    type: "Service Provider",
     transactions: 124,
     revenue: 15230.45,
     refunds: 3,
@@ -94,7 +97,7 @@ const mockSummary = [
     id: "firm-2",
     name: "Beta Logistics",
     email: "ops@betalogistics.co",
-    type: "Firm",
+    type: "Service Provider",
     transactions: 89,
     revenue: 10110.0,
     refunds: 5,
@@ -164,6 +167,11 @@ const Reports = () => {
     reportType: "Financial",
   });
 
+  // API data
+  const [reportData, setReportData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   // Base dataset (could be transformed by reportType)
   const [summary, setSummary] = useState(mockSummary);
 
@@ -196,18 +204,19 @@ const Reports = () => {
       return afterFrom && beforeTo;
     });
 
-    if (filters.groupBy === "By Firm")
-      rows = rows.filter((r) => r.type === "Firm");
+    if (filters.groupBy === "By Service Provider")
+      rows = rows.filter((r) => r.type === "Service Provider");
     if (filters.groupBy === "By Client")
       rows = rows.filter((r) => r.type === "Client");
 
     return rows;
   }, [summary, filters]);
 
-  // KPIs
-  const totalRevenue = filtered.reduce((s, r) => s + r.revenue, 0);
-  const totalTransactions = filtered.reduce((s, r) => s + r.transactions, 0);
-  const activeClients = filtered.filter((r) => r.type === "Client").length; // mock metric
+  // KPIs - use API data if available, otherwise fallback to filtered mock data
+  const totalRevenue = reportData?.revenue || filtered.reduce((s, r) => s + r.revenue, 0);
+  const totalTransactions = reportData?.counts?.transactions || filtered.reduce((s, r) => s + r.transactions, 0);
+  const activeClients = reportData?.counts?.clients || filtered.filter((r) => r.type === "Client").length;
+  const activeServiceProviders = reportData?.counts?.serviceProviders || filtered.filter((r) => r.type === "Service Provider").length;
   const refundRate =
     totalTransactions === 0
       ? 0
@@ -255,6 +264,33 @@ const Reports = () => {
       ),
     }));
   }, [refundRate, totalTransactions]);
+
+  // Fetch daily report data
+  useEffect(() => {
+    const fetchReport = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Use the "to" date from filters, or today
+        const date = filters.to || new Date().toISOString().split('T')[0];
+        const response = await adminAPI.dailyReport(date);
+        
+        if (response.data.success) {
+          setReportData(response.data.data);
+        } else {
+          setError("Failed to load report data");
+        }
+      } catch (err) {
+        console.error("Error fetching report:", err);
+        setError(err.response?.data?.message || "Failed to load report");
+        toastNotify.error("Failed to load report data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReport();
+  }, [filters.to]);
 
   // Effects
   useEffect(() => {
@@ -480,7 +516,7 @@ const Reports = () => {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="All">All</SelectItem>
-                        <SelectItem value="By Firm">By Firm</SelectItem>
+                        <SelectItem value="By Service Provider">By Service Provider</SelectItem>
                         <SelectItem value="By Client">By Client</SelectItem>
                       </SelectContent>
                     </Select>
@@ -499,8 +535,8 @@ const Reports = () => {
                         <SelectItem value="Clients Activity">
                           Clients Activity
                         </SelectItem>
-                        <SelectItem value="Firms Performance">
-                          Firms Performance
+                        <SelectItem value="Service Providers Performance">
+                          Service Providers Performance
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -640,33 +676,43 @@ const Reports = () => {
             </Card>
 
             {/* KPIs */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                {
-                  title: "Total Revenue",
-                  value: `$${totalRevenue.toFixed(2)}`,
-                },
-                { title: "Total Transactions", value: `${totalTransactions}` },
-                { title: "Active Clients", value: `${activeClients}` },
-                { title: "Refund Rate", value: `${refundRate}%` },
-              ].map((kpi, idx) => (
-                <Card key={idx}>
-                  <CardHeader>
-                    <CardTitle>{kpi.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <motion.div
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: idx * 0.05 }}
-                      className="text-2xl font-bold"
-                    >
-                      {kpi.value}
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+              </div>
+            ) : error ? (
+              <div className="text-center py-12 text-red-600 dark:text-red-400">
+                {error}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  {
+                    title: "Total Revenue",
+                    value: `$${totalRevenue.toFixed(2)}`,
+                  },
+                  { title: "Total Transactions", value: `${totalTransactions}` },
+                  { title: "Active Clients", value: `${activeClients}` },
+                  { title: "Service Providers", value: `${activeServiceProviders}` },
+                ].map((kpi, idx) => (
+                  <Card key={idx}>
+                    <CardHeader>
+                      <CardTitle>{kpi.title}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: idx * 0.05 }}
+                        className="text-2xl font-bold"
+                      >
+                        {kpi.value}
+                      </motion.div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
 
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -724,7 +770,7 @@ const Reports = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Top Firms / Clients</CardTitle>
+                  <CardTitle>Top Service Providers / Clients</CardTitle>
                 </CardHeader>
                 <CardContent style={{ height: 280 }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -907,7 +953,7 @@ const ExpandableRow = ({ row, index }) => {
           </div>
         </TableCell>
         <TableCell>
-          <Badge variant={row.type === "Firm" ? "secondary" : "success"}>
+          <Badge variant={row.type === "Service Provider" ? "secondary" : "success"}>
             {row.type}
           </Badge>
         </TableCell>
@@ -1037,8 +1083,8 @@ const ScheduleForm = ({ initial, onSave, onCancel }) => {
             <SelectContent>
               <SelectItem value="Financial">Financial</SelectItem>
               <SelectItem value="Clients Activity">Clients Activity</SelectItem>
-              <SelectItem value="Firms Performance">
-                Firms Performance
+              <SelectItem value="Service Providers Performance">
+                Service Providers Performance
               </SelectItem>
             </SelectContent>
           </Select>

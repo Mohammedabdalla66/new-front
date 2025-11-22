@@ -12,6 +12,7 @@ import {
   Sun,
   Globe,
 } from "lucide-react";
+import NotificationsDropdown from "./NotificationsDropdown";
 
 const Topbar = ({ onMenuClick, currentPath }) => {
   const { t, dir, toggleLanguage, language } = useLanguage();
@@ -79,6 +80,9 @@ const Topbar = ({ onMenuClick, currentPath }) => {
           >
             <Globe className="w-5 h-5" />
           </button>
+
+          {/* Notifications */}
+          <NotificationsDropdown />
 
           {/* Profile Dropdown */}
           <div className="relative">

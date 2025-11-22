@@ -4,7 +4,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 // Public pages
 import HomePage from './pages/HomePage';
 import ServicesPage from './pages/ServicesPage';
-import AccountantsPage from './pages/AccountantsPage';
+import FaqPage from './pages/FaqPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ContactPage from './pages/ContactPage';
 
@@ -19,6 +19,7 @@ import FirmRoutes from './routes/FirmRoutes';
 
 //profile
 import { ProfileForm } from './components/Profile/ProfileForm';
+
 
 const getStoredUser = () => {
   try {
@@ -36,6 +37,7 @@ const DashboardRedirect = () => {
   if (!user) return <Navigate to="/auth/login" replace state={{ from: location }} />;
   if (user.role === 'admin') return <Navigate to="/admin" replace />;
   if (user.role === 'client') return <Navigate to="/client" replace />;
+  if (user.role === 'serviceProvider' || user.role === 'firm') return <Navigate to="/firm" replace />;
   return <Navigate to="/auth/login" replace />;
 };
 
@@ -44,7 +46,13 @@ const RoleRoute = ({ requiredRole, children }) => {
   const user = getStoredUser();
 
   if (!user) return <Navigate to="/auth/login" replace state={{ from: location }} />;
-  if (user.role !== requiredRole) return <Navigate to="/auth/login" replace state={{ from: location }} />;
+  
+  // Support both single role string and array of roles
+  const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+  if (!allowedRoles.includes(user.role)) {
+    return <Navigate to="/auth/login" replace state={{ from: location }} />;
+  }
+  
   return children;
 };
 
@@ -54,7 +62,7 @@ function App() {
       {/* Public routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/services" element={<ServicesPage />} />
-      <Route path="/accountants" element={<AccountantsPage />} />
+      <Route path="/FAQ" element={<FaqPage />} />
       <Route path="/projects" element={<ProjectsPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path='/ProfileForm' element={<ProfileForm />} />
@@ -85,14 +93,15 @@ function App() {
           </RoleRoute>
         }
       />
-              <Route
-          path="/firm/*"
-          element={
-            <RoleRoute requiredRole="firm">
-              <FirmRoutes />
-            </RoleRoute>
-          }
-        />
+      {/* Service Provider / Firm role area */}
+      <Route
+        path="/firm/*"
+        element={
+          <RoleRoute requiredRole={['serviceProvider', 'firm']}>
+            <FirmRoutes />
+          </RoleRoute>
+        }
+      />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

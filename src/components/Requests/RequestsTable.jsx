@@ -1,6 +1,9 @@
 import React from "react";
+import { useLanguage } from "../../contexts/LanguageContext.jsx";
 
 export const RequestsTable = ({ requests, onViewDetails }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="overflow-x-auto">
       {/* Desktop Table */}
@@ -8,16 +11,16 @@ export const RequestsTable = ({ requests, onViewDetails }) => {
         <thead className="bg-gray-50 dark:bg-gray-700">
           <tr>
             <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              Request Title
+              {t("requestTitle")}
             </th>
             <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              Status
+              {t("status")}
             </th>
             <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              Offers
+              {t("offers")}
             </th>
             <th className="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-              Last Updated
+              {t("lastUpdated")}
             </th>
             <th className="px-3 lg:px-6 py-3" />
           </tr>
@@ -57,7 +60,7 @@ export const RequestsTable = ({ requests, onViewDetails }) => {
                   onClick={() => onViewDetails?.(r.id)}
                   className="px-3 py-1 text-xs sm:text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  View Details
+                  {t("viewDetails")}
                 </button>
               </td>
             </tr>
@@ -96,14 +99,14 @@ export const RequestsTable = ({ requests, onViewDetails }) => {
               </span>
             </div>
             <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
-              <span>{r.offers} offers</span>
+              <span>{r.offers} {t("offers").toLowerCase()}</span>
               <span>{new Date(r.lastUpdated).toLocaleDateString()}</span>
             </div>
             <button
               onClick={() => onViewDetails?.(r.id)}
               className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              View Details
+              {t("viewDetails")}
             </button>
           </div>
         ))}

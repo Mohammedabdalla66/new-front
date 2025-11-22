@@ -1,5 +1,7 @@
 import React from "react";
 import { Bell, Search, Settings, User, ChevronDown, Menu } from "lucide-react";
+import CaHupLogo from "../CaHupLogo";
+
 
 export const Header = ({ user, onToggleSidebar }) => {
   return (
@@ -17,11 +19,9 @@ export const Header = ({ user, onToggleSidebar }) => {
               <Menu className="w-5 h-5" />
             </button>
           )}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">AF</span>
-            </div>
-            <h1 className="text-xl font-bold text-gray-900">AccounTax Pro</h1>
+         <div className="flex items-center space-x-2">
+            <CaHupLogo className="h-8 w-8" />
+            <h1 className="text-xl font-bold text-gray-900">CaHup</h1>
           </div>
         </div>
 
