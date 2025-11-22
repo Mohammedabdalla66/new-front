@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# accounting-project
-=======
 # AccountHub Admin Dashboard
 
 A modern, responsive admin dashboard for the accounting services marketplace platform with bilingual support (English/Arabic) and RTL layout.
@@ -145,4 +142,3 @@ Fonts are loaded from Google Fonts in `index.html`.
 ## License
 
 This project is licensed under the MIT License.
->>>>>>> origin/wael
