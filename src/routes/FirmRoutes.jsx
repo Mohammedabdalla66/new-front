@@ -7,6 +7,8 @@ import MessagesPage from "../pages/dashboard/MessagesPage";
 import WalletPage from "../pages/dashboard/WalletPage";
 import PortfolioPage from "../pages/dashboard/PortfolioPage";
 import BrowseProjectsPage from "../pages/dashboard/BrowseProjectsPage";
+import RequestDetailsPage from "../pages/dashboard/RequestDetailsPage";
+import ProposalDetailsPage from "../pages/dashboard/ProposalDetailsPage";
 import SettingsPage from "../pages/dashboard/SettingsPage";
 import HelpSupportPage from "../pages/dashboard/HelpSupportPage";
 
@@ -21,6 +23,8 @@ export default function FirmRoutes() {
         <Route path="wallet" element={<WalletPage />} />
         <Route path="portfolio" element={<PortfolioPage />} />
         <Route path="browse" element={<BrowseProjectsPage />} />
+        <Route path="browse/:id" element={<RequestDetailsPage />} />
+        <Route path="proposals/:id" element={<ProposalDetailsPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="help" element={<HelpSupportPage />} />
       </Route>

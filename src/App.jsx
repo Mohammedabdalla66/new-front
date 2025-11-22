@@ -20,6 +20,7 @@ import FirmRoutes from './routes/FirmRoutes';
 //profile
 import { ProfileForm } from './components/Profile/ProfileForm';
 
+
 const getStoredUser = () => {
   try {
     const raw = localStorage.getItem('user');
@@ -36,6 +37,7 @@ const DashboardRedirect = () => {
   if (!user) return <Navigate to="/auth/login" replace state={{ from: location }} />;
   if (user.role === 'admin') return <Navigate to="/admin" replace />;
   if (user.role === 'client') return <Navigate to="/client" replace />;
+  if (user.role === 'serviceProvider' || user.role === 'firm') return <Navigate to="/firm" replace />;
   return <Navigate to="/auth/login" replace />;
 };
 
@@ -44,7 +46,13 @@ const RoleRoute = ({ requiredRole, children }) => {
   const user = getStoredUser();
 
   if (!user) return <Navigate to="/auth/login" replace state={{ from: location }} />;
-  if (user.role !== requiredRole) return <Navigate to="/auth/login" replace state={{ from: location }} />;
+  
+  // Support both single role string and array of roles
+  const allowedRoles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+  if (!allowedRoles.includes(user.role)) {
+    return <Navigate to="/auth/login" replace state={{ from: location }} />;
+  }
+  
   return children;
 };
 
@@ -85,14 +93,15 @@ function App() {
           </RoleRoute>
         }
       />
-              <Route
-          path="/firm/*"
-          element={
-            <RoleRoute requiredRole="firm">
-              <FirmRoutes />
-            </RoleRoute>
-          }
-        />
+      {/* Service Provider / Firm role area */}
+      <Route
+        path="/firm/*"
+        element={
+          <RoleRoute requiredRole={['serviceProvider', 'firm']}>
+            <FirmRoutes />
+          </RoleRoute>
+        }
+      />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

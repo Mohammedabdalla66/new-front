@@ -4,37 +4,30 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
 import { PhoneInput } from 'react-international-phone';
 import { toast } from 'react-toastify';
-import { Eye, EyeOff } from 'lucide-react';
-import { clientRegisterSchema } from '../../utils/validationSchemas';
+import { Eye, EyeOff, Upload, X } from 'lucide-react';
+import { companyRegisterSchema } from '../../utils/validationSchemas';
 import { authAPI } from '../../services/api';
+import FileUploadArea from '../common/FileUploadArea';
 
-const NATIONALITIES = [
-  { value: '', label: 'Select Nationality' },
-  { value: 'omani', label: 'Omani' },
-  { value: 'saudi', label: 'Saudi Arabian' },
-  { value: 'emirati', label: 'Emirati' },
-  { value: 'kuwaiti', label: 'Kuwaiti' },
-  { value: 'qatari', label: 'Qatari' },
-  { value: 'bahraini', label: 'Bahraini' },
-  { value: 'indian', label: 'Indian' },
-  { value: 'pakistani', label: 'Pakistani' },
-  { value: 'bangladeshi', label: 'Bangladeshi' },
-  { value: 'filipino', label: 'Filipino' },
-  { value: 'egyptian', label: 'Egyptian' },
-  { value: 'jordanian', label: 'Jordanian' },
+const SERVICE_PROVIDER_TYPES = [
+  { value: '', label: 'Select Service Provider Type' },
+  { value: 'llc', label: 'Limited Liability Company (LLC)' },
+  { value: 'corporation', label: 'Corporation' },
+  { value: 'partnership', label: 'Partnership' },
+  { value: 'sole_proprietorship', label: 'Sole Proprietorship' },
   { value: 'other', label: 'Other' }
 ];
 
-const ClientRegisterForm = () => {
+const ServiceProviderRegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const [verificationSent, setVerificationSent] = useState(false);
   const [code, setCode] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
-
   const navigate = useNavigate();
 
   const {
@@ -44,7 +37,10 @@ const ClientRegisterForm = () => {
     formState: { errors },
     watch
   } = useForm({
-    resolver: yupResolver(clientRegisterSchema)
+    resolver: yupResolver(companyRegisterSchema),
+    defaultValues: {
+      phoneNumber: ''
+    }
   });
 
   const termsAccepted = watch('termsAccepted');
@@ -115,21 +111,74 @@ const ClientRegisterForm = () => {
     }
   };
 
+  const handleFilesSelected = (files) => {
+    setUploadedFiles(files);
+  };
+
   const onSubmit = async (data) => {
     if (!verified) {
       toast.error('Please verify your phone number before submitting');
       return;
     }
+    if (uploadedFiles.length === 0) {
+      toast.error('Please upload at least one document');
+      return;
+    }
+
     setLoading(true);
     try {
-      // Remove confirmPassword from data before sending
-      const { confirmPassword, ...submitData } = data;
-      submitData.type = 'client';
-      submitData.phoneNumber = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
-      submitData.verified = true;
+      // Create FormData for file upload
+      const formData = new FormData();
+      
+      // Append required fields (matching backend expectations)
+      // Support both new (serviceProviderName) and old (companyName) field names for backward compatibility
+      formData.append('serviceProviderName', data.companyName);
+      formData.append('serviceProviderEmail', data.companyEmail);
+      // Also append legacy fields for backward compatibility
+      formData.append('companyName', data.companyName);
+      formData.append('companyEmail', data.companyEmail);
+      formData.append('password', data.password);
+      formData.append('phoneNumber', phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`);
+      
+      // Append optional fields if they exist
+      if (data.commercialRegistrationNumber) {
+        formData.append('taxId', data.commercialRegistrationNumber);
+      }
+      if (data.taxNumber) {
+        formData.append('licenseNumber', data.taxNumber);
+      }
+      if (data.city && data.street && data.zipCode) {
+        formData.append('address', `${data.street}, ${data.city}, ${data.zipCode}`);
+      }
+      if (data.contactPersonName) {
+        // Store contact person name if needed
+      }
+      if (data.companyType) {
+        // Store company type if needed
+      }
+      
+      // Append files - MUST use 'documents' as field name (matches backend multer config)
+      uploadedFiles.forEach((file) => {
+        formData.append('documents', file); // Field name must match: upload.array('documents')
+      });
+      
+      // Add verification status
+      formData.append('verified', 'true');
+      
+      // Log FormData for debugging (in development only)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('FormData entries:');
+        for (let pair of formData.entries()) {
+          if (pair[1] instanceof File) {
+            console.log(`${pair[0]}: [File] ${pair[1].name} (${pair[1].size} bytes)`);
+          } else {
+            console.log(`${pair[0]}: ${pair[1]}`);
+          }
+        }
+      }
 
-      console.log('Sending registration data:', { ...submitData, password: '***' });
-      const response = await authAPI.registerClient(submitData);
+      console.log('Sending service provider registration request...');
+      const response = await authAPI.registerServiceProvider(formData);
       
       console.log('Registration response:', response.data);
       
@@ -146,21 +195,32 @@ const ClientRegisterForm = () => {
       }
       
       // Get user role from response
-      const userRole = response.data?.user?.role || response.data?.role || 'client';
+      const userRole = response.data?.user?.role || response.data?.role || 'serviceProvider';
       
-      toast.success('Client registration successful! Redirecting...');
+      toast.success('Service Provider registration successful! Redirecting...');
       setTimeout(() => {
-        // Redirect client to requests page
-        navigate('/dashboard/requests');
+        // Redirect service provider to browse projects page
+        navigate('/dashboard/browse');
       }, 1500);
     } catch (error) {
       console.error('Registration error:', error);
       console.error('Error response:', error.response?.data);
-      const message = error.response?.data?.message || 
-                      error.response?.data?.errors?.join(', ') ||
+      
+      const errorData = error.response?.data || {};
+      const message = errorData.message || 
+                      errorData.errors?.join(', ') ||
                       error.message || 
                       'Registration failed. Please try again.';
+      
       toast.error(message);
+      
+      // Show additional error details in console for debugging
+      if (errorData.error) {
+        console.error('Error type:', errorData.error);
+      }
+      if (errorData.details) {
+        console.error('Error details:', errorData.details);
+      }
     } finally {
       setLoading(false);
     }
@@ -170,38 +230,66 @@ const ClientRegisterForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="text-center mb-6">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">
-          Create Your Client Account
+          Create Your Service Provider Account
         </h3>
         <p className="text-sm text-gray-600">
-          Fill in your personal information to get started
+          Fill in your service provider information to get started
         </p>
       </div>
 
-      {/* Full Name */}
+      {/* Service Provider Name */}
       <div>
-        <label className="form-label">Full Name *</label>
+        <label className="form-label">Service Provider Name *</label>
         <input
           type="text"
-          {...register('fullName')}
+          {...register('companyName')}
           className="form-input"
-          placeholder="Enter your full name"
+          placeholder="Enter your service provider name"
         />
-        {errors.fullName && (
-          <p className="form-error">{errors.fullName.message}</p>
+        {errors.companyName && (
+          <p className="form-error">{errors.companyName.message}</p>
         )}
       </div>
 
-      {/* Email */}
+      {/* Commercial Registration Number */}
       <div>
-        <label className="form-label">Email Address *</label>
+        <label className="form-label">Commercial Registration Number *</label>
+        <input
+          type="text"
+          {...register('commercialRegistrationNumber')}
+          className="form-input"
+          placeholder="Enter registration number"
+        />
+        {errors.commercialRegistrationNumber && (
+          <p className="form-error">{errors.commercialRegistrationNumber.message}</p>
+        )}
+      </div>
+
+      {/* Tax Number */}
+      <div>
+        <label className="form-label">Tax Number</label>
+        <input
+          type="text"
+          {...register('taxNumber')}
+          className="form-input"
+          placeholder="Enter tax number (optional)"
+        />
+        {errors.taxNumber && (
+          <p className="form-error">{errors.taxNumber.message}</p>
+        )}
+      </div>
+
+      {/* Service Provider Email */}
+      <div>
+        <label className="form-label">Service Provider Email *</label>
         <input
           type="email"
-          {...register('email')}
+          {...register('companyEmail')}
           className="form-input"
-          placeholder="Enter your email address"
+          placeholder="Enter service provider email address"
         />
-        {errors.email && (
-          <p className="form-error">{errors.email.message}</p>
+        {errors.companyEmail && (
+          <p className="form-error">{errors.companyEmail.message}</p>
         )}
       </div>
 
@@ -235,36 +323,76 @@ const ClientRegisterForm = () => {
         </div>
       </div>
 
-      {/* Nationality */}
+      {/* Contact Person Name */}
       <div>
-        <label className="form-label">Nationality *</label>
-        <select
-          {...register('nationality')}
+        <label className="form-label">Contact Person Name *</label>
+        <input
+          type="text"
+          {...register('contactPersonName')}
           className="form-input"
-        >
-          {NATIONALITIES.map(nationality => (
-            <option key={nationality.value} value={nationality.value}>
-              {nationality.label}
-            </option>
-          ))}
-        </select>
-        {errors.nationality && (
-          <p className="form-error">{errors.nationality.message}</p>
+          placeholder="Enter contact person full name"
+        />
+        {errors.contactPersonName && (
+          <p className="form-error">{errors.contactPersonName.message}</p>
         )}
       </div>
 
-      {/* Address */}
+      {/* Service Provider Type */}
       <div>
-        <label className="form-label">Address *</label>
-        <textarea
-          {...register('address')}
-          rows={3}
-          className="form-input resize-none"
-          placeholder="Enter your full address"
-        />
-        {errors.address && (
-          <p className="form-error">{errors.address.message}</p>
+        <label className="form-label">Service Provider Type *</label>
+        <select
+          {...register('companyType')}
+          className="form-input"
+        >
+          {SERVICE_PROVIDER_TYPES.map(type => (
+            <option key={type.value} value={type.value}>
+              {type.label}
+            </option>
+          ))}
+        </select>
+        {errors.companyType && (
+          <p className="form-error">{errors.companyType.message}</p>
         )}
+      </div>
+
+      {/* Address Fields */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label className="form-label">City *</label>
+          <input
+            type="text"
+            {...register('city')}
+            className="form-input"
+            placeholder="City"
+          />
+          {errors.city && (
+            <p className="form-error">{errors.city.message}</p>
+          )}
+        </div>
+        <div>
+          <label className="form-label">Street *</label>
+          <input
+            type="text"
+            {...register('street')}
+            className="form-input"
+            placeholder="Street"
+          />
+          {errors.street && (
+            <p className="form-error">{errors.street.message}</p>
+          )}
+        </div>
+        <div>
+          <label className="form-label">Zip Code *</label>
+          <input
+            type="text"
+            {...register('zipCode')}
+            className="form-input"
+            placeholder="Zip Code"
+          />
+          {errors.zipCode && (
+            <p className="form-error">{errors.zipCode.message}</p>
+          )}
+        </div>
       </div>
 
       {/* Password Fields */}
@@ -321,6 +449,20 @@ const ClientRegisterForm = () => {
         </div>
       </div>
 
+      {/* File Upload */}
+      <div>
+        <label className="form-label">Service Provider Documents *</label>
+        <FileUploadArea
+          onFilesSelected={handleFilesSelected}
+          maxFiles={5}
+          maxSize={5 * 1024 * 1024} // 5MB
+          acceptedTypes={['.pdf', '.doc', '.docx', '.jpg', '.jpeg']}
+        />
+        <p className="mt-2 text-xs text-gray-500">
+          Upload your license and official documents (PDF, DOCX, JPG - Max 5MB each)
+        </p>
+      </div>
+
       {/* Terms and Conditions */}
       <div className="flex items-start">
         <div className="flex items-center h-5">
@@ -359,11 +501,11 @@ const ClientRegisterForm = () => {
             Creating Account...
           </div>
         ) : (
-          'Create Client Account'
+          'Create Service Provider Account'
         )}
       </button>
     </form>
   );
 };
 
-export default ClientRegisterForm;
+export default ServiceProviderRegisterForm;

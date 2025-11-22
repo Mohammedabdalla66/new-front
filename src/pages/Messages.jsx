@@ -1,84 +1,18 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { messagesAPI } from "../services/api";
 
-const mockConversations = [
-  {
-    id: "c1",
-    company: "TaxExperts LLC",
-    lastMessage: "We can deliver in 10 days.",
-    time: "9:12 AM",
-  },
-  {
-    id: "c2",
-    company: "AccountPro Firm",
-    lastMessage: "Attached our proposal PDF.",
-    time: "Yesterday",
-  },
-  {
-    id: "c3",
-    company: "AuditWise Agency",
-    lastMessage: "Thanks for the details!",
-    time: "Mon",
-  },
-];
-
-const mockMessagesByConv = {
-  c1: [
-    {
-      id: "m1",
-      sender: "TaxExperts LLC",
-      side: "left",
-      text: "Hello! We reviewed your request.",
-      time: "9:05 AM",
-    },
-    {
-      id: "m2",
-      sender: "You",
-      side: "right",
-      text: "Great, what timeline are you thinking?",
-      time: "9:08 AM",
-    },
-    {
-      id: "m3",
-      sender: "TaxExperts LLC",
-      side: "left",
-      text: "We can deliver in 10 days.",
-      time: "9:12 AM",
-    },
-  ],
-  c2: [
-    {
-      id: "m4",
-      sender: "AccountPro Firm",
-      side: "left",
-      text: "Hi! Here is our proposal.",
-      time: "Yesterday",
-      file: { name: "proposal.pdf", url: "#", type: "pdf" },
-    },
-    {
-      id: "m5",
-      sender: "You",
-      side: "right",
-      text: "Thanks, I will review it soon.",
-      time: "Yesterday",
-    },
-  ],
-  c3: [
-    {
-      id: "m6",
-      sender: "AuditWise Agency",
-      side: "left",
-      text: "Thanks for the details! We will revert.",
-      time: "Mon",
-    },
-  ],
-};
+// Empty conversations - will be populated from API when endpoint is available
+const placeholderConversations = [];
 
 export const Messages = () => {
-  const [activeId, setActiveId] = useState("c1");
+  const [activeId, setActiveId] = useState(null); // No active conversation by default
   const [text, setText] = useState("");
   const [attach, setAttach] = useState(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const endRef = useRef(null);
 
   // Handle window resize
@@ -94,10 +28,50 @@ export const Messages = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const messages = useMemo(
-    () => mockMessagesByConv[activeId] || [],
-    [activeId]
-  );
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      if (!activeId) {
+        setMessages([]);
+        return;
+      }
+      
+      // Validate ObjectId format before making request
+      const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+      if (!objectIdRegex.test(activeId)) {
+        setError('Invalid service provider ID');
+        setMessages([]);
+        return;
+      }
+      
+      setLoading(true);
+      setError("");
+      try {
+        const res = await messagesAPI.getConversation(activeId);
+        const data = Array.isArray(res.data) ? res.data : [];
+        const mapped = data.map((m) => ({
+          id: m._id,
+          sender: m.sender === 'client' ? 'You' : 'Service Provider',
+          side: m.sender === 'client' ? 'right' : 'left',
+          text: m.text,
+          time: new Date(m.createdAt).toLocaleTimeString(),
+          file: m.file ? { name: m.file.name || m.file, url: m.file.url || '#', type: m.file.type || 'file' } : undefined,
+        }));
+        if (mounted) setMessages(mapped);
+      } catch (e) {
+        console.error(e);
+        if (mounted) {
+          const errorMsg = e?.response?.data?.message || 'Failed to load messages';
+          setError(errorMsg);
+          setMessages([]);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    load();
+    return () => { mounted = false; };
+  }, [activeId]);
 
   // Auto-scroll to bottom when messages change
   React.useEffect(() => {
@@ -106,17 +80,27 @@ export const Messages = () => {
     }
   }, [messages]);
 
-  const onSend = () => {
+  const onSend = async () => {
     if (!text && !attach) return;
-    const payload = {
-      to: activeId,
-      text,
-      file: attach ? attach.name : undefined,
-      at: new Date().toISOString(),
-    };
-    console.log("Send message:", payload);
-    setText("");
-    setAttach(null);
+    try {
+      const payload = { text, file: attach ? attach.name : undefined };
+      const res = await messagesAPI.send(activeId, payload);
+      const m = res.data;
+      const mapped = {
+        id: m._id,
+        sender: 'You',
+        side: 'right',
+        text: m.text,
+        time: new Date(m.createdAt).toLocaleTimeString(),
+        file: m.file ? { name: m.file, url: '#', type: 'file' } : undefined,
+      };
+      setMessages((prev) => [...prev, mapped]);
+      setText("");
+      setAttach(null);
+    } catch (e) {
+      console.error(e);
+      setError(e?.response?.data?.message || 'Failed to send message');
+    }
     // Reset textarea height
     const textarea = document.querySelector("textarea");
     if (textarea) {
@@ -171,7 +155,7 @@ export const Messages = () => {
             <h1 className="text-lg font-semibold text-gray-900">Messages</h1>
           </div>
           <div className="text-sm text-gray-500">
-            {mockConversations.find((c) => c.id === activeId)?.company}
+            {activeId ? 'Service Provider' : 'No conversation selected'}
           </div>
         </div>
       )}
@@ -189,27 +173,33 @@ export const Messages = () => {
             </h2>
           </div>
           <div className="flex-1 overflow-y-auto">
-            {mockConversations.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setActiveId(c.id)}
-                className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                  activeId === c.id
-                    ? "bg-blue-50 border-r-2 border-r-blue-500"
-                    : ""
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="font-medium text-gray-900 truncate">
-                    {c.company}
+            {placeholderConversations.length === 0 ? (
+              <div className="p-4 text-center text-gray-500 text-sm">
+                No conversations yet. Start a conversation from a service provider profile.
+              </div>
+            ) : (
+              placeholderConversations.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setActiveId(c.id)}
+                  className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+                    activeId === c.id
+                      ? "bg-blue-50 border-r-2 border-r-blue-500"
+                      : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="font-medium text-gray-900 truncate">
+                      {c.company}
+                    </div>
+                    <div className="text-xs text-gray-400 ml-2">{c.time}</div>
                   </div>
-                  <div className="text-xs text-gray-400 ml-2">{c.time}</div>
-                </div>
-                <div className="mt-1 text-sm text-gray-600 truncate">
-                  {c.lastMessage}
-                </div>
-              </button>
-            ))}
+                  <div className="mt-1 text-sm text-gray-600 truncate">
+                    {c.lastMessage}
+                  </div>
+                </button>
+              ))
+            )}
           </div>
         </div>
 
@@ -247,28 +237,34 @@ export const Messages = () => {
                 </button>
               </div>
               <div className="overflow-y-auto h-full">
-                {mockConversations.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => {
-                      setActiveId(c.id);
-                      setShowSidebar(false);
-                    }}
-                    className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                      activeId === c.id ? "bg-blue-50" : ""
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="font-medium text-gray-900 truncate">
-                        {c.company}
+                {placeholderConversations.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    No conversations yet.
+                  </div>
+                ) : (
+                  placeholderConversations.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => {
+                        setActiveId(c.id);
+                        setShowSidebar(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
+                        activeId === c.id ? "bg-blue-50" : ""
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="font-medium text-gray-900 truncate">
+                          {c.company}
+                        </div>
+                        <div className="text-xs text-gray-400 ml-2">{c.time}</div>
                       </div>
-                      <div className="text-xs text-gray-400 ml-2">{c.time}</div>
-                    </div>
-                    <div className="mt-1 text-sm text-gray-600 truncate">
-                      {c.lastMessage}
-                    </div>
-                  </button>
-                ))}
+                      <div className="mt-1 text-sm text-gray-600 truncate">
+                        {c.lastMessage}
+                      </div>
+                    </button>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -282,7 +278,7 @@ export const Messages = () => {
               <div>
                 <div className="text-sm text-gray-500">Chatting with</div>
                 <div className="text-lg font-semibold text-gray-900">
-                  {mockConversations.find((c) => c.id === activeId)?.company}
+                  {activeId ? 'Service Provider' : 'Select a conversation'}
                 </div>
               </div>
             </div>
@@ -290,7 +286,26 @@ export const Messages = () => {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 bg-gray-50">
-            {messages.map((m) => (
+            {!activeId && (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center text-gray-500">
+                  <p className="text-lg mb-2">No conversation selected</p>
+                  <p className="text-sm">Select a service provider to start messaging</p>
+                </div>
+              </div>
+            )}
+            {activeId && loading && (
+              <div className="text-sm text-gray-500">Loading messages...</div>
+            )}
+            {activeId && error && (
+              <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg">{error}</div>
+            )}
+            {activeId && messages.length === 0 && !loading && !error && (
+              <div className="text-center text-gray-500 py-8">
+                <p>No messages yet. Start the conversation!</p>
+              </div>
+            )}
+            {activeId && messages.map((m) => (
               <div
                 key={m.id}
                 className={`flex ${

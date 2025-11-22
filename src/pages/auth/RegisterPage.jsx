@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { UserPlus, Building2, User } from 'lucide-react';
-import CompanyRegisterForm from '../../components/auth/CompanyRegisterForm';
+import ServiceProviderRegisterForm from '../../components/auth/ServiceProviderRegisterForm';
 import ClientRegisterForm from '../../components/auth/ClientRegisterForm';
 
 const RegisterPage = () => {
-  const [registrationType, setRegistrationType] = useState('company');
+  const [registrationType, setRegistrationType] = useState('serviceProvider');
 
   return (
     <div className="auth-card">
@@ -25,15 +25,15 @@ const RegisterPage = () => {
       <div className="flex bg-gray-100 rounded-lg p-1 mb-8">
         <button
           type="button"
-          onClick={() => setRegistrationType('company')}
+          onClick={() => setRegistrationType('serviceProvider')}
           className={`flex-1 flex items-center justify-center py-2 px-4 rounded-md font-medium text-sm transition-colors ${
-            registrationType === 'company'
+            registrationType === 'serviceProvider'
               ? 'bg-white text-green-600 shadow-sm'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           <Building2 className="w-4 h-4 mr-2" />
-          Company
+          Service Provider
         </button>
         <button
           type="button"
@@ -50,8 +50,8 @@ const RegisterPage = () => {
       </div>
 
       {/* Render appropriate form */}
-      {registrationType === 'company' ? (
-        <CompanyRegisterForm />
+      {registrationType === 'serviceProvider' ? (
+        <ServiceProviderRegisterForm />
       ) : (
         <ClientRegisterForm />
       )}

@@ -80,36 +80,7 @@ const Header = ({ onAddProject }) => {
                 </Link>
               </>
             ) : (
-              <>
-                {/* Role-based navigation
-                {user.role === "client" && (
-                  <Link
-                    to="/client"
-                    className="text-gray-700 hover:text-blue-700 font-medium"
-
-                  >
-                    {language === "ar" ? "لوحة العميل" : "Client Dashboard"}
-                  </Link>
-                )}
-                {user.role === "admin" && (
-                  <Link
-
-                    to="/admin"
-                    className="text-gray-700 hover:text-blue-700 font-medium"
-
-                  >
-                    {language === "ar" ? "لوحة المدير" : "Admin Panel"}
-                  </Link>
-                )}
-                {user.role === "firm" && (
-                  <Link
-                    to="/firm"
-                    className="text-gray-700 hover:text-blue-700 font-medium"
-                  >
-                    {language === "ar" ? "لوحة الشركة" : "Firm Panel"}
-                  </Link>
-                )} */}
-
+              <>   
                 {/* Notifications */}
                 <button className="relative p-2 text-gray-600 hover:text-blue-700 transition-colors">
                   <Bell className="h-5 w-5" />
@@ -166,7 +137,7 @@ const Header = ({ onAddProject }) => {
                           {t("profile")}
                         </Link>
                       )}
-                       {user.role === "firm" && (
+                       {user.role === "serviceProvider" && (
                         <Link
                           to="ProfileForm"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -193,9 +164,9 @@ const Header = ({ onAddProject }) => {
                           {t("settings")}
                         </Link>
                       )}
-                      {user.role === "firm" && (
+                      {user.role === "serviceProvider" && (
                         <Link
-                          to="firm/setting"
+                          to="serviceProvider/setting"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
@@ -207,7 +178,7 @@ const Header = ({ onAddProject }) => {
                           to="/client"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
-                          {language === "ar" ? "لوحة العميل" : "Client Dashboard"}
+                          {language === "ar" ? "لوحة العميل" : "Dashboard"}
                         </Link>
                       )}
                       {user.role === "admin" && (
@@ -218,12 +189,12 @@ const Header = ({ onAddProject }) => {
                           {language === "ar" ? "لوحة المدير" : "Admin Panel"}
                         </Link>
                       )}
-                      {user.role === "firm" && (
+                      {user.role === "serviceProvider" && (
                         <Link
-                          to="/firm"
+                          to="/serviceProvider"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
-                          {language === "ar" ? "لوحة الشركة" : "Firm Panel"}
+                          {language === "ar" ? "لوحة الشركة" : "Service Provider Panel"}
                         </Link>
                       )}
                       <button

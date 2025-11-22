@@ -3,8 +3,8 @@ import * as yup from 'yup';
 // Password validation regex
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
 
-// Phone number validation for Oman (+968)
-const omanPhoneRegex = /^968\d{8}$/;
+// Phone number validation: E.164 format (e.g., +14155552671)
+const e164Regex = /^\+?[1-9]\d{1,14}$/;
 
 export const loginSchema = yup.object({
   email: yup
@@ -36,7 +36,7 @@ export const companyRegisterSchema = yup.object({
   phoneNumber: yup
     .string()
     .required('Phone number is required')
-    .matches(omanPhoneRegex, 'Please enter a valid Oman phone number (+968XXXXXXXX)'),
+    .matches(e164Regex, 'Please enter a valid phone number in international format (E.164)'),
   contactPersonName: yup
     .string()
     .required('Contact person name is required')
@@ -80,7 +80,7 @@ export const clientRegisterSchema = yup.object({
   phoneNumber: yup
     .string()
     .required('Phone number is required')
-    .matches(omanPhoneRegex, 'Please enter a valid Oman phone number (+968XXXXXXXX)'),
+    .matches(e164Regex, 'Please enter a valid phone number in international format (E.164)'),
   nationality: yup
     .string()
     .required('Please select your nationality')

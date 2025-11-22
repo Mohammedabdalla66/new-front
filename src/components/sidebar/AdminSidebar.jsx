@@ -12,6 +12,8 @@ import {
   User,
   X,
   LogOut,
+  ClipboardList,
+  FileCheck,
 } from "lucide-react";
 import { selectSidebarCollapsed } from "../../features/theme/themeSlice";
 import { useAuth } from "../../hooks/useAuth";
@@ -35,15 +37,27 @@ export default function AdminSidebar({
     },
     {
       icon: Building2,
-      label: t("firms"),
-      path: "/admin/firms",
-      active: location.pathname === "/admin/firms",
+      label: t("serviceProviders") || "Service Providers",
+      path: "/admin/service-providers",
+      active: location.pathname.startsWith("/admin/service-providers") || location.pathname === "/admin/firms",
     },
     {
       icon: Users,
       label: t("clients"),
       path: "/admin/clients",
       active: location.pathname === "/admin/clients",
+    },
+    {
+      icon: FileCheck,
+      label: "Pending Requests",
+      path: "/admin/requests/pending",
+      active: location.pathname === "/admin/requests/pending",
+    },
+    {
+      icon: ClipboardList,
+      label: "Proposals",
+      path: "/admin/proposals",
+      active: location.pathname === "/admin/proposals",
     },
     {
       icon: CreditCard,

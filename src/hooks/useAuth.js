@@ -33,6 +33,7 @@ export const useAuth = () => {
 
   const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("authToken");
     setUser(null);
     setIsAuthenticated(false);
   };

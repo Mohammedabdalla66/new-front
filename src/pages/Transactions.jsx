@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { CreditCard, Search, ChevronRight, Eye } from "lucide-react";
+import { CreditCard, Search, ChevronRight, Eye, Loader2 } from "lucide-react";
 import Navbar from "../components/Layout/Navbar";
 import AdminSidebar from "../components/sidebar/AdminSidebar";
 import {
@@ -34,69 +34,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "../components/ui/dialog";
-import AlertDialog from "../components/ui/alert-dialog";
-import Toast from "../components/ui/toast";
-
-// Mock data
-const initialTxns = [
-  {
-    id: "TXN-2024-0001",
-    partyName: "Alice Johnson",
-    partyEmail: "alice.johnson@example.com",
-    amount: 199.99,
-    currency: "USD",
-    type: "Payment",
-    status: "Completed",
-    paymentMethod: "Card",
-    datetime: "2024-07-12T10:15:00Z",
-    notes: "Monthly subscription payment.",
-  },
-  {
-    id: "TXN-2024-0002",
-    partyName: "Beta Logistics",
-    partyEmail: "ops@betalogistics.co",
-    amount: 499.0,
-    currency: "USD",
-    type: "Payment",
-    status: "Pending",
-    paymentMethod: "Bank",
-    datetime: "2024-07-13T14:20:00Z",
-  },
-  {
-    id: "TXN-2024-0003",
-    partyName: "Carlos Mendes",
-    partyEmail: "c.mendes@domain.com",
-    amount: 129.5,
-    currency: "USD",
-    type: "Subscription",
-    status: "Completed",
-    paymentMethod: "Card",
-    datetime: "2024-07-14T09:05:00Z",
-  },
-  {
-    id: "TXN-2024-0004",
-    partyName: "Delta Marketing LLC",
-    partyEmail: "hello@deltamktg.io",
-    amount: 129.5,
-    currency: "USD",
-    type: "Payment",
-    status: "Failed",
-    paymentMethod: "Card",
-    datetime: "2024-07-15T18:42:00Z",
-  },
-  {
-    id: "TXN-2024-0005",
-    partyName: "Echo Industries",
-    partyEmail: "finance@echo.io",
-    amount: 199.99,
-    currency: "USD",
-    type: "Refund",
-    status: "Refunded",
-    paymentMethod: "Card",
-    datetime: "2024-07-16T12:10:00Z",
-    notes: "Manual refund requested.",
-  },
-];
+import { adminAPI } from "../services/adminApi";
+import { toast } from "react-toastify";
 
 const currencySymbol = (cur) =>
   cur === "USD" ? "$" : cur === "EUR" ? "€" : "£";
@@ -110,22 +49,79 @@ const getInitials = (name) =>
     .slice(0, 2);
 
 const Transactions = () => {
-  const [txns, setTxns] = useState(initialTxns);
+  const [txns, setTxns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [filters, setFilters] = useState({
     query: "",
-    status: "All",
-    type: "All",
-    from: "",
-    to: "",
+    status: "",
+    type: "",
+    fromDate: "",
+    toDate: "",
   });
+  const [page, setPage] = useState(1);
+  const [limit] = useState(25);
+  const [meta, setMeta] = useState({ total: 0, pages: 1 });
 
   const [viewOpen, setViewOpen] = useState(false);
   const [selected, setSelected] = useState(null);
-
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [toast, setToast] = useState({ open: false });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Debounced search
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(filters.query);
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [filters.query]);
+
+  // Fetch transactions
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await adminAPI.listTransactions({
+          page,
+          limit,
+          type: filters.type === "All" ? "" : filters.type,
+          status: filters.status === "All" ? "" : filters.status,
+          fromDate: filters.fromDate || "",
+          toDate: filters.toDate || "",
+        });
+
+        if (response.data.success) {
+          // Filter by search query on client side if needed
+          let filteredData = response.data.data;
+          if (debouncedQuery) {
+            const q = debouncedQuery.toLowerCase();
+            filteredData = filteredData.filter(
+              (t) =>
+                t.transactionId?.toLowerCase().includes(q) ||
+                t.partyName?.toLowerCase().includes(q) ||
+                t.partyEmail?.toLowerCase().includes(q)
+            );
+          }
+          setTxns(filteredData);
+          setMeta(response.data.meta);
+        } else {
+          setError("Failed to load transactions");
+        }
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
+        setError(err.response?.data?.message || "Failed to load transactions");
+        toast.error("Failed to load transactions");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [page, limit, filters.type, filters.status, filters.fromDate, filters.toDate, debouncedQuery]);
 
   const openView = (t) => {
     setSelected(t);
@@ -133,70 +129,24 @@ const Transactions = () => {
   };
 
   const resetFilters = () => {
-    setFilters({ query: "", status: "All", type: "All", from: "", to: "" });
+    setFilters({ query: "", status: "", type: "", fromDate: "", toDate: "" });
+    setPage(1);
   };
 
-  const filtered = useMemo(() => {
-    const q = filters.query.trim().toLowerCase();
-    const from = filters.from ? new Date(filters.from) : null;
-    const to = filters.to ? new Date(filters.to) : null;
-
-    return txns.filter((t) => {
-      const matchesQuery =
-        !q ||
-        t.id.toLowerCase().includes(q) ||
-        t.partyName.toLowerCase().includes(q) ||
-        t.partyEmail.toLowerCase().includes(q);
-
-      const matchesStatus =
-        filters.status === "All" ? true : t.status === filters.status;
-      const matchesType =
-        filters.type === "All" ? true : t.type === filters.type;
-
-      const dt = new Date(t.datetime);
-      const afterFrom = from ? dt >= new Date(from.setHours(0, 0, 0, 0)) : true;
-      const beforeTo = to ? dt <= new Date(to.setHours(23, 59, 59, 999)) : true;
-
-      return (
-        matchesQuery && matchesStatus && matchesType && afterFrom && beforeTo
-      );
-    });
-  }, [txns, filters]);
-
-  // Analytics based on filtered
-  const totalTransactions = filtered.length;
-  const totalRevenue = filtered
-    .filter((t) => t.status === "Completed")
-    .reduce((sum, t) => sum + (t.type === "Refund" ? 0 : t.amount), 0);
+  // Analytics based on current page data
+  const totalTransactions = meta.total;
+  const totalRevenue = txns
+    .filter((t) => t.status === "completed")
+    .reduce((sum, t) => sum + (t.type === "refund" ? 0 : t.amount), 0);
   const successRate =
     totalTransactions === 0
       ? 0
       : Math.round(
-          (filtered.filter((t) => t.status === "Completed").length /
-            totalTransactions) *
+          (txns.filter((t) => t.status === "completed").length /
+            txns.length) *
             100
         );
-  const refundsIssued = filtered.filter((t) => t.status === "Refunded").length;
-
-  // Refund flow
-  const canRefund = (t) =>
-    !!t && t.status === "Completed" && t.type === "Payment";
-  const onConfirmRefund = () => {
-    if (!selected) return;
-    setTxns((prev) =>
-      prev.map((x) =>
-        x.id === selected.id ? { ...x, status: "Refunded", type: "Refund" } : x
-      )
-    );
-    setConfirmOpen(false);
-    setToast({
-      open: true,
-      title: "Refund issued",
-      description: `Refund issued successfully for ${selected.id}.`,
-      variant: "success",
-    });
-    setTimeout(() => setToast((t) => ({ ...t, open: false })), 2500);
-  };
+  const refundsIssued = txns.filter((t) => t.status === "completed" && t.type === "refund").length;
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -296,12 +246,11 @@ const Transactions = () => {
                       <SelectTrigger>
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
-                      <SelectContent>
+                        <SelectContent>
                         <SelectItem value="All">All</SelectItem>
-                        <SelectItem value="Pending">Pending</SelectItem>
-                        <SelectItem value="Completed">Completed</SelectItem>
-                        <SelectItem value="Failed">Failed</SelectItem>
-                        <SelectItem value="Refunded">Refunded</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="failed">Failed</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -315,34 +264,33 @@ const Transactions = () => {
                       <SelectTrigger>
                         <SelectValue placeholder="Type" />
                       </SelectTrigger>
-                      <SelectContent>
+                        <SelectContent>
                         <SelectItem value="All">All Types</SelectItem>
-                        <SelectItem value="Payment">Payment</SelectItem>
-                        <SelectItem value="Refund">Refund</SelectItem>
-                        <SelectItem value="Subscription">
-                          Subscription
-                        </SelectItem>
-                        <SelectItem value="Transfer">Transfer</SelectItem>
+                        <SelectItem value="deposit">Deposit</SelectItem>
+                        <SelectItem value="payment">Payment</SelectItem>
+                        <SelectItem value="hold">Hold</SelectItem>
+                        <SelectItem value="release">Release</SelectItem>
+                        <SelectItem value="refund">Refund</SelectItem>
                       </SelectContent>
                     </Select>
 
                     {/* Date From */}
                     <Input
                       type="date"
-                      value={filters.from}
+                      value={filters.fromDate}
                       onChange={(e) =>
                         setFilters((prev) => ({
                           ...prev,
-                          from: e.target.value,
+                          fromDate: e.target.value,
                         }))
                       }
                     />
                     {/* Date To */}
                     <Input
                       type="date"
-                      value={filters.to}
+                      value={filters.toDate}
                       onChange={(e) =>
-                        setFilters((prev) => ({ ...prev, to: e.target.value }))
+                        setFilters((prev) => ({ ...prev, toDate: e.target.value }))
                       }
                     />
                   </div>
@@ -363,83 +311,96 @@ const Transactions = () => {
             {/* Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Transactions List</CardTitle>
+                <CardTitle>Transactions List ({meta.total} total)</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Transaction ID</TableHead>
-                        <TableHead>Client/Firm</TableHead>
-                        <TableHead>Amount</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Date & Time</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filtered.map((t, index) => (
-                        <motion.tr
-                          key={t.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.06 }}
-                          className="border-b hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
-                        >
-                          <TableCell className="font-medium">{t.id}</TableCell>
+                {loading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
+                  </div>
+                ) : error ? (
+                  <div className="text-center py-12 text-red-600 dark:text-red-400">
+                    {error}
+                  </div>
+                ) : txns.length === 0 ? (
+                  <div className="text-center py-12 text-neutral-600 dark:text-neutral-400">
+                    No transactions found
+                  </div>
+                ) : (
+                  <>
+                    <div className="rounded-md border">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Transaction ID</TableHead>
+                            <TableHead>Client/Service Provider</TableHead>
+                            <TableHead>Amount</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Date & Time</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {txns.map((t, index) => (
+                            <motion.tr
+                              key={t._id || t.transactionId}
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: index * 0.05 }}
+                              className="border-b hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
+                            >
+                          <TableCell className="font-medium">
+                            {t.transactionId || t._id?.toString().slice(-8)}
+                          </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
                               <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
                                 <span className="text-primary-600 dark:text-primary-400 text-xs font-semibold">
-                                  {getInitials(t.partyName)}
+                                  {getInitials(t.partyName || "Unknown")}
                                 </span>
                               </div>
                               <div>
                                 <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                                  {t.partyName}
+                                  {t.partyName || "Unknown"}
                                 </div>
                                 <div className="text-xs text-neutral-500">
-                                  {t.partyEmail}
+                                  {t.partyEmail || "—"}
                                 </div>
                               </div>
                             </div>
                           </TableCell>
                           <TableCell>
-                            {currencySymbol(t.currency)}
-                            {t.amount.toFixed(2)}
+                            ${t.amount?.toFixed(2) || "0.00"}
                           </TableCell>
                           <TableCell>
                             <Badge
                               variant={
-                                t.type === "Payment"
+                                t.type === "payment" || t.type === "deposit" || t.type === "release"
                                   ? "success"
-                                  : t.type === "Refund"
+                                  : t.type === "refund"
                                   ? "secondary"
                                   : "warning"
                               }
                             >
-                              {t.type}
+                              {t.type || "—"}
                             </Badge>
                           </TableCell>
                           <TableCell>
                             <Badge
                               variant={
-                                t.status === "Completed"
+                                t.status === "completed"
                                   ? "success"
-                                  : t.status === "Pending"
+                                  : t.status === "pending"
                                   ? "warning"
-                                  : t.status === "Refunded"
-                                  ? "secondary"
                                   : "destructive"
                               }
                             >
-                              {t.status}
+                              {t.status || "—"}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            {new Date(t.datetime).toLocaleString()}
+                            {new Date(t.datetime || t.createdAt).toLocaleString()}
                           </TableCell>
                           <TableCell className="text-right">
                             <Button
@@ -454,9 +415,40 @@ const Transactions = () => {
                           </TableCell>
                         </motion.tr>
                       ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                        </TableBody>
+                      </Table>
+                    </div>
+
+                    {/* Pagination */}
+                    {meta.pages > 1 && (
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                          Page {page} of {meta.pages}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            disabled={page === 1}
+                          >
+                            Previous
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              setPage((p) => Math.min(meta.pages, p + 1))
+                            }
+                            disabled={page === meta.pages}
+                          >
+                            Next
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
               </CardContent>
             </Card>
 
@@ -483,42 +475,33 @@ const Transactions = () => {
                           Transaction ID
                         </div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          {selected.id}
+                          {selected.transactionId || selected._id}
                         </div>
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">
-                          Client/Firm
+                          Client/Service Provider
                         </div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          {selected.partyName} • {selected.partyEmail}
+                          {selected.partyName || "Unknown"} • {selected.partyEmail || "—"}
                         </div>
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">Amount</div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          {currencySymbol(selected.currency)}
-                          {selected.amount.toFixed(2)}
+                          ${selected.amount?.toFixed(2) || "0.00"}
                         </div>
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">Type</div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          {selected.type}
+                          {selected.type || "—"}
                         </div>
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">Status</div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          {selected.status}
-                        </div>
-                      </div>
-                      <div className="space-y-1">
-                        <div className="text-xs text-neutral-500">
-                          Payment Method
-                        </div>
-                        <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          {selected.paymentMethod}
+                          {selected.status || "—"}
                         </div>
                       </div>
                       <div className="space-y-1">
@@ -526,84 +509,32 @@ const Transactions = () => {
                           Date & Time
                         </div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          {new Date(selected.datetime).toLocaleString()}
+                          {new Date(selected.datetime || selected.createdAt).toLocaleString()}
                         </div>
                       </div>
                       <div className="space-y-1 sm:col-span-2">
-                        <div className="text-xs text-neutral-500">Notes</div>
+                        <div className="text-xs text-neutral-500">Description</div>
                         <div className="text-sm text-neutral-700 dark:text-neutral-300">
-                          {selected.notes || "—"}
+                          {selected.description || "—"}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-2 pt-2">
-                      <div className="text-sm text-neutral-500" />
-                      {canRefund(selected) ? (
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="destructive"
-                            onClick={() => setConfirmOpen(true)}
-                          >
-                            Refund
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => setViewOpen(false)}
-                          >
-                            Close
-                          </Button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <Badge
-                            variant={
-                              selected.status === "Completed"
-                                ? "success"
-                                : selected.status === "Pending"
-                                ? "warning"
-                                : selected.status === "Refunded"
-                                ? "secondary"
-                                : "destructive"
-                            }
-                          >
-                            {selected.status}
-                          </Badge>
-                          <Button
-                            variant="outline"
-                            onClick={() => setViewOpen(false)}
-                          >
-                            Close
-                          </Button>
-                        </div>
-                      )}
+                    <div className="flex items-center justify-end gap-2 pt-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setViewOpen(false)}
+                      >
+                        Close
+                      </Button>
                     </div>
                   </motion.div>
                 )}
               </DialogContent>
             </Dialog>
 
-            {/* Confirm Refund */}
-            <AlertDialog
-              open={confirmOpen}
-              onOpenChange={setConfirmOpen}
-              title="Issue Refund"
-              description="Are you sure you want to issue a refund for this transaction? This action cannot be undone."
-              confirmText="Refund"
-              variant="destructive"
-              onConfirm={onConfirmRefund}
-            />
           </div>
         </main>
-
-        {/* Toast */}
-        <Toast
-          open={toast.open}
-          title={toast.title}
-          description={toast.description}
-          variant={toast.variant}
-          onOpenChange={(open) => setToast((t) => ({ ...t, open }))}
-        />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://api.yourdomain.com',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -16,12 +16,126 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // If data is FormData, remove Content-Type to let browser set it with boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+    
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
+// Requests API per spec
+export const requestsAPI = {
+  list: (params = {}) => {
+    const { page = 1, limit = 25, status = '', q = '', sort = '-createdAt' } = params;
+    return api.get('/requests/my', { params: { page, limit, status, q, sort } });
+  },
+  create: (data) => api.post('/requests/create', data), // JSON payload (no files)
+  createWithFiles: (formData) => {
+    // FormData requests - Content-Type will be automatically set by browser with boundary
+    // The interceptor already handles this, so we just need to pass the FormData
+    return api.post('/requests/create', formData);
+  },
+  get: (id) => api.get(`/requests/${id}`),
+  getWithProposals: (id) => api.get(`/requests/${id}/proposals`),
+  update: (id, data) => api.patch(`/requests/${id}`, data),
+  remove: (id) => api.delete(`/requests/${id}`),
+  // Service Provider API - browse available requests
+  browse: (params = {}) => {
+    const { page = 1, limit = 25, status = '', q = '', sort = '-createdAt' } = params;
+    return api.get('/service-provider/requests', { params: { page, limit, status, q, sort } });
+  },
+  getForServiceProvider: (id) => api.get(`/service-provider/requests/${id}`),
+};
+
+// Proposals API
+export const proposalsAPI = {
+  // Service Provider: List my proposals
+  listMy: () => api.get('/service-provider/proposals/my'),
+  // Service Provider: Get single proposal
+  get: (id) => api.get(`/service-provider/proposals/${id}`),
+  // Service Provider: Create proposal with files
+  create: (requestId, formData) => {
+    // FormData should include: price, durationDays, notes, and files as 'documents'
+    return api.post(`/service-provider/requests/${requestId}/proposals`, formData);
+  },
+  // Service Provider: Update proposal
+  update: (id, formData) => api.patch(`/service-provider/proposals/${id}`, formData),
+  // Service Provider: Cancel proposal
+  cancel: (id) => api.delete(`/service-provider/proposals/${id}`),
+  // Client: List proposals for a request
+  listByRequest: (requestId) => api.get(`/requests/${requestId}/proposals`),
+};
+
+// Bookings API
+export const bookingsAPI = {
+  // Client: List my bookings
+  listMy: () => api.get('/bookings/my'),
+  // Client: Get single booking
+  get: (id) => api.get(`/bookings/${id}`),
+  // Client: Accept a proposal (creates booking and wallet hold)
+  acceptProposal: (proposalId) => api.post(`/bookings/proposals/${proposalId}/accept`),
+  // Client: Cancel booking
+  cancel: (id) => api.patch(`/bookings/${id}/cancel`),
+  // Service Provider: List my bookings
+  listMyForProvider: () => api.get('/service-provider/bookings/my'),
+  // Service Provider: Update booking status (accept, start, complete)
+  updateStatus: (id, action) => api.patch(`/service-provider/bookings/${id}/${action}`),
+};
+
+// Wallet API per spec
+export const walletAPI = {
+  // Client wallet endpoint
+  get: () => api.get('/wallet'), // returns { balance, transactions }
+  // Service provider wallet endpoint
+  getForServiceProvider: () => api.get('/service-provider/wallet'), // returns { balance, transactions }
+  deposit: (amount) => api.post('/wallet/deposit', { amount }),
+  // Note: hold/release/refund are typically called by backend when accepting proposals
+};
+
+// Messages API per spec
+export const messagesAPI = {
+  // Client APIs
+  getConversation: (serviceProviderId) => api.get(`/messages/${serviceProviderId}`),
+  send: (serviceProviderId, data) => api.post(`/messages/${serviceProviderId}`, data),
+  // Service Provider APIs
+  getConversationForServiceProvider: (clientId) => api.get(`/messages/service-provider/${clientId}`),
+  sendFromServiceProvider: (clientId, data) => api.post(`/messages/service-provider/${clientId}`, data),
+  // Legacy support
+  getConversationLegacy: (companyId) => api.get(`/messages/${companyId}`),
+  sendLegacy: (companyId, data) => api.post(`/messages/${companyId}`, data),
+};
+
+// Service Provider API
+export const serviceProviderAPI = {
+  // Browse available requests
+  browseRequests: (params) => api.get('/service-provider/requests', { params }),
+  getRequest: (id) => api.get(`/service-provider/requests/${id}`),
+  // Wallet for service providers
+  getWallet: () => api.get('/service-provider/wallet'),
+  // Bookings
+  listMyBookings: () => api.get('/service-provider/bookings/my'),
+  updateBooking: (id, action) => api.patch(`/service-provider/bookings/${id}/${action}`),
+};
+
+// Admin API (users, requests, bookings, proposals)
+export const adminAPI = {
+  listUsers: (params) => api.get('/admin/users', { params }),
+  updateUserStatus: (id, status) => api.patch(`/admin/users/${id}/status`, { status }),
+  listRequests: (params) => api.get('/admin/requests', { params }),
+  listPendingRequests: (params) => api.get('/admin/requests/pending', { params }),
+  getRequest: (id) => api.get(`/admin/requests/${id}`),
+  approveRequest: (id) => api.patch(`/admin/requests/${id}/approve`),
+  rejectRequest: (id, reason) => api.patch(`/admin/requests/${id}/reject`, { reason }),
+  listBookings: (params) => api.get('/admin/bookings', { params }),
+  listPendingProposals: (params) => api.get('/admin/proposals/pending', { params }),
+  approveProposal: (id) => api.patch(`/admin/proposals/${id}/approve`),
+  rejectProposal: (id, reason) => api.patch(`/admin/proposals/${id}/reject`, { reason }),
+};
 
 // Response interceptor for error handling
 api.interceptors.response.use(
@@ -30,7 +144,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Handle unauthorized access
       localStorage.removeItem('authToken');
-      localStorage.removeItem('userData');
+      localStorage.removeItem('user');
       window.location.href = '/auth/login';
     }
     return Promise.reject(error);
@@ -39,80 +153,29 @@ api.interceptors.response.use(
 
 // Auth API endpoints
 export const authAPI = {
-  login: async (data) => {
-    try {
-      // Mock API call - replace with actual endpoint
-      console.log('Login attempt:', data);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock successful response
-      return {
-        data: {
-          token: 'mock-jwt-token-' + Date.now(),
-          user: {
-            id: 1,
-            email: data.email,
-            type: 'client'
-          }
-        }
-      };
-    } catch (error) {
-      throw error;
-    }
-  },
+  // Login with email/password
+  login: (data) => api.post('/auth/login', data),
+  // Register (generic)
+  register: (data) => api.post('/auth/register', data),
+  // Get current profile
+  getProfile: () => api.get('/auth/me'),
+  // Phone verification
+  sendPhoneCode: (phone) => api.post('/auth/verify/send', { phone }),
+  verifyPhoneCode: (phone, code) => api.post('/auth/verify/check', { phone, code }),
 
-  registerCompany: async (formData) => {
-    try {
-      // Mock API call - replace with actual endpoint
-      console.log('Company registration attempt');
-      console.log('Form data entries:', [...formData.entries()]);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock successful response
-      return {
-        data: {
-          message: 'Company registered successfully',
-          userId: Date.now()
-        }
-      };
-    } catch (error) {
-      throw error;
-    }
-  },
+  // Service Provider registration (multipart/form-data with documents)
+  // NOTE: Content-Type is automatically removed by interceptor for FormData
+  registerServiceProvider: (formData) =>
+    api.post('/auth/register/service-provider', formData),
+  // Legacy endpoint for backward compatibility
+  registerCompany: (formData) =>
+    api.post('/auth/register/company', formData),
 
-  registerClient: async (data) => {
-    try {
-      // Mock API call - replace with actual endpoint
-      console.log('Client registration attempt:', data);
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Mock successful response
-      return {
-        data: {
-          message: 'Client registered successfully',
-          userId: Date.now()
-        }
-      };
-    } catch (error) {
-      throw error;
-    }
-  },
+  // Client registration (JSON payload)
+  registerClient: (data) => api.post('/auth/register/client', data),
 
-  forgotPassword: async (email) => {
-    try {
-      console.log('Forgot password request for:', email);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return { data: { message: 'Reset instructions sent to your email' } };
-    } catch (error) {
-      throw error;
-    }
-  }
+  // Forgot password
+  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
 };
 
 export default api;

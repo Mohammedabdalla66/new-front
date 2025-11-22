@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { walletAPI, serviceProviderAPI } from "../../services/api";
+import { useAuth } from "../../hooks/useAuth";
 import {
   DollarSign,
   TrendingUp,
@@ -15,62 +17,79 @@ import {
 
 const WalletPage = () => {
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const isServiceProvider = user?.role === 'serviceProvider' || user?.role === 'firm' || user?.role === 'company';
+  
   const [activeTab, setActiveTab] = useState("overview");
+  const [walletData, setWalletData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const walletStats = {
-    balance: 12450.0,
-    pending: 3200.0,
-    totalEarnings: 45600.0,
-    thisMonth: 8500.0,
+  useEffect(() => {
+    const loadWallet = async () => {
+      try {
+        setLoading(true);
+        
+        // Use the correct endpoint based on user role
+        const response = isServiceProvider 
+          ? await serviceProviderAPI.getWallet()
+          : await walletAPI.get();
+        
+        // Handle response format: { success: true, data: { balance, pendingPayouts, transactions } }
+        const walletResponse = response.data?.data || response.data;
+        setWalletData({
+          balance: walletResponse.balance || 0,
+          pendingPayouts: walletResponse.pendingPayouts || 0,
+          transactions: walletResponse.transactions || [],
+        });
+      } catch (err) {
+        console.error("Error loading wallet:", err);
+        console.error("Error response:", err?.response?.data);
+        console.error("Error status:", err?.response?.status);
+        setError(err?.response?.data?.message || err?.response?.data?.error || "Failed to load wallet data");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadWallet();
+  }, [isServiceProvider]);
+
+  // Calculate stats from transactions
+  const walletStats = walletData ? {
+    balance: walletData.balance || 0,
+    pending: walletData.pendingPayouts || walletData.transactions
+      ?.filter(t => t.status === 'pending' && (t.type === 'payment' || t.type === 'release'))
+      .reduce((sum, t) => sum + (t.amount || 0), 0) || 0,
+    totalEarnings: walletData.transactions
+      ?.filter(t => (t.type === 'release' || t.type === 'payment') && t.status === 'completed')
+      .reduce((sum, t) => sum + (t.amount || 0), 0) || 0,
+    thisMonth: walletData.transactions
+      ?.filter(t => {
+        const date = new Date(t.createdAt);
+        const now = new Date();
+        return date.getMonth() === now.getMonth() && 
+               date.getFullYear() === now.getFullYear() &&
+               (t.type === 'release' || t.type === 'payment') && 
+               t.status === 'completed';
+      })
+      .reduce((sum, t) => sum + (t.amount || 0), 0) || 0,
+  } : {
+    balance: 0,
+    pending: 0,
+    totalEarnings: 0,
+    thisMonth: 0,
   };
 
-  const transactions = [
-    {
-      id: 1,
-      type: "earning",
-      amount: 2500.0,
-      description: "Tax Filing Services - ABC Company",
-      date: "2024-12-15",
-      status: "completed",
-      method: "bank_transfer",
-    },
-    {
-      id: 2,
-      type: "earning",
-      amount: 1800.0,
-      description: "Financial Statements - XYZ Corp",
-      date: "2024-12-10",
-      status: "completed",
-      method: "bank_transfer",
-    },
-    {
-      id: 3,
-      type: "withdrawal",
-      amount: -2000.0,
-      description: "Withdrawal to Bank Account",
-      date: "2024-12-08",
-      status: "completed",
-      method: "bank_transfer",
-    },
-    {
-      id: 4,
-      type: "earning",
-      amount: 3200.0,
-      description: "Audit Support - GHI Industries",
-      date: "2024-12-05",
-      status: "pending",
-      method: "bank_transfer",
-    },
-    {
-      id: 5,
-      type: "earning",
-      amount: 1200.0,
-      description: "Payroll Setup - JKL Services",
-      date: "2024-12-01",
-      status: "completed",
-      method: "bank_transfer",
-    },
-  ];
+  const transactions = walletData?.transactions?.map(t => ({
+    id: t._id || t.id,
+    type: t.type === 'release' || t.type === 'deposit' ? 'earning' : 
+          t.type === 'hold' ? 'hold' : 'withdrawal',
+    amount: t.type === 'hold' ? -t.amount : t.amount,
+    description: t.description || `${t.type} transaction`,
+    date: new Date(t.createdAt).toLocaleDateString(),
+    status: t.status,
+    method: 'wallet',
+  })) || [];
 
   const getTransactionIcon = (type) => {
     switch (type) {
@@ -78,6 +97,8 @@ const WalletPage = () => {
         return <TrendingUp className="w-5 h-5 text-green-500" />;
       case "withdrawal":
         return <TrendingDown className="w-5 h-5 text-red-500" />;
+      case "hold":
+        return <Clock className="w-5 h-5 text-yellow-500" />;
       default:
         return <DollarSign className="w-5 h-5 text-gray-500" />;
     }
@@ -101,6 +122,25 @@ const WalletPage = () => {
     { id: "transactions", label: "Transactions" },
     { id: "withdrawals", label: t("withdrawals") },
   ];
+
+  if (loading) {
+    return (
+      <div className="text-center py-12">
+        <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">Loading wallet...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <p className="text-red-800 dark:text-red-200">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
