@@ -5,7 +5,7 @@ import { Building2, Users, DollarSign, Clock } from "lucide-react";
 
 import Navbar from "../components/Layout/Navbar";
 import AdminSidebar from "../components/sidebar/AdminSidebar";
-import StatsCard from "../components/Dashboard/StatsCard";
+import StatsCard from "../components/dashboard/StatsCard";
 import RevenueChart from "../components/Dashboard/RevenueChart";
 import ServicePie from "../components/Dashboard/ServicePie";
 import RecentActivity from "../components/Dashboard/RecentActivity";
