@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,6 +13,8 @@ import CaHupLogo from "../../components/CaHupLogo";
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [retryAfter, setRetryAfter] = useState(null);
+  const [cooldownTimer, setCooldownTimer] = useState(null);
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -27,12 +29,36 @@ const LoginPage = () => {
     navigate('/auth/register');
   };
 
+  // Cleanup cooldown timer on unmount
+  useEffect(() => {
+    return () => {
+      if (cooldownTimer) {
+        clearInterval(cooldownTimer);
+      }
+    };
+  }, [cooldownTimer]);
+
   const onSubmit = async (data) => {
+    // Prevent submission if in cooldown
+    if (retryAfter && retryAfter > 0) {
+      toast.warning(`Please wait ${Math.ceil(retryAfter / 60)} minutes before trying again.`);
+      return;
+    }
+
     setLoading(true);
     try {
       const payload = { email: data.email, password: data.password };
       console.log('Login payload:', payload); // Debug log
       const res = await authAPI.login(payload);
+      
+      // Clear any cooldown on successful login
+      if (retryAfter) {
+        setRetryAfter(null);
+        if (cooldownTimer) {
+          clearInterval(cooldownTimer);
+          setCooldownTimer(null);
+        }
+      }
       const token = res?.data?.token || res?.data?.accessToken;
       const userFromApi = res?.data?.user || res?.data?.data?.user;
 
@@ -69,11 +95,40 @@ const LoginPage = () => {
                           error?.message || 
                           'Login failed. Please try again.';
       
-      // Check if it's a 403 (pending account) or 401 (invalid credentials)
+      // Check if it's a 403 (pending account), 401 (invalid credentials), or 429 (rate limit)
       if (error?.response?.status === 403) {
         toast.error(errorMessage || 'Your account is under review. Please wait for admin approval.');
       } else if (error?.response?.status === 401) {
         toast.error(errorMessage || 'Invalid email or password.');
+      } else if (error?.response?.status === 429) {
+        // Extract retry-after from response
+        const retryAfterSeconds = error?.response?.data?.retryAfter || 
+                                  error?.response?.headers?.['retry-after'] || 
+                                  error?.response?.headers?.['x-ratelimit-reset'] ||
+                                  900; // Default to 15 minutes (900 seconds)
+        
+        const retryAfterMinutes = Math.ceil(retryAfterSeconds / 60);
+        const message = `Too many login attempts. Please wait ${retryAfterMinutes} minute${retryAfterMinutes !== 1 ? 's' : ''} before trying again.`;
+        
+        toast.error(message, { autoClose: 8000 });
+        
+        // Set cooldown timer
+        setRetryAfter(retryAfterSeconds);
+        
+        // Start countdown timer
+        const timer = setInterval(() => {
+          setRetryAfter((prev) => {
+            if (prev <= 1) {
+              clearInterval(timer);
+              setCooldownTimer(null);
+              toast.info('You can now try logging in again.');
+              return null;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        
+        setCooldownTimer(timer);
       } else {
         toast.error(errorMessage);
       }
@@ -135,20 +190,6 @@ const LoginPage = () => {
           )}
         </div>
 
-        {/* Role Selector (Fake Auth) */}
-        <div>
-          <label className="form-label">Role</label>
-          <select
-            {...register('role')}
-            className="form-input"
-            defaultValue="client"
-          >
-            <option value="client">Client</option>
-            <option value="admin">Admin</option>
-            <option value="firm">Firm</option>
-          </select>
-        </div>
-
         {/* Forgot Password Link */}
         <div className="flex justify-end">
           <Link
@@ -162,14 +203,17 @@ const LoginPage = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || (retryAfter !== null && retryAfter > 0)}
           className="btn-primary"
+          title={retryAfter && retryAfter > 0 ? `Please wait ${Math.ceil(retryAfter / 60)} minute${Math.ceil(retryAfter / 60) !== 1 ? 's' : ''} before trying again` : ''}
         >
           {loading ? (
             <div className="flex items-center justify-center">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
               Signing in...
             </div>
+          ) : retryAfter && retryAfter > 0 ? (
+            `Wait ${Math.ceil(retryAfter / 60)}m ${retryAfter % 60}s`
           ) : (
             'Sign In'
           )}

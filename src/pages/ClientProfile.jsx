@@ -1,27 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { ProfileForm } from "../components/Profile/ProfileForm.jsx";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
 
-const mockClient = {
-  id: "client-1",
-  name: "Jane Client",
-  email: "jane.client@example.com",
-  phone: "+1 (555) 111-2222",
-  company: "ClientCo LLC",
-  avatar:
-    "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&dpr=2",
-  location: "Austin, TX",
-  joinedDate: "2023-06-01",
-  verified: false,
-};
-
 export default function ClientProfile() {
   const { t } = useLanguage();
-  const [user, setUser] = useState(mockClient);
 
   const handleSave = (updatedUser) => {
-    setUser(updatedUser);
-    console.log("Saving client (static):", updatedUser);
+    // ProfileForm now handles all API calls and state updates
+    console.log("Profile updated:", updatedUser);
   };
 
   return (
@@ -37,7 +23,7 @@ export default function ClientProfile() {
       </div>
 
       {/* Profile Form */}
-      <ProfileForm user={user} onSave={handleSave} />
+      <ProfileForm onSave={handleSave} />
 
       {/* Stats Cards */}
       <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">

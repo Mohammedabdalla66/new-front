@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { serviceProviderAPI } from "../../services/api";
+import { toast } from "react-toastify";
 import {
   Calendar,
   TrendingUp,
@@ -16,36 +18,106 @@ import {
 
 const DashboardPage = () => {
   const { t } = useLanguage();
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const statsCards = [
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        setLoading(true);
+        const response = await serviceProviderAPI.getDashboardStats();
+        if (response.data.success) {
+          setStats(response.data.data);
+        } else {
+          console.error("Dashboard stats response not successful:", response.data);
+          toast.error(response.data.message || "Failed to load dashboard statistics");
+        }
+      } catch (error) {
+        console.error("Error loading dashboard stats:", error);
+        const errorMessage = error?.response?.data?.message || error?.message || "Failed to load dashboard statistics";
+        console.error("Error details:", {
+          status: error?.response?.status,
+          statusText: error?.response?.statusText,
+          data: error?.response?.data,
+          url: error?.config?.url
+        });
+        toast.error(errorMessage);
+        // Set default stats on error so UI doesn't break
+        setStats({
+          bookings: { total: 0, active: 0, completed: 0 },
+          proposals: { total: 0, pending: 0, active: 0, accepted: 0 },
+          earnings: 0,
+          messages: { unread: 0 }
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadStats();
+  }, []);
+
+  const statsCards = stats ? [
     {
       title: t("totalBookings"),
-      value: "24",
-      change: "+12%",
+      value: stats.bookings?.total || 0,
+      change: "",
       changeType: "positive",
       icon: Calendar,
       color: "blue",
     },
     {
       title: t("activeProjects"),
-      value: "8",
-      change: "+3",
+      value: stats.bookings?.active || 0,
+      change: "",
       changeType: "positive",
       icon: TrendingUp,
       color: "green",
     },
     {
       title: t("completedProjects"),
-      value: "156",
-      change: "+8%",
+      value: stats.bookings?.completed || 0,
+      change: "",
       changeType: "positive",
       icon: CheckCircle,
       color: "purple",
     },
     {
       title: t("earnings"),
-      value: "$12,450",
-      change: "+15%",
+      value: `$${stats.earnings?.toLocaleString() || 0}`,
+      change: "",
+      changeType: "positive",
+      icon: DollarSign,
+      color: "yellow",
+    },
+  ] : [
+    {
+      title: t("totalBookings"),
+      value: "0",
+      change: "",
+      changeType: "positive",
+      icon: Calendar,
+      color: "blue",
+    },
+    {
+      title: t("activeProjects"),
+      value: "0",
+      change: "",
+      changeType: "positive",
+      icon: TrendingUp,
+      color: "green",
+    },
+    {
+      title: t("completedProjects"),
+      value: "0",
+      change: "",
+      changeType: "positive",
+      icon: CheckCircle,
+      color: "purple",
+    },
+    {
+      title: t("earnings"),
+      value: "$0",
+      change: "",
       changeType: "positive",
       icon: DollarSign,
       color: "yellow",
@@ -147,6 +219,14 @@ const DashboardPage = () => {
         return "text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-700";
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

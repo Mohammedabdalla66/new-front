@@ -1,21 +1,110 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { messagesAPI } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
-
-// Empty conversations - will be populated from API when endpoint is available
-const placeholderConversations = [];
+import { useAuth } from "../hooks/useAuth";
 
 export const Messages = () => {
   const { t } = useLanguage();
-  const [activeId, setActiveId] = useState(null); // No active conversation by default
+  const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [conversations, setConversations] = useState([]);
+  const [activeId, setActiveId] = useState(null);
+  
+  // Determine the base path based on current route
+  const getBasePath = () => {
+    if (location.pathname.startsWith('/firm/')) {
+      return '/firm/messages';
+    } else if (location.pathname.startsWith('/client/')) {
+      return '/client/messages';
+    } else if (location.pathname.startsWith('/dashboard/')) {
+      return '/dashboard/messages';
+    }
+    return '/client/messages'; // Default fallback
+  };
   const [text, setText] = useState("");
   const [attach, setAttach] = useState(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [conversationsLoading, setConversationsLoading] = useState(true);
   const [error, setError] = useState("");
   const endRef = useRef(null);
+
+  // Load conversations on mount
+  useEffect(() => {
+    const loadConversations = async () => {
+      try {
+        setConversationsLoading(true);
+        const response = user?.role === 'client' 
+          ? await messagesAPI.listClientConversations()
+          : await messagesAPI.listServiceProviderConversations();
+        
+        if (response.data.success) {
+          const chats = response.data.data || [];
+          setConversations(chats.map(chat => {
+            // Always use conversationId (Chat._id) as the primary id
+            const conversationId = chat.conversationId || chat._id;
+            return {
+              id: conversationId, // Use conversationId as the primary id
+              company: chat.serviceProvider?.name || chat.client?.name || 'Unknown',
+              lastMessage: chat.lastMessage?.text || 'No messages yet',
+              time: chat.lastMessage?.timestamp ? new Date(chat.lastMessage.timestamp).toLocaleTimeString() : '',
+              unread: user?.role === 'client' 
+                ? (chat.unreadCount?.client || 0)
+                : (chat.unreadCount?.serviceProvider || 0),
+              requestTitle: chat.request?.title || '',
+              proposalPrice: chat.proposal?.price || null,
+              conversationId: conversationId, // Explicitly set conversationId
+              // Keep participant IDs for reference
+              serviceProviderId: chat.serviceProvider?._id || chat.serviceProvider,
+              clientId: chat.client?._id || chat.client
+            };
+          }));
+          
+          // Check if there's a chat parameter in URL
+          const chatParam = searchParams.get('chat');
+          if (chatParam) {
+            // Try to find by conversationId first, then by participant ID
+            const foundChat = chats.find(c => {
+              const convId = c.conversationId || c._id;
+              return convId === chatParam || 
+                     convId?.toString() === chatParam ||
+                     (c.serviceProvider?._id || c.serviceProvider || c.client?._id || c.client) === chatParam;
+            });
+            if (foundChat) {
+              // Always use conversationId if available
+              const idToUse = foundChat.conversationId || foundChat._id || chatParam;
+              console.log('Setting activeId from URL param:', idToUse);
+              setActiveId(idToUse);
+            } else {
+              // If chat param exists but conversation not found, try using it directly
+              // This handles cases where the conversation might not be loaded yet
+              console.log('Chat param found but conversation not in list, using param directly:', chatParam);
+              setActiveId(chatParam);
+            }
+          } else if (chats.length > 0 && !activeId) {
+            // Auto-select first conversation if none is selected
+            const firstChat = chats[0];
+            const idToUse = firstChat.conversationId || firstChat._id;
+            console.log('Auto-selecting first conversation:', idToUse);
+            setActiveId(idToUse);
+          }
+        }
+      } catch (e) {
+        console.error('Error loading conversations:', e);
+      } finally {
+        setConversationsLoading(false);
+      }
+    };
+    
+    if (user) {
+      loadConversations();
+    }
+  }, [user, searchParams]);
 
   // Handle window resize
   React.useEffect(() => {
@@ -49,12 +138,50 @@ export const Messages = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await messagesAPI.getConversation(activeId);
-        const data = Array.isArray(res.data) ? res.data : [];
+        // Check if activeId is a conversationId (from conversations list) or serviceProviderId (legacy)
+        const activeConversation = conversations.find(c => 
+          c.id === activeId || 
+          c.conversationId === activeId ||
+          (c.conversationId && c.conversationId.toString() === activeId.toString())
+        );
+        
+        let res;
+        let conversationIdToUse = null;
+        
+        // Determine which conversationId to use
+        if (activeConversation && activeConversation.conversationId) {
+          conversationIdToUse = activeConversation.conversationId;
+        } else if (activeId && /^[0-9a-fA-F]{24}$/.test(activeId)) {
+          // If activeId is a valid ObjectId, try using it directly as conversationId
+          const matchingChat = conversations.find(c => 
+            (c.conversationId && c.conversationId.toString() === activeId.toString()) ||
+            (c._id && c._id.toString() === activeId.toString())
+          );
+          if (matchingChat) {
+            conversationIdToUse = matchingChat.conversationId || matchingChat._id || activeId;
+          } else {
+            // Try using activeId directly as conversationId
+            conversationIdToUse = activeId;
+          }
+        }
+        
+        if (conversationIdToUse) {
+          // Use conversationId-based API
+          console.log('Loading messages for conversationId:', conversationIdToUse);
+          res = await messagesAPI.getMessagesByConversation(conversationIdToUse);
+        } else {
+          // Fallback to legacy API (using serviceProviderId/clientId)
+          console.log('Using legacy API with activeId:', activeId);
+          res = user?.role === 'client'
+            ? await messagesAPI.getConversation(activeId)
+            : await messagesAPI.getConversationForServiceProvider(activeId);
+        }
+        
+        const data = res.data.success ? (res.data.data || []) : (Array.isArray(res.data) ? res.data : []);
         const mapped = data.map((m) => ({
           id: m._id,
-          sender: m.sender === "client" ? "You" : "Service Provider",
-          side: m.sender === "client" ? "right" : "left",
+          sender: m.sender === "client" ? (user?.role === 'client' ? "You" : "Client") : "Service Provider",
+          side: m.sender === "client" ? (user?.role === 'client' ? "right" : "left") : (user?.role === 'client' ? "left" : "right"),
           text: m.text,
           time: new Date(m.createdAt).toLocaleTimeString(),
           file: m.file
@@ -82,7 +209,7 @@ export const Messages = () => {
     return () => {
       mounted = false;
     };
-  }, [activeId]);
+  }, [activeId, conversations, user]);
 
   // Auto-scroll to bottom when messages change
   React.useEffect(() => {
@@ -92,25 +219,135 @@ export const Messages = () => {
   }, [messages]);
 
   const onSend = async () => {
-    if (!text && !attach) return;
+    if (!text.trim() && !attach) {
+      console.log('Cannot send: no text or attachment');
+      setError(t("pleaseEnterMessage"));
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
+    
+    if (!activeId) {
+      console.log('Cannot send: no activeId. Conversations:', conversations);
+      setError(t("pleaseSelectConversation"));
+      setTimeout(() => setError(""), 3000);
+      // Try to auto-select first conversation if available
+      if (conversations.length > 0) {
+        const firstChat = conversations[0];
+        const idToUse = firstChat.conversationId || firstChat.id;
+        console.log('Auto-selecting first conversation:', idToUse);
+        setActiveId(idToUse);
+        // Retry sending after a short delay
+        setTimeout(() => {
+          if (text.trim() || attach) {
+            onSend();
+          }
+        }, 100);
+      }
+      return;
+    }
+    
     try {
-      const payload = { text, file: attach ? attach.name : undefined };
-      const res = await messagesAPI.send(activeId, payload);
-      const m = res.data;
+      setError("");
+      const payload = { text: text.trim(), file: attach ? attach.name : undefined };
+      
+      // Find the active conversation
+      const activeConversation = conversations.find(c => 
+        c.id === activeId || 
+        c.conversationId === activeId ||
+        (c.conversationId && c.conversationId.toString() === activeId.toString())
+      );
+      
+      console.log('Sending message - activeId:', activeId, 'activeConversation:', activeConversation);
+      
+      let res;
+      let conversationIdToUse = null;
+      
+      // Determine which conversationId to use
+      if (activeConversation && activeConversation.conversationId) {
+        conversationIdToUse = activeConversation.conversationId;
+      } else if (activeId && /^[0-9a-fA-F]{24}$/.test(activeId)) {
+        // If activeId is a valid ObjectId and matches a conversationId, use it directly
+        const matchingChat = conversations.find(c => 
+          (c.conversationId && c.conversationId.toString() === activeId.toString()) ||
+          (c._id && c._id.toString() === activeId.toString())
+        );
+        if (matchingChat) {
+          conversationIdToUse = matchingChat.conversationId || matchingChat._id || activeId;
+        } else {
+          // Try using activeId directly as conversationId
+          conversationIdToUse = activeId;
+        }
+      }
+      
+      if (conversationIdToUse) {
+        // Use conversationId-based API
+        console.log('Using conversationId-based API:', conversationIdToUse);
+        res = await messagesAPI.sendToConversation(conversationIdToUse, payload);
+      } else {
+        // Fallback to legacy API (using serviceProviderId/clientId)
+        console.log('Using legacy API with activeId:', activeId);
+        res = user?.role === 'client'
+          ? await messagesAPI.send(activeId, payload)
+          : await messagesAPI.sendFromServiceProvider(activeId, payload);
+      }
+      
+      console.log('Message sent successfully:', res.data);
+      
+      const m = res.data.success ? res.data.data : res.data;
+      if (!m || !m._id) {
+        throw new Error('Invalid response from server');
+      }
+      
       const mapped = {
         id: m._id,
         sender: "You",
         side: "right",
-        text: m.text,
-        time: new Date(m.createdAt).toLocaleTimeString(),
-        file: m.file ? { name: m.file, url: "#", type: "file" } : undefined,
+        text: m.text || text.trim(),
+        time: new Date(m.createdAt || new Date()).toLocaleTimeString(),
+        file: m.file ? { name: m.file.name || m.file, url: m.file.url || "#", type: m.file.type || "file" } : undefined,
       };
       setMessages((prev) => [...prev, mapped]);
       setText("");
       setAttach(null);
+      
+      // Refresh conversations to update last message
+      if (user) {
+        try {
+          const response = user.role === 'client' 
+            ? await messagesAPI.listClientConversations()
+            : await messagesAPI.listServiceProviderConversations();
+          if (response.data.success) {
+            const chats = response.data.data || [];
+            setConversations(chats.map(chat => {
+              const conversationId = chat.conversationId || chat._id;
+              return {
+                id: conversationId, // Use conversationId as the primary id
+                company: chat.serviceProvider?.name || chat.client?.name || 'Unknown',
+                lastMessage: chat.lastMessage?.text || 'No messages yet',
+                time: chat.lastMessage?.timestamp ? new Date(chat.lastMessage.timestamp).toLocaleTimeString() : '',
+                unread: user.role === 'client' 
+                  ? (chat.unreadCount?.client || 0)
+                  : (chat.unreadCount?.serviceProvider || 0),
+                requestTitle: chat.request?.title || '',
+                proposalPrice: chat.proposal?.price || null,
+                conversationId: conversationId,
+                serviceProviderId: chat.serviceProvider?._id || chat.serviceProvider,
+                clientId: chat.client?._id || chat.client
+              };
+            }));
+          }
+        } catch (refreshError) {
+          console.error('Error refreshing conversations:', refreshError);
+          // Don't show error to user, just log it
+        }
+      }
     } catch (e) {
-      console.error(e);
-      setError(e?.response?.data?.message || t("failedToSendMessage"));
+      console.error('Error sending message:', e);
+      console.error('Error details:', e.response?.data);
+      const errorMsg = e?.response?.data?.message || e?.message || t("failedToSendMessage");
+      setError(errorMsg);
+      // Show error for 3 seconds then clear
+      setTimeout(() => setError(""), 3000);
     }
     // Reset textarea height
     const textarea = document.querySelector("textarea");
@@ -186,17 +423,27 @@ export const Messages = () => {
             </h2>
           </div>
           <div className="flex-1 overflow-y-auto">
-            {placeholderConversations.length === 0 ? (
+            {conversationsLoading ? (
+              <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+                Loading conversations...
+              </div>
+            ) : conversations.length === 0 ? (
               <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
                 {t("noConversationsYet")}
               </div>
             ) : (
-              placeholderConversations.map((c) => (
+              conversations.map((c) => (
                 <button
                   key={c.id}
-                  onClick={() => setActiveId(c.id)}
+                  onClick={() => {
+                    // Use conversationId if available, otherwise use id
+                    const idToUse = c.conversationId || c.id;
+                    console.log('Conversation clicked, setting activeId:', idToUse);
+                    setActiveId(idToUse);
+                    navigate(`${getBasePath()}?chat=${idToUse}`);
+                  }}
                   className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                    activeId === c.id
+                    (activeId === c.id || activeId === c.conversationId)
                       ? "bg-blue-50 border-r-2 border-r-blue-500"
                       : ""
                   }`}
@@ -207,9 +454,21 @@ export const Messages = () => {
                     </div>
                     <div className="text-xs text-gray-400 ml-2">{c.time}</div>
                   </div>
+                  {c.requestTitle && (
+                    <div className="text-xs text-gray-500 truncate mt-1">
+                      {c.requestTitle}
+                    </div>
+                  )}
                   <div className="mt-1 text-sm text-gray-600 truncate">
                     {c.lastMessage}
                   </div>
+                  {c.unread > 0 && (
+                    <div className="mt-1">
+                      <span className="inline-block px-2 py-0.5 text-xs bg-blue-600 text-white rounded-full">
+                        {c.unread}
+                      </span>
+                    </div>
+                  )}
                 </button>
               ))
             )}
@@ -250,20 +509,28 @@ export const Messages = () => {
                 </button>
               </div>
               <div className="overflow-y-auto h-full">
-                {placeholderConversations.length === 0 ? (
+                {conversationsLoading ? (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    Loading conversations...
+                  </div>
+                ) : conversations.length === 0 ? (
                   <div className="p-4 text-center text-gray-500 text-sm">
                     No conversations yet.
                   </div>
                 ) : (
-                  placeholderConversations.map((c) => (
+                  conversations.map((c) => (
                     <button
                       key={c.id}
                       onClick={() => {
-                        setActiveId(c.id);
+                        // Use conversationId if available, otherwise use id
+                        const idToUse = c.conversationId || c.id;
+                        console.log('Mobile conversation clicked, setting activeId:', idToUse);
+                        setActiveId(idToUse);
                         setShowSidebar(false);
+                        navigate(`${getBasePath()}?chat=${idToUse}`);
                       }}
                       className={`w-full text-left px-4 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors ${
-                        activeId === c.id ? "bg-blue-50" : ""
+                        (activeId === c.id || activeId === c.conversationId) ? "bg-blue-50" : ""
                       }`}
                     >
                       <div className="flex items-center justify-between">
@@ -274,9 +541,21 @@ export const Messages = () => {
                           {c.time}
                         </div>
                       </div>
+                      {c.requestTitle && (
+                        <div className="text-xs text-gray-500 truncate mt-1">
+                          {c.requestTitle}
+                        </div>
+                      )}
                       <div className="mt-1 text-sm text-gray-600 truncate">
                         {c.lastMessage}
                       </div>
+                      {c.unread > 0 && (
+                        <div className="mt-1">
+                          <span className="inline-block px-2 py-0.5 text-xs bg-blue-600 text-white rounded-full">
+                            {c.unread}
+                          </span>
+                        </div>
+                      )}
                     </button>
                   ))
                 )}

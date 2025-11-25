@@ -19,7 +19,7 @@ import {
 import { useLanguage } from "../contexts/LanguageContext.jsx";
 
 const StatusTracker = ({ status }) => {
-  const steps = ["submitted", "open", "in-progress", "completed"];
+  const steps = ["pending", "open", "in-progress", "completed"];
   const idx = steps.indexOf(status);
   return (
     <div className="flex items-center space-x-2 sm:space-x-4">
@@ -95,7 +95,11 @@ export const RequestDetails = () => {
           : Array.isArray(res.data)
           ? res.data
           : [];
-        setProposals(data);
+        // Filter to only show active proposals (approved by admin)
+        const activeProposals = data.filter(
+          (proposal) => proposal.status === "active"
+        );
+        setProposals(activeProposals);
       } catch (e) {
         console.error("Error loading proposals:", e);
         toast.error("Failed to load proposals");
@@ -198,7 +202,11 @@ export const RequestDetails = () => {
             : Array.isArray(res.data)
             ? res.data
             : [];
-          setProposals(data);
+          // Filter to only show active proposals (approved by admin)
+          const activeProposals = data.filter(
+            (proposal) => proposal.status === "active"
+          );
+          setProposals(activeProposals);
         } catch (e) {
           console.error("Error loading proposals for messages:", e);
         }
@@ -238,7 +246,11 @@ export const RequestDetails = () => {
         : Array.isArray(res.data)
         ? res.data
         : [];
-      setProposals(data);
+      // Filter to only show active proposals (approved by admin)
+      const activeProposals = data.filter(
+        (proposal) => proposal.status === "active"
+      );
+      setProposals(activeProposals);
     } catch (e) {
       console.error("Error accepting proposal:", e);
       toast.error(e?.response?.data?.message || "Failed to accept proposal");
@@ -356,7 +368,7 @@ export const RequestDetails = () => {
             {request.description}
           </p>
         </div>
-        <StatusTracker status={request.status || "submitted"} />
+        <StatusTracker status={request.status || "pending"} />
       </div>
 
       {/* Request Details Section */}
@@ -480,7 +492,7 @@ export const RequestDetails = () => {
                 الحالة
               </label>
               <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1 capitalize">
-                {request.status || "submitted"}
+                {request.status || "pending"}
               </p>
             </div>
           </div>
@@ -553,7 +565,7 @@ export const RequestDetails = () => {
       </div>
 
       {/* Rejection Reason Alert */}
-      {isRejected && request.rejectionReason && (
+      {request?.status === "rejected" && request.rejectionReason && (
         <div className="mb-4 sm:mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0">
@@ -583,7 +595,7 @@ export const RequestDetails = () => {
       )}
 
       {/* Pending Status Alert */}
-      {isPending && (
+      {request?.status === "pending" && (
         <div className="mb-4 sm:mb-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
           <div className="flex items-start">
             <div className="flex-shrink-0">
@@ -707,20 +719,89 @@ export const RequestDetails = () => {
                         ${(proposal.price || 0).toLocaleString()}
                       </div>
                       {!isAccepted && !isCanceled && (
-                        <button
-                          onClick={() =>
-                            handleAcceptProposal(proposal._id || proposal.id)
-                          }
-                          disabled={
-                            acceptingProposalId ===
-                            (proposal._id || proposal.id)
-                          }
-                          className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                        >
-                          {acceptingProposalId === (proposal._id || proposal.id)
-                            ? t("accepting")
-                            : t("accept")}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          {proposal.status === "active" && (
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const proposalId = proposal._id || proposal.id;
+                                  if (!proposalId) {
+                                    toast.error("Proposal ID not found");
+                                    return;
+                                  }
+                                  
+                                  // First, try to create or get the chat for this proposal
+                                  let conversationId = null;
+                                  try {
+                                    const chatResponse = await messagesAPI.createChatForProposal(proposalId);
+                                    if (chatResponse.data.success && chatResponse.data.data) {
+                                      // The response returns the chat object, conversationId is the _id
+                                      conversationId = chatResponse.data.data._id || chatResponse.data.data.conversationId;
+                                      console.log('Chat created/found, conversationId:', conversationId);
+                                    }
+                                  } catch (chatError) {
+                                    console.error('Error creating chat:', chatError);
+                                    // If chat creation fails, try to find existing conversation
+                                    try {
+                                      const conversationsResponse = await messagesAPI.listClientConversations();
+                                      if (conversationsResponse.data.success) {
+                                        const chats = conversationsResponse.data.data || [];
+                                        const existingChat = chats.find(c => {
+                                          const chatProposalId = c.proposal?._id || c.proposal;
+                                          return chatProposalId && (
+                                            chatProposalId.toString() === proposalId.toString() ||
+                                            chatProposalId === proposalId
+                                          );
+                                        });
+                                        if (existingChat) {
+                                          conversationId = existingChat._id || existingChat.conversationId;
+                                          console.log('Found existing conversation:', conversationId);
+                                        }
+                                      }
+                                    } catch (findError) {
+                                      console.error('Error finding conversation:', findError);
+                                    }
+                                  }
+                                  
+                                  if (conversationId) {
+                                    // Navigate with conversationId
+                                    console.log('Navigating to messages with conversationId:', conversationId);
+                                    navigate(`/client/messages?chat=${conversationId}`);
+                                  } else {
+                                    // Fallback: use serviceProviderId (legacy behavior)
+                                    const serviceProviderId = proposal.serviceProvider?._id || proposal.serviceProvider || proposal.company?._id || proposal.company;
+                                    if (serviceProviderId) {
+                                      console.log('Using fallback serviceProviderId:', serviceProviderId);
+                                      navigate(`/client/messages?chat=${serviceProviderId}`);
+                                    } else {
+                                      toast.error("Unable to start chat. Please try again.");
+                                    }
+                                  }
+                                } catch (error) {
+                                  console.error('Error opening chat:', error);
+                                  toast.error("Failed to open chat. Please try again.");
+                                }
+                              }}
+                              className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                              {t("chat") || "Chat"}
+                            </button>
+                          )}
+                          <button
+                            onClick={() =>
+                              handleAcceptProposal(proposal._id || proposal.id)
+                            }
+                            disabled={
+                              acceptingProposalId ===
+                              (proposal._id || proposal.id)
+                            }
+                            className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                          >
+                            {acceptingProposalId === (proposal._id || proposal.id)
+                              ? t("accepting")
+                              : t("accept")}
+                          </button>
+                        </div>
                       )}
                     </div>
                   </div>

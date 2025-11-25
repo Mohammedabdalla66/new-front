@@ -32,7 +32,7 @@ export const RequestFilters = ({ filters, onFiltersChange }) => {
             onChange={(e) => handleChange("status", e.target.value)}
           >
             <option value="">{t("all")}</option>
-            <option value="submitted">{t("submitted")}</option>
+            <option value="pending">{t("pending")}</option>
             <option value="in-progress">{t("inProgress")}</option>
             <option value="completed">{t("completed")}</option>
           </select>

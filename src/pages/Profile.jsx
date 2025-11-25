@@ -1,25 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ProfileForm } from '../components/Profile/ProfileForm.jsx';
 
-const mockUser = {
-  id: '1',
-  name: 'John Davidson',
-  email: 'john.davidson@company.com',
-  phone: '+1 (555) 123-4567',
-  company: 'Davidson Tech Solutions',
-  avatar:
-    'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=128&h=128&dpr=2',
-  location: 'New York, NY',
-  joinedDate: '2023-03-15',
-  verified: true,
-};
-
 export const Profile = () => {
-  const [user, setUser] = useState(mockUser);
-
   const handleSave = (updatedUser) => {
-    setUser(updatedUser);
-    console.log('Saving user:', updatedUser);
+    // ProfileForm now handles all API calls and state updates
+    console.log('Profile updated:', updatedUser);
   };
 
   return (

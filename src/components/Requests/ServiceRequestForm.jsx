@@ -306,7 +306,7 @@ export const ServiceRequestForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                النشاط التجاري
+                Business Activity
               </label>
               <select
                 value={businessActivity}
@@ -326,37 +326,37 @@ export const ServiceRequestForm = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                رأس المال بالسجل التجاري (ريال)
+                Capital as per the commercial register (Riyal)
               </label>
               <input
                 type="number"
                 value={registeredCapital}
                 onChange={(e) => setRegisteredCapital(e.target.value)}
-                placeholder="أدخل رأس المال"
+                placeholder="Enter the capital"
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                الإيرادات التقديرية (ريال)
+                Estimated Revenue (Riyal)
               </label>
               <input
                 type="number"
                 value={estimatedRevenue}
                 onChange={(e) => setEstimatedRevenue(e.target.value)}
-                placeholder="أدخل الإيرادات التقديرية"
+                placeholder="Enter the revenue"
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                المصاريف التقديرية (ريال)
+                Estimated Expenses (Riyal)
               </label>
               <input
                 type="number"
                 value={estimatedExpenses}
                 onChange={(e) => setEstimatedExpenses(e.target.value)}
-                placeholder="أدخل المصاريف التقديرية"
+                placeholder="Enter the expenses"
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -366,7 +366,7 @@ export const ServiceRequestForm = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Budget Range (ريال)
+                Budget Range (Riyal)
               </label>
               <select
                 value={budget}
@@ -374,15 +374,15 @@ export const ServiceRequestForm = () => {
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">Select a budget range</option>
-                <option value="10-50">٠ - ٥٠ ريال</option>
-                <option value="50-100">٥٠ - ٠٠ ريال</option>
-                <option value="100-250">٢٠٠ - ٢٥٠ ريال</option>
-                <option value="250-500">٢٥٠ - ٥٠٠ ريال</option>
-                <option value="500-1000">٥٠٠ - ٢٠٠٠ ريال</option>
-                <option value="1000-2500">٢٠٠٠ - ٢٥٠٠ ريال</option>
-                <option value="2500-5000">٢٥٠٠ - ٥٠٠٠ ريال</option>
-                <option value="5000-10000">٥٠٠٠ - ٢٠٠٠٠ ريال</option>
-                <option value="10000+">٢٠٠٠٠ - فأكثر ريال</option>
+                  <option value="10-50">0 - 50 Riyal</option>
+                <option value="50-100">50 - 00 Riyal</option>
+                <option value="100-250">200 - 250 Riyal</option>
+                <option value="250-500">250 - 500 Riyal</option>
+                <option value="500-1000">500 - 2000 Riyal</option>
+                <option value="1000-2500">2000 - 2500 Riyal</option>
+                <option value="2500-5000">2500 - 5000 Riyal</option>
+                <option value="5000-10000">5000 - 20000 Riyal</option>
+                <option value="10000+">20000 - More than 20000 Riyal</option>
               </select>
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 Select an estimated budget range.

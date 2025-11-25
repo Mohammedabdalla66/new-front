@@ -29,6 +29,7 @@ const RequestDetailsPage = () => {
   const [durationDays, setDurationDays] = useState("");
   const [notes, setNotes] = useState("");
   const [files, setFiles] = useState([]);
+  const [priceError, setPriceError] = useState("");
 
   useEffect(() => {
     const loadRequest = async () => {
@@ -66,11 +67,94 @@ const RequestDetailsPage = () => {
     setFiles(files.filter((_, i) => i !== index));
   };
 
+  // Parse budget range from request
+  const parseBudgetRange = (budgetString) => {
+    if (!budgetString || budgetString.trim() === '') {
+      return null; // No budget range specified
+    }
+
+    // Remove currency symbols and whitespace
+    const cleaned = budgetString.toString().replace(/[$,\s]/g, '');
+    
+    // Check if it's a range (e.g., "500-1000" or "500 - 1000")
+    if (cleaned.includes('-')) {
+      const parts = cleaned.split('-').map(p => p.trim());
+      if (parts.length === 2) {
+        const min = parseFloat(parts[0]);
+        const max = parseFloat(parts[1]);
+        if (!isNaN(min) && !isNaN(max) && min >= 0 && max >= min) {
+          return { min, max };
+        }
+      }
+    }
+    
+    // Check if it's a single number
+    const singleValue = parseFloat(cleaned);
+    if (!isNaN(singleValue) && singleValue >= 0) {
+      // If single value, treat it as both min and max (exact match)
+      return { min: singleValue, max: singleValue };
+    }
+    
+    return null; // Invalid format
+  };
+
+  // Validate price against budget range
+  const validatePrice = (priceValue) => {
+    setPriceError("");
+    
+    if (!priceValue || priceValue.trim() === '') {
+      return true; // Will be caught by required validation
+    }
+
+    const priceNum = parseFloat(priceValue);
+    if (isNaN(priceNum) || priceNum < 0) {
+      setPriceError("Price must be a valid positive number");
+      return false;
+    }
+
+    if (!request || !request.budget) {
+      return true; // No budget range to validate against
+    }
+
+    const budgetRange = parseBudgetRange(request.budget);
+    if (!budgetRange) {
+      return true; // Budget range not specified or invalid, allow any price
+    }
+
+    if (priceNum < budgetRange.min) {
+      setPriceError(`Price must be at least $${budgetRange.min.toLocaleString()}. The client's budget range is $${budgetRange.min.toLocaleString()} - $${budgetRange.max.toLocaleString()}.`);
+      return false;
+    }
+
+    if (priceNum > budgetRange.max) {
+      setPriceError(`Price must not exceed $${budgetRange.max.toLocaleString()}. The client's budget range is $${budgetRange.min.toLocaleString()} - $${budgetRange.max.toLocaleString()}.`);
+      return false;
+    }
+
+    return true;
+  };
+
+  const handlePriceChange = (e) => {
+    const value = e.target.value;
+    setPrice(value);
+    if (value) {
+      validatePrice(value);
+    } else {
+      setPriceError("");
+    }
+  };
+
   const handleSubmitProposal = async (e) => {
     e.preventDefault();
     
     if (!price || !durationDays) {
       toast.error("Price and duration are required");
+      return;
+    }
+
+    // Validate price against budget range
+    if (!validatePrice(price)) {
+      toast.error(priceError || "Price is outside the client's budget range");
       return;
     }
 
@@ -212,7 +296,7 @@ const RequestDetailsPage = () => {
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    {request.status || "submitted"}
+                    {request.status || "pending"}
                   </p>
                 </div>
               </div>
@@ -264,16 +348,51 @@ const RequestDetailsPage = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Price (USD) *
+                      {request.budget && (() => {
+                        const budgetRange = parseBudgetRange(request.budget);
+                        if (budgetRange) {
+                          return (
+                            <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                              (Range: ${budgetRange.min.toLocaleString()} - ${budgetRange.max.toLocaleString()})
+                            </span>
+                          );
+                        }
+                        return null;
+                      })()}
                     </label>
                     <input
                       type="number"
                       min="0"
                       step="0.01"
                       value={price}
-                      onChange={(e) => setPrice(e.target.value)}
+                      onChange={handlePriceChange}
+                      onBlur={() => validatePrice(price)}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 ${
+                        priceError
+                          ? 'border-red-500 focus:ring-red-500'
+                          : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'
+                      }`}
                     />
+                    {priceError && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                        {priceError}
+                      </p>
+                    )}
+                    {request.budget && !priceError && price && (() => {
+                      const budgetRange = parseBudgetRange(request.budget);
+                      if (budgetRange) {
+                        const priceNum = parseFloat(price);
+                        if (!isNaN(priceNum) && priceNum >= budgetRange.min && priceNum <= budgetRange.max) {
+                          return (
+                            <p className="mt-1 text-sm text-green-600 dark:text-green-400">
+                              ✓ Price is within the client's budget range
+                            </p>
+                          );
+                        }
+                      }
+                      return null;
+                    })()}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">

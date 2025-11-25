@@ -55,20 +55,23 @@ const PendingRequests = () => {
         setLoading(true);
         const response = await adminAPI.listPendingRequests();
         const requestsData = response.data?.data || response.data || [];
-        setRequests(requestsData.map(request => ({
-          id: request._id || request.id,
-          title: request.title || 'N/A',
-          description: request.description || '',
-          clientName: request.client?.name || 'N/A',
-          clientEmail: request.client?.email || '',
-          clientId: request.client?._id || request.client,
-          budget: request.budget || 0,
-          deadline: request.deadline,
-          attachments: request.attachments || [],
-          status: request.status || 'pending',
-          rejectionReason: request.rejectionReason || '',
-          createdAt: request.createdAt,
-        })));
+        setRequests(requestsData.map(request => {
+          const requestId = request._id || request.id;
+          return {
+            id: requestId?.toString ? requestId.toString() : String(requestId),
+            title: request.title || 'N/A',
+            description: request.description || '',
+            clientName: request.client?.name || 'N/A',
+            clientEmail: request.client?.email || '',
+            clientId: request.client?._id || request.client,
+            budget: request.budget || 0,
+            deadline: request.deadline,
+            attachments: request.attachments || [],
+            status: request.status || 'pending',
+            rejectionReason: request.rejectionReason || '',
+            createdAt: request.createdAt,
+          };
+        }));
       } catch (error) {
         console.error('Error loading requests:', error);
         toast.error(error?.response?.data?.message || 'Failed to load pending requests');
@@ -132,6 +135,11 @@ const PendingRequests = () => {
       return;
     }
     try {
+      console.log('Rejecting request:', {
+        id: selectedRequest.id,
+        status: selectedRequest.status,
+        reason: rejectionReason.trim()
+      });
       await adminAPI.rejectRequest(selectedRequest.id, rejectionReason);
       toast.success('Request rejected successfully');
       setRequests(requests.filter(r => r.id !== selectedRequest.id));
@@ -140,7 +148,44 @@ const PendingRequests = () => {
       setRejectionReason('');
     } catch (error) {
       console.error('Error rejecting request:', error);
-      toast.error(error?.response?.data?.message || 'Failed to reject request');
+      console.error('Error response:', error?.response?.data);
+      const errorMessage = error?.response?.data?.message || 
+                          error?.message || 
+                          'Failed to reject request';
+      toast.error(errorMessage);
+      
+      // If the request status is not pending, show a helpful message
+      if (errorMessage.includes('Only pending requests can be rejected') || 
+          errorMessage.includes('pending')) {
+        toast.warning('This request may have already been processed. Refreshing the list...');
+        // Reload requests to get updated status
+        const loadRequests = async () => {
+          try {
+            const response = await adminAPI.listPendingRequests();
+            const requestsData = response.data?.data || response.data || [];
+            setRequests(requestsData.map(request => {
+              const requestId = request._id || request.id;
+              return {
+                id: requestId?.toString ? requestId.toString() : String(requestId),
+                title: request.title || 'N/A',
+                description: request.description || '',
+                clientName: request.client?.name || 'N/A',
+                clientEmail: request.client?.email || '',
+                clientId: request.client?._id || request.client,
+                budget: request.budget || 0,
+                deadline: request.deadline,
+                attachments: request.attachments || [],
+                status: request.status || 'pending',
+                rejectionReason: request.rejectionReason || '',
+                createdAt: request.createdAt,
+              };
+            }));
+          } catch (e) {
+            console.error('Error reloading requests:', e);
+          }
+        };
+        loadRequests();
+      }
     }
   };
 

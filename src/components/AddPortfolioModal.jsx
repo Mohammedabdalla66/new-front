@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "../contexts/LanguageContext";
+import { portfolioAPI } from "../services/api";
+import { toast } from "react-toastify";
 import { X, Upload, Calendar, Award, FileText, Image } from "lucide-react";
 
 const AddPortfolioModal = ({
@@ -14,9 +16,9 @@ const AddPortfolioModal = ({
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: "",
+    tags: "",
     date: "",
-    file: null,
+    files: [],
     // For case studies
     client: "",
     industry: "",
@@ -26,9 +28,18 @@ const AddPortfolioModal = ({
     issuer: "",
     expiry: "",
     credentialId: "",
+    status: "active",
   });
 
   const [imagePreview, setImagePreview] = useState(null);
+  const [saving, setSaving] = useState(false);
+  
+  // Map tab IDs to backend types
+  const tabTypeMap = {
+    samples: 'work',
+    cases: 'case',
+    certifications: 'cert'
+  };
 
   const portfolioCategories = {
     en: [
@@ -63,28 +74,37 @@ const AddPortfolioModal = ({
   // Load editing item data when in edit mode
   useEffect(() => {
     if (isEditMode && editingItem) {
+      // Format date for input field
+      const formatDateForInput = (dateString) => {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        return date.toISOString().split("T")[0];
+      };
+      
       setFormData({
         title: editingItem.title || "",
         description: editingItem.description || "",
-        category: editingItem.category || "",
-        date: editingItem.date || "",
-        file: editingItem.file || null,
+        tags: editingItem.tags ? (Array.isArray(editingItem.tags) ? editingItem.tags.join(", ") : editingItem.tags) : "",
+        date: formatDateForInput(editingItem.date),
+        files: [],
         client: editingItem.client || "",
         industry: editingItem.industry || "",
         duration: editingItem.duration || "",
-        results: editingItem.results ? editingItem.results.join(", ") : "",
+        results: editingItem.results ? (Array.isArray(editingItem.results) ? editingItem.results.join(", ") : editingItem.results) : "",
         issuer: editingItem.issuer || "",
-        expiry: editingItem.expiry || "",
+        expiry: formatDateForInput(editingItem.expiry),
         credentialId: editingItem.credentialId || "",
+        status: editingItem.status || "active",
       });
 
-      // Set image preview for editing
-      if (
-        editingItem.file &&
-        editingItem.file.type &&
-        editingItem.file.type.startsWith("image/")
-      ) {
-        setImagePreview(URL.createObjectURL(editingItem.file));
+      // Set image preview from existing files
+      if (editingItem.files && editingItem.files.length > 0) {
+        const imageFile = editingItem.files.find(f => f.type === 'image');
+        if (imageFile) {
+          setImagePreview(imageFile.url);
+        } else {
+          setImagePreview(null);
+        }
       } else {
         setImagePreview(null);
       }
@@ -93,9 +113,9 @@ const AddPortfolioModal = ({
       setFormData({
         title: "",
         description: "",
-        category: "",
+        tags: "",
         date: "",
-        file: null,
+        files: [],
         client: "",
         industry: "",
         duration: "",
@@ -103,56 +123,126 @@ const AddPortfolioModal = ({
         issuer: "",
         expiry: "",
         credentialId: "",
+        status: "active",
       });
       setImagePreview(null);
     }
   }, [isEditMode, editingItem]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const newItem = {
-      id: isEditMode ? editingItem.id : Date.now(), // Keep existing ID for edit mode
-      ...formData,
-      date: formData.date || new Date().toISOString().split("T")[0],
-      results: formData.results
-        ? formData.results.split(",").map((r) => r.trim())
-        : [],
-      status:
-        activeTab === "certifications"
-          ? editingItem?.status || "active"
-          : undefined,
-      type: activeTab === "samples" ? "document" : undefined,
-    };
-
-    onAddItem(activeTab, newItem);
-
-    // Reset form
-    setFormData({
-      title: "",
-      description: "",
-      category: "",
-      date: "",
-      file: null,
-      client: "",
-      industry: "",
-      duration: "",
-      results: "",
-      issuer: "",
-      expiry: "",
-      credentialId: "",
-    });
-
-    onClose();
+    
+    if (!formData.title.trim()) {
+      toast.error("Title is required");
+      return;
+    }
+    
+    try {
+      setSaving(true);
+      
+      const backendType = tabTypeMap[activeTab];
+      const formDataToSend = new FormData();
+      
+      // Add basic fields
+      formDataToSend.append('type', backendType);
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description || '');
+      if (formData.tags) formDataToSend.append('tags', formData.tags);
+      if (formData.date) formDataToSend.append('date', formData.date);
+      
+      // Add type-specific fields
+      if (backendType === 'case') {
+        if (formData.client) formDataToSend.append('client', formData.client);
+        if (formData.industry) formDataToSend.append('industry', formData.industry);
+        if (formData.duration) formDataToSend.append('duration', formData.duration);
+        if (formData.results) formDataToSend.append('results', formData.results);
+      } else if (backendType === 'cert') {
+        if (formData.issuer) formDataToSend.append('issuer', formData.issuer);
+        if (formData.expiry) formDataToSend.append('expiry', formData.expiry);
+        if (formData.credentialId) formDataToSend.append('credentialId', formData.credentialId);
+        if (formData.status) formDataToSend.append('status', formData.status);
+      }
+      
+      // Add files
+      if (formData.files && formData.files.length > 0) {
+        formData.files.forEach((file) => {
+          formDataToSend.append('documents', file);
+        });
+      }
+      
+      let response;
+      if (isEditMode && editingItem) {
+        // Update existing item
+        response = await portfolioAPI.update(editingItem._id || editingItem.id, formDataToSend);
+      } else {
+        // Create new item
+        response = await portfolioAPI.create(formDataToSend);
+      }
+      
+      if (response.data.success) {
+        toast.success(isEditMode ? "Portfolio item updated successfully" : "Portfolio item created successfully");
+        onAddItem(activeTab, response.data.data);
+        
+        // Reset form
+        setFormData({
+          title: "",
+          description: "",
+          tags: "",
+          date: "",
+          files: [],
+          client: "",
+          industry: "",
+          duration: "",
+          results: "",
+          issuer: "",
+          expiry: "",
+          credentialId: "",
+          status: "active",
+        });
+        setImagePreview(null);
+        
+        onClose();
+      } else {
+        toast.error(response.data.message || "Failed to save portfolio item");
+      }
+    } catch (error) {
+      console.error("Error saving portfolio item:", error);
+      toast.error(error?.response?.data?.message || "Failed to save portfolio item");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files?.[0] || null;
-    setFormData((prev) => ({ ...prev, file }));
-
-    // Create image preview if it's an image file
-    if (file && file.type && file.type.startsWith("image/")) {
-      setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files || []);
+    const newFiles = [...formData.files, ...files];
+    setFormData({ ...formData, files: newFiles });
+    
+    // Set preview for first image file
+    const firstImage = newFiles.find(f => f.type && f.type.startsWith('image/'));
+    if (firstImage) {
+      if (firstImage instanceof File) {
+        setImagePreview(URL.createObjectURL(firstImage));
+      } else {
+        setImagePreview(firstImage.url);
+      }
+    } else {
+      setImagePreview(null);
+    }
+  };
+  
+  const handleRemoveFile = (index) => {
+    const newFiles = formData.files.filter((_, i) => i !== index);
+    setFormData({ ...formData, files: newFiles });
+    
+    // Update preview if needed
+    const firstImage = newFiles.find(f => f.type && f.type.startsWith('image/'));
+    if (firstImage) {
+      if (firstImage instanceof File) {
+        setImagePreview(URL.createObjectURL(firstImage));
+      } else {
+        setImagePreview(firstImage.url);
+      }
     } else {
       setImagePreview(null);
     }
@@ -260,25 +350,15 @@ const AddPortfolioModal = ({
             <>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {language === "ar" ? "التصنيف" : "Category"}
+                  {language === "ar" ? "العلامات (مفصولة بفواصل)" : "Tags (comma-separated)"}
                 </label>
-                <select
-                  required
-                  value={formData.category}
-                  onChange={(e) =>
-                    handleInputChange("category", e.target.value)
-                  }
+                <input
+                  type="text"
+                  value={formData.tags}
+                  onChange={(e) => handleInputChange("tags", e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                >
-                  <option value="">
-                    {language === "ar" ? "اختر التصنيف" : "Select category"}
-                  </option>
-                  {portfolioCategories[language].map((category, index) => (
-                    <option key={index} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
+                  placeholder={language === "ar" ? "مثال: Financial Statements, Tax Services" : "e.g., Financial Statements, Tax Services"}
+                />
               </div>
 
               <div>
@@ -318,6 +398,7 @@ const AddPortfolioModal = ({
                     onChange={handleFileChange}
                     className="hidden"
                     id="file-upload"
+                    multiple
                     accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
                   />
                   <label
@@ -326,17 +407,38 @@ const AddPortfolioModal = ({
                   >
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {formData.file
-                        ? formData.file.name
-                        : language === "ar"
-                        ? "انقر لرفع الملف"
-                        : "Click to upload file"}
+                      {language === "ar"
+                        ? "انقر لرفع الملفات"
+                        : "Click to upload files"}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      PDF, DOC, XLS, JPG (Max 10MB)
+                      PDF, DOC, XLS, JPG (Max 10MB each)
                     </span>
                   </label>
                 </div>
+                
+                {/* Show selected files */}
+                {formData.files && formData.files.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {language === "ar" ? "الملفات المحددة:" : "Selected files:"}
+                    </p>
+                    {formData.files.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {file.name || file.url || `File ${index + 1}`}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveFile(index)}
+                          className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -499,19 +601,95 @@ const AddPortfolioModal = ({
             </>
           )}
 
+          {/* File Upload for Case Studies and Certifications */}
+          {(activeTab === "cases" || activeTab === "certifications") && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                {language === "ar" ? "رفع الملفات" : "Upload Files"}
+              </label>
+              
+              {/* Image Preview */}
+              {imagePreview && (
+                <div className="mb-4">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-48 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                  />
+                </div>
+              )}
+              
+              <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 hover:border-blue-400 transition-colors">
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="file-upload-other"
+                  multiple
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                />
+                <label
+                  htmlFor="file-upload-other"
+                  className="flex flex-col items-center cursor-pointer"
+                >
+                  <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {language === "ar"
+                      ? "انقر لرفع الملفات"
+                      : "Click to upload files"}
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    PDF, DOC, XLS, JPG (Max 10MB each)
+                  </span>
+                </label>
+              </div>
+              
+              {/* Show selected files */}
+              {formData.files && formData.files.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {language === "ar" ? "الملفات المحددة:" : "Selected files:"}
+                  </p>
+                  {formData.files.map((file, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                        {file.name || file.url || `File ${index + 1}`}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFile(index)}
+                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Buttons */}
           <div className="flex gap-4 pt-4">
             <button
               type="submit"
-              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              disabled={saving}
+              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {isEditMode
-                ? language === "ar"
-                  ? "تحديث"
-                  : "Update"
-                : language === "ar"
-                ? "إضافة"
-                : "Add"}
+              {saving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  {language === "ar" ? "جاري الحفظ..." : "Saving..."}
+                </>
+              ) : (
+                isEditMode
+                  ? language === "ar"
+                    ? "تحديث"
+                    : "Update"
+                  : language === "ar"
+                  ? "إضافة"
+                  : "Add"
+              )}
             </button>
             <button
               type="button"

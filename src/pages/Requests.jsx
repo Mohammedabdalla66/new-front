@@ -41,7 +41,7 @@ export const Requests = () => {
         title: r.title,
         description: r.description,
         serviceType: r.serviceType || "",
-        status: r.status || "submitted",
+        status: r.status || "pending",
         offers: r.proposalsCount || r.offers || 0,
         lastUpdated: r.updatedAt || r.createdAt || new Date().toISOString(),
       }));

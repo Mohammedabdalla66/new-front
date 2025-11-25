@@ -171,7 +171,7 @@ const MyRequestsPage = () => {
       ]
     : [
         { value: "all", label: "All Requests" },
-        { value: "submitted", label: "Submitted" },
+        { value: "pending", label: "Pending" },
         { value: "open", label: "Open" },
         { value: "in-progress", label: "In Progress" },
         { value: "completed", label: "Completed" },
@@ -291,7 +291,7 @@ const MyRequestsPage = () => {
                           request.status
                         )}`}
                       >
-                        {request.status || "submitted"}
+                        {request.status || "pending"}
                       </span>
                     </div>
                   </div>

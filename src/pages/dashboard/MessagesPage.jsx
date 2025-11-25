@@ -4,6 +4,7 @@ import { messagesAPI } from "../../services/api";
 import { socket } from "../../services/socket";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
+import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Search,
   Send,
@@ -21,15 +22,29 @@ import {
 const MessagesPage = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [selectedChat, setSelectedChat] = useState(null);
   const [message, setMessage] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [conversations, setConversations] = useState([]);
-  const [messages, setMessages] = useState({});
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [conversationsLoading, setConversationsLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
+  
+  // Determine the base path based on current route
+  const getBasePath = () => {
+    if (location.pathname.startsWith('/firm/')) {
+      return '/firm/messages';
+    } else if (location.pathname.startsWith('/dashboard/')) {
+      return '/dashboard/messages';
+    }
+    return '/firm/messages'; // Default for service provider
+  };
 
   // Handle window resize
   React.useEffect(() => {
@@ -44,67 +59,195 @@ const MessagesPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Load conversations list (for service provider, we need to get list of clients they've messaged)
-  // For now, we'll create a simple endpoint or fetch from existing messages
+  // Load conversations list for service provider
   useEffect(() => {
-    // TODO: Create endpoint to list conversations for service provider
-    // For now, conversations will be populated when user selects a client
-    setLoading(false);
-  }, []);
+    const loadConversations = async () => {
+      if (!user || user.role !== 'serviceProvider') {
+        setConversationsLoading(false);
+        return;
+      }
+      
+      try {
+        setConversationsLoading(true);
+        const response = await messagesAPI.listServiceProviderConversations();
+        
+        if (response.data.success) {
+          const chats = response.data.data || [];
+          setConversations(chats.map(chat => {
+            const conversationId = chat.conversationId || chat._id;
+            return {
+              id: conversationId,
+              conversationId: conversationId,
+              client: chat.client?.name || 'Unknown Client',
+              clientId: chat.client?._id || chat.client,
+              company: chat.client?.name || 'Unknown',
+              lastMessage: chat.lastMessage?.text || 'No messages yet',
+              timestamp: chat.lastMessage?.timestamp 
+                ? new Date(chat.lastMessage.timestamp).toLocaleTimeString() 
+                : '',
+              unread: chat.unreadCount?.serviceProvider || 0,
+              requestTitle: chat.request?.title || '',
+              proposalPrice: chat.proposal?.price || null,
+              avatar: chat.client?.name?.charAt(0)?.toUpperCase() || 'C',
+              online: false, // TODO: Implement online status
+            };
+          }));
+          
+          // Check if there's a chat parameter in URL
+          const chatParam = searchParams.get('chat');
+          if (chatParam) {
+            const foundChat = chats.find(c => {
+              const convId = c.conversationId || c._id;
+              return convId === chatParam || 
+                     convId?.toString() === chatParam ||
+                     (c.client?._id || c.client) === chatParam;
+            });
+            if (foundChat) {
+              const idToUse = foundChat.conversationId || foundChat._id || chatParam;
+              setSelectedChat(idToUse);
+            } else {
+              // Try using chatParam directly as conversationId
+              setSelectedChat(chatParam);
+            }
+          } else if (chats.length > 0 && !selectedChat) {
+            // Auto-select first conversation if none is selected
+            const firstChat = chats[0];
+            const idToUse = firstChat.conversationId || firstChat._id;
+            setSelectedChat(idToUse);
+          }
+        }
+      } catch (e) {
+        console.error('Error loading conversations:', e);
+        toast.error('Failed to load conversations');
+      } finally {
+        setConversationsLoading(false);
+        setLoading(false);
+      }
+    };
+    
+    if (user) {
+      loadConversations();
+    }
+  }, [user, searchParams]);
 
   // Load messages for selected conversation
   useEffect(() => {
-    if (selectedChat) {
-      const loadMessages = async () => {
-        try {
-          const response = await messagesAPI.getConversationForServiceProvider(selectedChat);
-          if (response.data.success) {
-            const msgs = response.data.data || [];
-            setMessages(prev => ({
-              ...prev,
-              [selectedChat]: msgs.map(msg => ({
-                id: msg._id,
-                sender: msg.sender === 'serviceProvider' ? 'provider' : 'client',
-                message: msg.text || '',
-                timestamp: new Date(msg.createdAt).toLocaleTimeString(),
-                avatar: msg.sender === 'serviceProvider' ? 'SP' : 'C',
-                file: msg.file,
-              })),
-            }));
-          }
-        } catch (err) {
-          console.error('Error loading messages:', err);
-          toast.error('Failed to load messages');
-        }
-      };
-      loadMessages();
+    if (!selectedChat) {
+      setMessages([]);
+      return;
     }
-  }, [selectedChat]);
+    
+    const loadMessages = async () => {
+      try {
+        setLoading(true);
+        // Check if selectedChat is a conversationId (from conversations list) or clientId (legacy)
+        const activeConversation = conversations.find(c => 
+          c.id === selectedChat || 
+          c.conversationId === selectedChat ||
+          (c.conversationId && c.conversationId.toString() === selectedChat.toString())
+        );
+        
+        let response;
+        if (activeConversation && activeConversation.conversationId) {
+          // Use conversationId-based API
+          console.log('Loading messages for conversationId:', activeConversation.conversationId);
+          response = await messagesAPI.getMessagesByConversation(activeConversation.conversationId);
+        } else if (selectedChat && /^[0-9a-fA-F]{24}$/.test(selectedChat)) {
+          // If selectedChat is a valid ObjectId, try using it as conversationId
+          const matchingChat = conversations.find(c => 
+            (c.conversationId && c.conversationId.toString() === selectedChat.toString()) ||
+            (c._id && c._id.toString() === selectedChat.toString())
+          );
+          if (matchingChat) {
+            response = await messagesAPI.getMessagesByConversation(matchingChat.conversationId || matchingChat._id || selectedChat);
+          } else {
+            // Try using selectedChat directly as conversationId
+            response = await messagesAPI.getMessagesByConversation(selectedChat);
+          }
+        } else {
+          // Fallback to legacy API (using clientId)
+          console.log('Using legacy API with clientId:', selectedChat);
+          response = await messagesAPI.getConversationForServiceProvider(selectedChat);
+        }
+        
+        if (response.data.success) {
+          const msgs = response.data.data || [];
+          const mapped = msgs.map(msg => ({
+            id: msg._id,
+            sender: msg.sender === 'serviceProvider' ? 'provider' : 'client',
+            message: msg.text || '',
+            timestamp: new Date(msg.createdAt).toLocaleTimeString(),
+            avatar: msg.sender === 'serviceProvider' ? 'SP' : 'C',
+            file: msg.file,
+          }));
+          setMessages(mapped);
+        }
+      } catch (err) {
+        console.error('Error loading messages:', err);
+        toast.error('Failed to load messages');
+        setMessages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadMessages();
+  }, [selectedChat, conversations]);
 
   // Socket listeners for real-time messages
   useEffect(() => {
     const handleChatMessage = (data) => {
-      if (data.to === (user?._id || user?.id)) {
-        // Message is for current user
-        const clientId = data.from;
-        setMessages(prev => ({
-          ...prev,
-          [clientId]: [
-            ...(prev[clientId] || []),
-            {
-              id: data.id || Date.now(),
-              sender: 'client',
-              message: data.text || '',
-              timestamp: new Date(data.timestamp || Date.now()).toLocaleTimeString(),
-              avatar: 'C',
-              file: data.file,
-            },
-          ],
-        }));
+      // Check if message is for current conversation
+      const isForCurrentChat = selectedChat && (
+        data.conversationId === selectedChat ||
+        data.conversationId?.toString() === selectedChat.toString()
+      );
+      
+      if (isForCurrentChat && data.to === (user?._id || user?.id)) {
+        // Message is for current conversation and user
+        const newMessage = {
+          id: data.id || Date.now(),
+          sender: 'client',
+          message: data.text || '',
+          timestamp: new Date(data.timestamp || Date.now()).toLocaleTimeString(),
+          avatar: 'C',
+          file: data.file,
+        };
+        setMessages(prev => [...prev, newMessage]);
         // Scroll to bottom
         setTimeout(() => {
           messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
+        
+        // Refresh conversations to update last message
+        if (user) {
+          messagesAPI.listServiceProviderConversations()
+            .then(response => {
+              if (response.data.success) {
+                const chats = response.data.data || [];
+                setConversations(chats.map(chat => {
+                  const conversationId = chat.conversationId || chat._id;
+                  return {
+                    id: conversationId,
+                    conversationId: conversationId,
+                    client: chat.client?.name || 'Unknown Client',
+                    clientId: chat.client?._id || chat.client,
+                    company: chat.client?.name || 'Unknown',
+                    lastMessage: chat.lastMessage?.text || 'No messages yet',
+                    timestamp: chat.lastMessage?.timestamp 
+                      ? new Date(chat.lastMessage.timestamp).toLocaleTimeString() 
+                      : '',
+                    unread: chat.unreadCount?.serviceProvider || 0,
+                    requestTitle: chat.request?.title || '',
+                    proposalPrice: chat.proposal?.price || null,
+                    avatar: chat.client?.name?.charAt(0)?.toUpperCase() || 'C',
+                    online: false,
+                  };
+                }));
+              }
+            })
+            .catch(err => console.error('Error refreshing conversations:', err));
+        }
       }
     };
 
@@ -113,18 +256,16 @@ const MessagesPage = () => {
     return () => {
       socket.off('chat:message', handleChatMessage);
     };
-  }, [user]);
+  }, [user, selectedChat]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
-    if (selectedChat && messages[selectedChat]) {
+    if (messages.length > 0) {
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     }
-  }, [messages, selectedChat]);
-
-  const currentMessages = selectedChat ? (messages[selectedChat] || []) : [];
+  }, [messages]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -132,27 +273,89 @@ const MessagesPage = () => {
 
     try {
       setSending(true);
-      const response = await messagesAPI.sendFromServiceProvider(selectedChat, {
-        text: message.trim(),
-      });
+      
+      // Find the active conversation
+      const activeConversation = conversations.find(c => 
+        c.id === selectedChat || 
+        c.conversationId === selectedChat ||
+        (c.conversationId && c.conversationId.toString() === selectedChat.toString())
+      );
+      
+      let response;
+      let conversationIdToUse = null;
+      
+      // Determine which conversationId to use
+      if (activeConversation && activeConversation.conversationId) {
+        conversationIdToUse = activeConversation.conversationId;
+      } else if (selectedChat && /^[0-9a-fA-F]{24}$/.test(selectedChat)) {
+        // If selectedChat is a valid ObjectId, try using it as conversationId
+        const matchingChat = conversations.find(c => 
+          (c.conversationId && c.conversationId.toString() === selectedChat.toString()) ||
+          (c._id && c._id.toString() === selectedChat.toString())
+        );
+        if (matchingChat) {
+          conversationIdToUse = matchingChat.conversationId || matchingChat._id || selectedChat;
+        } else {
+          conversationIdToUse = selectedChat;
+        }
+      }
+      
+      if (conversationIdToUse) {
+        // Use conversationId-based API
+        console.log('Sending message to conversationId:', conversationIdToUse);
+        response = await messagesAPI.sendToConversation(conversationIdToUse, {
+          text: message.trim(),
+        });
+      } else {
+        // Fallback to legacy API (using clientId)
+        console.log('Using legacy API with clientId:', selectedChat);
+        response = await messagesAPI.sendFromServiceProvider(selectedChat, {
+          text: message.trim(),
+        });
+      }
 
       if (response.data.success) {
         const newMsg = response.data.data;
-        setMessages(prev => ({
-          ...prev,
-          [selectedChat]: [
-            ...(prev[selectedChat] || []),
-            {
-              id: newMsg._id,
-              sender: 'provider',
-              message: newMsg.text || '',
-              timestamp: new Date(newMsg.createdAt).toLocaleTimeString(),
-              avatar: 'SP',
-              file: newMsg.file,
-            },
-          ],
-        }));
+        const mapped = {
+          id: newMsg._id,
+          sender: 'provider',
+          message: newMsg.text || message.trim(),
+          timestamp: new Date(newMsg.createdAt || new Date()).toLocaleTimeString(),
+          avatar: 'SP',
+          file: newMsg.file,
+        };
+        setMessages(prev => [...prev, mapped]);
         setMessage("");
+        
+        // Refresh conversations to update last message
+        try {
+          const conversationsResponse = await messagesAPI.listServiceProviderConversations();
+          if (conversationsResponse.data.success) {
+            const chats = conversationsResponse.data.data || [];
+            setConversations(chats.map(chat => {
+              const conversationId = chat.conversationId || chat._id;
+              return {
+                id: conversationId,
+                conversationId: conversationId,
+                client: chat.client?.name || 'Unknown Client',
+                clientId: chat.client?._id || chat.client,
+                company: chat.client?.name || 'Unknown',
+                lastMessage: chat.lastMessage?.text || 'No messages yet',
+                timestamp: chat.lastMessage?.timestamp 
+                  ? new Date(chat.lastMessage.timestamp).toLocaleTimeString() 
+                  : '',
+                unread: chat.unreadCount?.serviceProvider || 0,
+                requestTitle: chat.request?.title || '',
+                proposalPrice: chat.proposal?.price || null,
+                avatar: chat.client?.name?.charAt(0)?.toUpperCase() || 'C',
+                online: false,
+              };
+            }));
+          }
+        } catch (refreshError) {
+          console.error('Error refreshing conversations:', refreshError);
+        }
+        
         // Scroll to bottom
         setTimeout(() => {
           messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -167,10 +370,16 @@ const MessagesPage = () => {
   };
 
   const handleChatSelect = (chatId) => {
-    setSelectedChat(chatId);
+    // Use conversationId if available, otherwise use id
+    const conversation = conversations.find(c => c.id === chatId || c.conversationId === chatId);
+    const idToUse = conversation?.conversationId || conversation?.id || chatId;
+    console.log('Chat selected, setting selectedChat to:', idToUse);
+    setSelectedChat(idToUse);
     if (isMobile) {
       setShowSidebar(false);
     }
+    // Update URL
+    navigate(`${getBasePath()}?chat=${idToUse}`);
   };
 
   return (
@@ -219,7 +428,11 @@ const MessagesPage = () => {
 
         {/* Conversations */}
         <div className="flex-1 overflow-y-auto">
-          {conversations.length === 0 ? (
+          {conversationsLoading ? (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+              Loading conversations...
+            </div>
+          ) : conversations.length === 0 ? (
             <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               <p>No conversations yet</p>
               <p className="text-sm mt-2">Start messaging clients from your bookings or proposals</p>
@@ -304,7 +517,16 @@ const MessagesPage = () => {
                 </div>
               </div>
               <div className="overflow-y-auto h-full">
-                {conversations.map((conversation) => (
+                {conversationsLoading ? (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    Loading conversations...
+                  </div>
+                ) : conversations.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    No conversations yet.
+                  </div>
+                ) : (
+                  conversations.map((conversation) => (
                   <div
                     key={conversation.id}
                     onClick={() => handleChatSelect(conversation.id)}
@@ -346,9 +568,10 @@ const MessagesPage = () => {
                 )}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         )}
 
@@ -437,13 +660,13 @@ const MessagesPage = () => {
                 <div className="text-center py-8">
                   <div className="inline-block w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                 </div>
-              ) : currentMessages.length === 0 ? (
+              ) : messages.length === 0 ? (
                 <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                   <p>No messages yet</p>
                   <p className="text-sm mt-2">Start the conversation!</p>
                 </div>
               ) : (
-                currentMessages.map((msg) => (
+                messages.map((msg) => (
                 <div
                   key={msg.id}
                   className={`flex ${

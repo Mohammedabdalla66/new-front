@@ -13,19 +13,16 @@ import {
 const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
   const { language } = useLanguage();
 
-  // Clean up image URLs when modal closes
-  useEffect(() => {
-    return () => {
-      if (
-        item &&
-        item.file &&
-        item.file.type &&
-        item.file.type.startsWith("image/")
-      ) {
-        URL.revokeObjectURL(URL.createObjectURL(item.file));
-      }
-    };
-  }, [item]);
+  // Helper function to get first image file
+  const getFirstImageFile = () => {
+    if (item?.files && item.files.length > 0) {
+      const imageFile = item.files.find(f => f.type === 'image');
+      return imageFile ? imageFile.url : null;
+    }
+    return null;
+  };
+  
+  const imageUrl = getFirstImageFile();
 
   if (!isOpen || !item) return null;
 
@@ -85,22 +82,13 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
             <div className="space-y-6">
               {/* Thumbnail */}
               <div className="h-64 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center overflow-hidden">
-                {item.file &&
-                item.file.type &&
-                item.file.type.startsWith("image/") ? (
+                {imageUrl ? (
                   <img
-                    src={URL.createObjectURL(item.file)}
+                    src={imageUrl}
                     alt={item.title}
                     className="w-full h-full object-cover rounded-lg"
                   />
-                ) : item.thumbnail &&
-                  item.thumbnail !== "/api/placeholder/300/200" ? (
-                  <img
-                    src={item.thumbnail}
-                    alt={item.title}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                ) : item.type === "document" ? (
+                ) : item.files && item.files.length > 0 ? (
                   <FileText className="w-16 h-16 text-gray-400" />
                 ) : (
                   <Image className="w-16 h-16 text-gray-400" />
@@ -119,17 +107,23 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {item.tags && item.tags.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+                        {language === "ar" ? "العلامات" : "Tags"}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {item.tags.map((tag, index) => (
+                          <span key={index} className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                      {language === "ar" ? "التصنيف" : "Category"}
-                    </p>
-                    <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm">
-                      {item.category}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                      {language === "ar" ? "تاريخ الإنجاز" : "Completion Date"}
+                      {language === "ar" ? "تاريخ الإنجاز" : "Date"}
                     </p>
                     <p className="text-gray-900 dark:text-white">
                       {formatDate(item.date)}
@@ -137,19 +131,30 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                   </div>
                 </div>
 
-                {item.file && (
+                {item.files && item.files.length > 0 && (
                   <div>
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                      {language === "ar" ? "الملف المرفق" : "Attached File"}
+                      {language === "ar" ? "الملفات المرفقة" : "Attached Files"}
                     </p>
-                    <div className="flex items-center space-x-2">
-                      <FileText className="w-5 h-5 text-gray-400" />
-                      <span className="text-gray-900 dark:text-white">
-                        {item.file.name || "Document.pdf"}
-                      </span>
-                      <button className="p-1 text-blue-600 hover:text-blue-800">
-                        <Download className="w-4 h-4" />
-                      </button>
+                    <div className="space-y-2">
+                      {item.files.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                          <div className="flex items-center space-x-2">
+                            <FileText className="w-5 h-5 text-gray-400" />
+                            <span className="text-gray-900 dark:text-white">
+                              {file.name || `File ${index + 1}`}
+                            </span>
+                          </div>
+                          <a
+                            href={file.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                          >
+                            <Download className="w-4 h-4" />
+                          </a>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -213,6 +218,34 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                 </div>
               </div>
 
+              {item.files && item.files.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                    {language === "ar" ? "الملفات المرفقة" : "Attached Files"}
+                  </p>
+                  <div className="space-y-2">
+                    {item.files.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <FileText className="w-5 h-5 text-gray-400" />
+                          <span className="text-gray-900 dark:text-white">
+                            {file.name || `File ${index + 1}`}
+                          </span>
+                        </div>
+                        <a
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                        >
+                          <Download className="w-4 h-4" />
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {language === "ar" ? "تاريخ الإنجاز" : "Completion Date"}:{" "}
@@ -235,20 +268,30 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-                    {item.name}
+                    {item.title}
                   </h3>
-                  <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
-                    {item.issuer}
-                  </p>
+                  {item.issuer && (
+                    <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
+                      {item.issuer}
+                    </p>
+                  )}
                 </div>
-                <span
-                  className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
-                    item.status
-                  )}`}
-                >
-                  {item.status}
-                </span>
+                {item.status && (
+                  <span
+                    className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusColor(
+                      item.status
+                    )}`}
+                  >
+                    {item.status}
+                  </span>
+                )}
               </div>
+              
+              {item.description && (
+                <p className="text-gray-600 dark:text-gray-400">
+                  {item.description}
+                </p>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
@@ -283,12 +326,47 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                 </div>
               </div>
 
+              {item.files && item.files.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
+                    {language === "ar" ? "الملفات المرفقة" : "Attached Files"}
+                  </p>
+                  <div className="space-y-2">
+                    {item.files.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <FileText className="w-5 h-5 text-gray-400" />
+                          <span className="text-gray-900 dark:text-white">
+                            {file.name || `File ${index + 1}`}
+                          </span>
+                        </div>
+                        <a
+                          href={file.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                        >
+                          <Download className="w-4 h-4" />
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex space-x-3">
-                  <button className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
-                    <Download className="w-4 h-4 mr-2" />
-                    {language === "ar" ? "تحميل" : "Download"}
-                  </button>
+                  {item.files && item.files.length > 0 && (
+                    <a
+                      href={item.files[0].url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      {language === "ar" ? "تحميل" : "Download"}
+                    </a>
+                  )}
                   <button className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
                     <Share2 className="w-4 h-4 mr-2" />
                     {language === "ar" ? "مشاركة" : "Share"}

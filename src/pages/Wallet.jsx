@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { walletAPI } from "../services/api";
+import { walletAPI, serviceProviderAPI } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
+import { useAuth } from "../hooks/useAuth";
 
 export const Wallet = () => {
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const isServiceProvider = user?.role === 'serviceProvider' || user?.role === 'firm';
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState("Visa");
   const [cardNumber, setCardNumber] = useState("");
@@ -26,7 +29,10 @@ export const Wallet = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await walletAPI.get();
+        // Use appropriate API based on user role
+        const res = isServiceProvider 
+          ? await serviceProviderAPI.getWallet()
+          : await walletAPI.get();
         const data = res.data || {};
         if (mounted) {
           setBalance(Number(data.balance || 0));
@@ -50,7 +56,7 @@ export const Wallet = () => {
     };
     load();
     return () => { mounted = false; };
-  }, []);
+  }, [isServiceProvider]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
