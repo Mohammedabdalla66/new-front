@@ -15,7 +15,7 @@ import {
 
 import Navbar from '../components/Layout/Navbar';
 import Sidebar from './components/Layout/Sidebar';
-import StatsCard from './components/Dashboard/StatsCard';
+import StatsCard from './components/dashboard/StatsCard';
 import RevenueChart from './components/Dashboard/RevenueChart';
 import ServicePie from './components/Dashboard/ServicePie';
 

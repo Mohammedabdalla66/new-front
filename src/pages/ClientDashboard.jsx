@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import StatsCard from "../components/Dashboard/StatsCard.jsx";
+import StatsCard from "../components/dashboard/StatsCard.jsx";
 import RecentActivity from "../components/Dashboard/RecentActivity.jsx";
 import { QuickActions } from "../components/Dashboard/QuickActions.jsx";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
