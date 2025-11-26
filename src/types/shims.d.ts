@@ -69,27 +69,27 @@ declare module '../components/Layout/Sidebar.jsx' {
 }
 
 // Dashboard components
-declare module '../components/Dashboard/StatsCard' {
+declare module '../components/dashboard/StatsCard' {
   const StatsCard: any;
   export default StatsCard;
 }
 
-declare module '../components/Dashboard/RevenueChart' {
+declare module '../components/dashboard/RevenueChart' {
   const RevenueChart: any;
   export default RevenueChart;
 }
 
-declare module '../components/Dashboard/ServicePie' {
+declare module '../components/dashboard/ServicePie' {
   const ServicePie: any;
   export default ServicePie;
 }
 
-declare module '../components/Dashboard/RecentActivity' {
+declare module '../components/dashboard/RecentActivity' {
   const RecentActivity: any;
   export default RecentActivity;
 }
 
-declare module '../components/Dashboard/PendingList' {
+declare module '../components/dashboard/PendingList' {
   const PendingList: any;
   export default PendingList;
 }

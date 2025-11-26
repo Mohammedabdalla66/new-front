@@ -6,10 +6,10 @@ import { Building2, Users, DollarSign, Clock } from "lucide-react";
 import Navbar from "../components/Layout/Navbar";
 import AdminSidebar from "../components/sidebar/AdminSidebar";
 import StatsCard from "../components/dashboard/StatsCard";
-import RevenueChart from "../components/Dashboard/RevenueChart";
-import ServicePie from "../components/Dashboard/ServicePie";
-import RecentActivity from "../components/Dashboard/RecentActivity";
-import PendingList from "../components/Dashboard/PendingList";
+import RevenueChart from "../components/dashboard/RevenueChart";
+import ServicePie from "../components/dashboard/ServicePie";
+import RecentActivity from "../components/dashboard/RecentActivity";
+import PendingList from "../components/dashboard/PendingList";
 
 import {
   fetchDashboard,
