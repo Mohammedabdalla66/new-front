@@ -33,9 +33,9 @@ export default function ClientSidebar({
   ];
 
   const bottomItems = [
-    { id: "settings", label: t("settingsSidebar"), icon: Settings },
-    { id: "help", label: t("helpSupportSidebar"), icon: HelpCircle },
-    { id: "logout", label: t("logout"), icon: LogOut },
+    { id: "settings", label: t("Settings"), icon: Settings },
+    { id: "help", label: t("Help & Support"), icon: HelpCircle },
+    { id: "logout", label: t("Logout"), icon: LogOut },
   ];
 
   const [isCollapsed, setIsCollapsed] = useState(false);

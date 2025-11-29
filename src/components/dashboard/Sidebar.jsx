@@ -246,7 +246,7 @@ const Sidebar = ({ isOpen, onClose, currentPath }) => {
           <div className="flex items-center">
             <CaHupLogo className="h-8 w-8" />
             <span className="ml-3 text-xl font-semibold text-gray-800 dark:text-white">
-              {t("accountingPlatform")}
+              {t("CaHup")}
             </span>
           </div>
           <button

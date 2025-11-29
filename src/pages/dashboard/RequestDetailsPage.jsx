@@ -13,6 +13,9 @@ import {
   Send,
   Upload,
   X,
+  Building2,
+  TrendingUp,
+  Wallet,
 } from "lucide-react";
 
 const RequestDetailsPage = () => {
@@ -215,6 +218,43 @@ const RequestDetailsPage = () => {
     return `$${amount.toLocaleString()}`;
   };
 
+  // Helper function to get label for legal form
+  const getLegalFormLabel = (value) => {
+    const legalForms = {
+      individual_trader: "Individual Trader",
+      sole_partner: "Sole Partner",
+      limited_liability: "Limited Liability",
+      public_company: "Public Company",
+      closed_company: "Closed Company",
+      limited_partnership: "Limited Partnership",
+      solidarity_company: "Solidarity Company",
+    };
+    return legalForms[value] || value;
+  };
+
+  // Helper function to get label for business activity
+  const getBusinessActivityLabel = (value) => {
+    const activities = {
+      financial_sector: "Financial Sector",
+      industrial_sector: "Industrial Sector",
+      oil_gas_sector: "Oil & Gas Sector",
+      tourism_sector: "Tourism Sector",
+      service_sector: "Service Sector",
+      construction_sector: "Construction Sector",
+      retail_sector: "Retail Sector",
+      telecommunications_it: "Telecommunications & IT",
+      education_sector: "Education Sector",
+      public_sector: "Public Sector",
+    };
+    return activities[value] || value;
+  };
+
+  // Format currency in Riyal
+  const formatRiyal = (amount) => {
+    if (!amount || amount === 0) return "Not specified";
+    return `${parseFloat(amount).toLocaleString()} Riyal`;
+  };
+
   if (loading) {
     return (
       <div className="text-center py-12">
@@ -272,7 +312,9 @@ const RequestDetailsPage = () => {
               {request.description}
             </p>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            {/* All Project Details in One Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              {/* Basic Info */}
               <div className="flex items-center space-x-2">
                 <DollarSign className="w-5 h-5 text-gray-400" />
                 <div>
@@ -309,6 +351,81 @@ const RequestDetailsPage = () => {
                   </p>
                 </div>
               </div>
+
+              {/* Legal Form */}
+              {request.legalForm && (
+                <div className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
+                      Legal Form
+                    </label>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
+                      {getLegalFormLabel(request.legalForm)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Business Activity */}
+              {request.businessActivity && (
+                <div className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
+                      Business Activity
+                    </label>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
+                      {getBusinessActivityLabel(request.businessActivity)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Capital as per the commercial register */}
+              {request.registeredCapital && (
+                <div className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
+                      Capital as per the commercial register (Riyal)
+                    </label>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
+                      {formatRiyal(request.registeredCapital)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Estimated Revenue */}
+              {request.estimatedRevenue && (
+                <div className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
+                      Estimated Revenue (Riyal)
+                    </label>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
+                      {formatRiyal(request.estimatedRevenue)}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Estimated Expenses */}
+              {request.estimatedExpenses && (
+                <div className="flex items-start space-x-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <DollarSign className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
+                      Estimated Expenses (Riyal)
+                    </label>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
+                      {formatRiyal(request.estimatedExpenses)}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Attachments */}

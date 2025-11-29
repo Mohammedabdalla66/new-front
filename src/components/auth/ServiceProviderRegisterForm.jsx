@@ -416,7 +416,7 @@ const ServiceProviderRegisterForm = () => {
       </div>
 
       {/* Legal Form */}
-      <div>
+      {/* <div>
         <label className="form-label">Service Provider Legal Form*</label>
         <select {...register("legalForm")} className="form-input">
           {LEGAL_FORMS.map((form) => (
@@ -428,7 +428,7 @@ const ServiceProviderRegisterForm = () => {
         {errors.legalForm && (
           <p className="form-error">{errors.legalForm.message}</p>
         )}
-      </div>
+      </div> */}
 
       {/* Address Fields */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
