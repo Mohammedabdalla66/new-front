@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useConfirmationToast } from "../../components/ui/ConfirmationToast";
 import { getServiceTitleLabel } from "../../utils/titleUtils";
-import DateInput from "../../components/ui/DateInput";
 import {
   ArrowLeft,
   DollarSign,
@@ -35,7 +34,7 @@ const RequestDetailsPage = () => {
 
   // Proposal form state
   const [price, setPrice] = useState("");
-  const [endDate, setEndDate] = useState(null);
+  const [endDate, setEndDate] = useState("");
   const [notes, setNotes] = useState("");
   const [files, setFiles] = useState([]);
   const [priceError, setPriceError] = useState("");
@@ -228,7 +227,7 @@ const RequestDetailsPage = () => {
         }
         // Reset form
         setPrice("");
-        setEndDate(null);
+        setEndDate("");
         setNotes("");
         setFiles([]);
       }
@@ -552,15 +551,16 @@ const RequestDetailsPage = () => {
                     })()}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
                       End Date *
                     </label>
-                    <DateInput
+                    <input
+                      type="date"
                       value={endDate}
-                      onChange={setEndDate}
-                      minDate={new Date()}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
-                      placeholder="Select the project completion date"
                     />
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                       Select the project completion date

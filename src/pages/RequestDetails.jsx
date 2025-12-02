@@ -384,7 +384,7 @@ export const RequestDetails = () => {
             <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                الميزانية
+                Budget
               </label>
               <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                 {formatBudget(request.budget)}
@@ -398,7 +398,7 @@ export const RequestDetails = () => {
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  الموعد النهائي
+                  Deadline
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                   {formatDate(request.deadline)}
@@ -413,7 +413,7 @@ export const RequestDetails = () => {
               <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  الشكل القانوني للشركة
+                  Legal Form
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                   {getLegalFormLabel(request.legalForm)}
@@ -428,7 +428,7 @@ export const RequestDetails = () => {
               <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  النشاط التجاري
+                  Business Activity
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                   {getBusinessActivityLabel(request.businessActivity)}
@@ -443,11 +443,11 @@ export const RequestDetails = () => {
               <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  رأس المال بالسجل التجاري
+                  Registered Capital
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
-                  {parseFloat(request.registeredCapital).toLocaleString()} ريال
-                  عماني
+                  {parseFloat(request.registeredCapital).toLocaleString()} OMR
+                  (OMR)
                 </p>
               </div>
             </div>
@@ -459,11 +459,11 @@ export const RequestDetails = () => {
               <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  الإيرادات التقديرية
+                  Estimated Revenue
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
-                  {parseFloat(request.estimatedRevenue).toLocaleString()} ريال
-                  عماني
+                  {parseFloat(request.estimatedRevenue).toLocaleString()} OMR
+                  (OMR)
                 </p>
               </div>
             </div>
@@ -475,11 +475,11 @@ export const RequestDetails = () => {
               <DollarSign className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  المصاريف التقديرية
+                  Estimated Expenses
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
-                  {parseFloat(request.estimatedExpenses).toLocaleString()} ريال
-                  عماني
+                  {parseFloat(request.estimatedExpenses).toLocaleString()} OMR
+                  (OMR)
                 </p>
               </div>
             </div>
@@ -490,7 +490,7 @@ export const RequestDetails = () => {
             <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                الحالة
+                Status
               </label>
               <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1 capitalize">
                 {request.status || "pending"}
@@ -504,7 +504,7 @@ export const RequestDetails = () => {
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  تاريخ الإنشاء
+                  Created At
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                   {formatDate(request.createdAt)}
@@ -518,7 +518,7 @@ export const RequestDetails = () => {
         {request.attachments && request.attachments.length > 0 && (
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 block">
-              المرفقات
+              Attachments
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {request.attachments.map((attachment, index) => (
@@ -543,7 +543,7 @@ export const RequestDetails = () => {
                     />
                   </svg>
                   <span className="text-sm text-gray-900 dark:text-white truncate flex-1">
-                    {attachment.name || `مرفق ${index + 1}`}
+                    {attachment.name || `Attachment ${index + 1}`}
                   </span>
                   <svg
                     className="w-4 h-4 text-gray-400"

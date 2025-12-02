@@ -3,16 +3,15 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../hooks/useAuth";
 import CaHupLogo from "./CaHupLogo";
-import { Menu, X, Bell, MessageCircle, User, ChevronDown } from "lucide-react";
+import UserDropdown from "./ui/UserDropdown";
+import { Menu, X, Bell, MessageCircle } from "lucide-react";
 
 const Header = ({ onAddProject }) => {
   const { language, toggleLanguage, t } = useLanguage();
   const { user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-  const toggleUserMenu = () => setIsUserMenuOpen(!isUserMenuOpen);
 
   const navItems = [
     { key: "home", path: "/" },
@@ -80,133 +79,17 @@ const Header = ({ onAddProject }) => {
                 {/* Notifications */}
                 <button className="relative p-2 text-gray-600 hover:text-blue-700 transition-colors">
                   <Bell className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                    3
-                  </span>
+                  
                 </button>
 
                 {/* Messages */}
                 <button className="relative p-2 text-gray-600 hover:text-blue-700 transition-colors">
                   <MessageCircle className="h-5 w-5" />
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                    2
-                  </span>
+                  
                 </button>
 
-                {/* Add Project
-                <button
-                  onClick={onAddProject}
-                  className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 font-medium transition-colors"
-                >
-                  {t("addProject")}
-                </button> */}
-
-                {/* User Menu */}
-                <div className="relative">
-                  <button
-                    onClick={toggleUserMenu}
-                    className="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 hover:text-blue-700 transition-colors"
-                  >
-                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                      <User className="h-5 w-5" />
-                    </div>
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
-
-                  {isUserMenuOpen && (
-                    <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                      {user.role === "client" && (
-                        <Link
-                          to="ProfileForm"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          {t("profile")}
-                        </Link>
-                      )}
-                      {user.role === "admin" && (
-                        <Link
-                          to="ProfileForm"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          {t("profile")}
-                        </Link>
-                      )}
-                      {user.role === "serviceProvider" && (
-                        <Link
-                          to="ProfileForm"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          {t("profile")}
-                        </Link>
-                      )}
-                      {user.role === "client" && (
-                        <Link
-                          to="client/settings"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          {t("settings")}
-                        </Link>
-                      )}
-                      {user.role === "admin" && (
-                        <Link
-                          to="admin/settings"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          {t("settings")}
-                        </Link>
-                      )}
-                      {user.role === "serviceProvider" && (
-                        <Link
-                          to="serviceProvider/setting"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setIsUserMenuOpen(false)}
-                        >
-                          {t("settings")}
-                        </Link>
-                      )}
-                      {user.role === "client" && (
-                        <Link
-                          to="/client"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          {language === "ar"
-                            ? "لوحة العميل"
-                            : "Client Dashboard"}
-                        </Link>
-                      )}
-                      {user.role === "admin" && (
-                        <Link
-                          to="/admin"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          {language === "ar" ? "لوحة المدير" : "Admin Panel"}
-                        </Link>
-                      )}
-                      {user.role === "serviceProvider" && (
-                        <Link
-                          to="/firm"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          {language === "ar" ? "لوحة الشركة" : "Service Provider Panel"}
-                        </Link>
-                      )}
-                      <button
-                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => {
-                          logout();
-                          setIsUserMenuOpen(false);
-                        }}
-                      >
-                        {t("logout")}
-                      </button>
-                    </div>
-                  )}
-                </div>
+                {/* User Dropdown */}
+                <UserDropdown user={user} />
               </>
             )}
           </div>

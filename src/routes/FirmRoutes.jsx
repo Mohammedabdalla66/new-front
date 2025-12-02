@@ -10,6 +10,7 @@ import BrowseProjectsPage from "../pages/dashboard/BrowseProjectsPage";
 import RequestDetailsPage from "../pages/dashboard/RequestDetailsPage";
 import ProposalDetailsPage from "../pages/dashboard/ProposalDetailsPage";
 import SettingsPage from "../pages/dashboard/SettingsPage";
+import ProfilePage from "../pages/dashboard/ProfilePage";
 import HelpSupportPage from "../pages/dashboard/HelpSupportPage";
 
 export default function FirmRoutes() {
@@ -25,6 +26,7 @@ export default function FirmRoutes() {
         <Route path="browse" element={<BrowseProjectsPage />} />
         <Route path="browse/:id" element={<RequestDetailsPage />} />
         <Route path="proposals/:id" element={<ProposalDetailsPage />} />
+        <Route path="profile" element={<ProfilePage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="help" element={<HelpSupportPage />} />
       </Route>

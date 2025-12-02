@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useConfirmationToast } from "../../components/ui/ConfirmationToast";
 import { getServiceTitleLabel } from "../../utils/titleUtils";
-import DateInput from "../../components/ui/DateInput";
 import {
   ArrowLeft,
   DollarSign,
@@ -30,10 +29,10 @@ const ProposalDetailsPage = () => {
   const [error, setError] = useState("");
   const [showEditForm, setShowEditForm] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
-
+  
   // Edit form state
   const [price, setPrice] = useState("");
-  const [endDate, setEndDate] = useState(null);
+  const [endDate, setEndDate] = useState("");
   const [notes, setNotes] = useState("");
   const [files, setFiles] = useState([]);
   const [priceError, setPriceError] = useState("");
@@ -43,7 +42,7 @@ const ProposalDetailsPage = () => {
       try {
         setLoading(true);
         const response = await proposalsAPI.get(id);
-
+        
         if (response.data.success) {
           setProposal(response.data.data);
         } else {
@@ -70,9 +69,9 @@ const ProposalDetailsPage = () => {
         const today = new Date();
         const endDateValue = new Date(today);
         endDateValue.setDate(today.getDate() + proposal.durationDays);
-        setEndDate(endDateValue);
+        setEndDate(endDateValue.toISOString().split('T')[0]);
       } else {
-        setEndDate(null);
+        setEndDate("");
       }
       setNotes(proposal.notes || "");
       setFiles([]);
@@ -165,17 +164,17 @@ const ProposalDetailsPage = () => {
 
   const handleUpdateProposal = async (e) => {
     e.preventDefault();
-
+    
     // Show confirmation toast
-    const confirmMessage = language === "ar"
+    const confirmMessage = language === "ar" 
       ? "هل أنت متأكد من صحة جميع البيانات؟"
       : "Are you sure about all the data?";
-
+    
     const confirmText = language === "ar" ? "نعم، متابعة" : "Yes, proceed";
     const cancelText = language === "ar" ? "إلغاء" : "Cancel";
-
+    
     const confirmed = await showConfirmation(confirmMessage, confirmText, cancelText);
-
+    
     if (!confirmed) {
       return; // User cancelled, don't submit
     }
@@ -208,24 +207,24 @@ const ProposalDetailsPage = () => {
 
       const timeDifference = selectedDate - today;
       const durationDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
-
+      
       // Create FormData for file upload
       const formData = new FormData();
       formData.append("price", price);
       formData.append("durationDays", durationDays.toString());
       formData.append("notes", notes || "");
-
+      
       // Append files - backend expects 'documents' field name
       files.forEach((file) => {
         formData.append("documents", file);
       });
 
       const response = await proposalsAPI.update(id, formData);
-
+      
       if (response.data.success) {
         toast.success("Proposal updated successfully! Awaiting admin approval.");
         setShowEditForm(false);
-
+        
         // Reload proposal to update status
         const reloadResponse = await proposalsAPI.get(id);
         if (reloadResponse.data.success) {
@@ -235,7 +234,7 @@ const ProposalDetailsPage = () => {
         }
         // Reset form
         setPrice("");
-        setEndDate(null);
+        setEndDate("");
         setNotes("");
         setFiles([]);
       }
@@ -542,15 +541,16 @@ const ProposalDetailsPage = () => {
                     })()}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
                       End Date *
                     </label>
-                    <DateInput
+                    <input
+                      type="date"
                       value={endDate}
-                      onChange={setEndDate}
-                      minDate={new Date()}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       required
-                      placeholder="Select the project completion date"
                     />
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                       Select the project completion date
