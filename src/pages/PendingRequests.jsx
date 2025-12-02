@@ -28,9 +28,12 @@ import { Textarea } from '../components/ui/textarea';
 import Toast from '../components/ui/toast';
 import AlertDialog from '../components/ui/alert-dialog';
 import { adminAPI } from '../services/api';
+import { getServiceTitleLabel } from '../utils/titleUtils';
+import { useLanguage } from '../contexts/LanguageContext';
 import { toast } from 'react-toastify';
 
 const PendingRequests = () => {
+  const { language } = useLanguage();
   // Data
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -200,7 +203,7 @@ const PendingRequests = () => {
 
   const formatCurrency = (amount) => {
     if (!amount || amount === 0) return 'Not specified';
-    return `$${amount.toLocaleString()}`;
+    return `${amount.toLocaleString()} OMR`;
   };
 
   return (
@@ -273,7 +276,7 @@ const PendingRequests = () => {
                           <TableRow key={request.id}>
                             <TableCell>
                               <div className="font-medium text-gray-900 dark:text-white">
-                                {request.title}
+                                {getServiceTitleLabel(request.title, language || 'en')}
                               </div>
                               <div className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
                                 {request.description}
@@ -344,7 +347,7 @@ const PendingRequests = () => {
       <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{selectedRequest?.title}</DialogTitle>
+            <DialogTitle>{getServiceTitleLabel(selectedRequest?.title, language || 'en')}</DialogTitle>
             <DialogDescription>
               Full request details and attachments
             </DialogDescription>
@@ -475,7 +478,7 @@ const PendingRequests = () => {
         title={confirmAction === 'approve' ? 'Approve Request' : 'Confirm Action'}
         description={
           confirmAction === 'approve'
-            ? `Are you sure you want to approve "${selectedRequest?.title}"? This will make it visible to service providers.`
+            ? `Are you sure you want to approve "${getServiceTitleLabel(selectedRequest?.title, language || 'en')}"? This will make it visible to service providers.`
             : 'Are you sure you want to proceed?'
         }
         confirmText={confirmAction === 'approve' ? 'Approve' : 'Confirm'}

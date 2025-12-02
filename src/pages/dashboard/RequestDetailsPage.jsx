@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { serviceProviderAPI, proposalsAPI } from "../../services/api";
 import { toast } from "react-toastify";
+import { useLanguage } from "../../contexts/LanguageContext";
+import { useConfirmationToast } from "../../components/ui/ConfirmationToast";
+import { getServiceTitleLabel } from "../../utils/titleUtils";
+import DateInput from "../../components/ui/DateInput";
 import {
   ArrowLeft,
   DollarSign,
-  Calendar,
+  Calendar as CalendarIcon,
   FileText,
   User,
   Mail,
@@ -21,6 +25,8 @@ import {
 const RequestDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { language } = useLanguage();
+  const { showConfirmation, ConfirmationToastComponent } = useConfirmationToast();
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,7 +35,7 @@ const RequestDetailsPage = () => {
 
   // Proposal form state
   const [price, setPrice] = useState("");
-  const [durationDays, setDurationDays] = useState("");
+  const [endDate, setEndDate] = useState(null);
   const [notes, setNotes] = useState("");
   const [files, setFiles] = useState([]);
   const [priceError, setPriceError] = useState("");
@@ -39,7 +45,7 @@ const RequestDetailsPage = () => {
       try {
         setLoading(true);
         const response = await serviceProviderAPI.getRequest(id);
-        
+
         if (response.data.success) {
           setRequest(response.data.data);
           // Show proposal form if provider hasn't proposed yet
@@ -77,8 +83,8 @@ const RequestDetailsPage = () => {
     }
 
     // Remove currency symbols and whitespace
-    const cleaned = budgetString.toString().replace(/[$,\s]/g, '');
-    
+    const cleaned = budgetString.toString().replace(/[OMR,\s]/gi, '');
+
     // Check if it's a range (e.g., "500-1000" or "500 - 1000")
     if (cleaned.includes('-')) {
       const parts = cleaned.split('-').map(p => p.trim());
@@ -90,21 +96,21 @@ const RequestDetailsPage = () => {
         }
       }
     }
-    
+
     // Check if it's a single number
     const singleValue = parseFloat(cleaned);
     if (!isNaN(singleValue) && singleValue >= 0) {
       // If single value, treat it as both min and max (exact match)
       return { min: singleValue, max: singleValue };
     }
-    
+
     return null; // Invalid format
   };
 
   // Validate price against budget range
   const validatePrice = (priceValue) => {
     setPriceError("");
-    
+
     if (!priceValue || priceValue.trim() === '') {
       return true; // Will be caught by required validation
     }
@@ -125,14 +131,12 @@ const RequestDetailsPage = () => {
     }
 
     if (priceNum < budgetRange.min) {
-      setPriceError(`Price must be at least $${budgetRange.min.toLocaleString()}. The client's budget range is $${budgetRange.min.toLocaleString()} - $${budgetRange.max.toLocaleString()}.`);
+      setPriceError(`Price must be at least ${budgetRange.min.toLocaleString()} OMR. The client's budget range is ${budgetRange.min.toLocaleString()} - ${budgetRange.max.toLocaleString()} OMR, but you can offer a higher price.`);
       return false;
     }
 
-    if (priceNum > budgetRange.max) {
-      setPriceError(`Price must not exceed $${budgetRange.max.toLocaleString()}. The client's budget range is $${budgetRange.min.toLocaleString()} - $${budgetRange.max.toLocaleString()}.`);
-      return false;
-    }
+    // Allow prices higher than the maximum limit
+    // Only enforce minimum limit
 
     return true;
   };
@@ -149,41 +153,69 @@ const RequestDetailsPage = () => {
 
   const handleSubmitProposal = async (e) => {
     e.preventDefault();
-    
-    if (!price || !durationDays) {
-      toast.error("Price and duration are required");
+
+    // Show confirmation toast
+    const confirmMessage = language === "ar"
+      ? "هل أنت متأكد من صحة جميع البيانات؟"
+      : "Are you sure about all the data?";
+
+    const confirmText = language === "ar" ? "نعم، متابعة" : "Yes, proceed";
+    const cancelText = language === "ar" ? "إلغاء" : "Cancel";
+
+    const confirmed = await showConfirmation(confirmMessage, confirmText, cancelText);
+
+    if (!confirmed) {
+      return; // User cancelled, don't submit
+    }
+
+    if (!price || !endDate) {
+      toast.error("Price and end date are required");
       return;
     }
 
-    // Validate price against budget range
+    // Validate price against budget range (minimum only)
     if (!validatePrice(price)) {
-      toast.error(priceError || "Price is outside the client's budget range");
+      toast.error(priceError || "Price must meet the minimum requirement");
       return;
     }
+
+    // Calculate durationDays from end date
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const selectedDate = new Date(endDate);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate <= today) {
+      toast.error("End date must be in the future");
+      return;
+    }
+
+    const timeDifference = selectedDate - today;
+    const durationDays = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 
     try {
       setProposalLoading(true);
-      
+
       // Create FormData for file upload
       const formData = new FormData();
       formData.append("price", price);
-      formData.append("durationDays", durationDays);
+      formData.append("durationDays", durationDays.toString());
       formData.append("notes", notes || "");
-      
+
       // Append files - backend expects 'documents' field name
       files.forEach((file) => {
         formData.append("documents", file);
       });
 
       const response = await proposalsAPI.create(id, formData);
-      
+
       if (response.data.success) {
         toast.success("Proposal submitted successfully! Awaiting admin approval.");
         setShowProposalForm(false);
-        
+
         // Get proposal ID from response
         const proposalId = response.data.data?._id || response.data.data?.id || response.data._id;
-        
+
         // Reload request to update hasProposal status
         const reloadResponse = await serviceProviderAPI.getRequest(id);
         if (reloadResponse.data.success) {
@@ -196,7 +228,7 @@ const RequestDetailsPage = () => {
         }
         // Reset form
         setPrice("");
-        setDurationDays("");
+        setEndDate(null);
         setNotes("");
         setFiles([]);
       }
@@ -215,7 +247,7 @@ const RequestDetailsPage = () => {
 
   const formatCurrency = (amount) => {
     if (!amount || amount === 0) return "Not specified";
-    return `$${amount.toLocaleString()}`;
+    return `${amount.toLocaleString()} OMR`;
   };
 
   // Helper function to get label for legal form
@@ -282,6 +314,7 @@ const RequestDetailsPage = () => {
 
   return (
     <div className="space-y-6">
+      <ConfirmationToastComponent />
       {/* Header */}
       <div className="flex items-center space-x-4">
         <button
@@ -306,7 +339,7 @@ const RequestDetailsPage = () => {
           {/* Request Info */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              {request.title}
+              {getServiceTitleLabel(request.title, language)}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               {request.description}
@@ -325,7 +358,7 @@ const RequestDetailsPage = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <Calendar className="w-5 h-5 text-gray-400" />
+                <CalendarIcon className="w-5 h-5 text-gray-400" />
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Deadline</p>
                   <p className="font-medium text-gray-900 dark:text-white">
@@ -464,13 +497,13 @@ const RequestDetailsPage = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Price (USD) *
+                      Price (OMR) *
                       {request.budget && (() => {
                         const budgetRange = parseBudgetRange(request.budget);
                         if (budgetRange) {
                           return (
                             <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                              (Range: ${budgetRange.min.toLocaleString()} - ${budgetRange.max.toLocaleString()})
+                              (Minimum: {budgetRange.min.toLocaleString()} OMR, Budget range: {budgetRange.min.toLocaleString()} - {budgetRange.max.toLocaleString()} OMR)
                             </span>
                           );
                         }
@@ -485,11 +518,10 @@ const RequestDetailsPage = () => {
                       onChange={handlePriceChange}
                       onBlur={() => validatePrice(price)}
                       required
-                      className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 ${
-                        priceError
+                      className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 ${priceError
                           ? 'border-red-500 focus:ring-red-500'
                           : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500'
-                      }`}
+                        }`}
                     />
                     {priceError && (
                       <p className="mt-1 text-sm text-red-600 dark:text-red-400">
@@ -500,12 +532,20 @@ const RequestDetailsPage = () => {
                       const budgetRange = parseBudgetRange(request.budget);
                       if (budgetRange) {
                         const priceNum = parseFloat(price);
-                        if (!isNaN(priceNum) && priceNum >= budgetRange.min && priceNum <= budgetRange.max) {
-                          return (
-                            <p className="mt-1 text-sm text-green-600 dark:text-green-400">
-                              ✓ Price is within the client's budget range
-                            </p>
-                          );
+                        if (!isNaN(priceNum) && priceNum >= budgetRange.min) {
+                          if (priceNum <= budgetRange.max) {
+                            return (
+                              <p className="mt-1 text-sm text-green-600 dark:text-green-400">
+                                ✓ Price is within the client's budget range
+                              </p>
+                            );
+                          } else {
+                            return (
+                              <p className="mt-1 text-sm text-blue-600 dark:text-blue-400">
+                                ✓ Price exceeds the client's maximum budget, but is allowed
+                              </p>
+                            );
+                          }
                         }
                       }
                       return null;
@@ -513,17 +553,20 @@ const RequestDetailsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Duration (Days) *
+                      End Date *
                     </label>
-                    <input
-                      type="number"
-                      min="1"
-                      value={durationDays}
-                      onChange={(e) => setDurationDays(e.target.value)}
+                    <DateInput
+                      value={endDate}
+                      onChange={setEndDate}
+                      minDate={new Date()}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Select the project completion date"
                     />
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      Select the project completion date
+                    </p>
                   </div>
+
                 </div>
 
                 <div>
@@ -616,6 +659,26 @@ const RequestDetailsPage = () => {
                   View your proposal
                 </button>
               )}
+            </div>
+          )}
+
+          {/* Rejected Proposal Alert */}
+          {request.proposal && request.proposal.status === 'rejected' && request.proposal.rejectionReason && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+              <div className="flex items-start">
+                <div className="flex-shrink-0">
+                  <X className="w-5 h-5 text-red-400" />
+                </div>
+                <div className="ml-3 flex-1">
+                  <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+                    Proposal Rejected
+                  </h3>
+                  <div className="mt-2 text-sm text-red-700 dark:text-red-300">
+                    <p className="font-medium mb-1">Rejection Reason:</p>
+                    <p className="whitespace-pre-wrap">{request.proposal.rejectionReason}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>

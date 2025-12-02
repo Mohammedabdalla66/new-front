@@ -7,7 +7,7 @@ const StatsCard = ({ title, value, change, icon: Icon, color, delta, format, loa
 
   // Format value based on format prop
   const formattedValue = format === 'currency' 
-    ? typeof value === 'number' ? `$${value.toLocaleString()}` : value
+    ? typeof value === 'number' ? `${value.toLocaleString()} OMR` : value
     : format === 'number'
     ? typeof value === 'number' ? value.toLocaleString() : value
     : value;

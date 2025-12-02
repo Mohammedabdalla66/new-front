@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { requestsAPI, proposalsAPI } from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
+import { getServiceTitleLabel } from "../../utils/titleUtils";
 import {
   FileText,
   Clock,
@@ -15,7 +16,7 @@ import {
 } from "lucide-react";
 
 const MyRequestsPage = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { user } = useAuth();
   const isServiceProvider = user?.role === 'serviceProvider' || user?.role === 'firm';
@@ -68,6 +69,7 @@ const MyRequestsPage = () => {
               _id: p._id,
               id: p._id,
               title: p.request?.title || 'Request',
+              titleDisplay: getServiceTitleLabel(p.request?.title, language || 'en'),
               description: p.notes || '',
               status: p.status,
               budget: p.price,
@@ -115,7 +117,7 @@ const MyRequestsPage = () => {
 
   const formatCurrency = (amount) => {
     if (!amount || amount === 0) return "Not specified";
-    return `$${amount.toLocaleString()}`;
+    return `${amount.toLocaleString()} OMR`;
   };
 
   const getStatusIcon = (status) => {
@@ -276,11 +278,11 @@ const MyRequestsPage = () => {
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                        {request.title}
+                        {isServiceProvider ? getServiceTitleLabel(request.request?.title, language || 'en') : getServiceTitleLabel(request.title, language || 'en')}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {isServiceProvider 
-                          ? `Proposal for: ${request.request?.title || 'Request'}`
+                          ? `Proposal for: ${getServiceTitleLabel(request.request?.title, language || 'en')}`
                           : `Request ID: ${request._id?.slice(-8) || request.id}`}
                       </p>
                     </div>

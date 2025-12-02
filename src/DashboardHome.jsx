@@ -77,13 +77,7 @@ const ActivityTable = ({ data, loading, t }) => {
 
   const formatCurrency = (amount) => {
     if (!amount) return '-';
-    const locale = isRTL ? 'ar-SA' : 'en-US';
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: 'SAR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+    return `${amount.toLocaleString()} OMR`;
   };
 
   if (loading) {

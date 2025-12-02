@@ -17,6 +17,7 @@ import {
   bookingsAPI,
 } from "../services/api.js";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
+import { getServiceTitleLabel } from "../utils/titleUtils";
 
 const StatusTracker = ({ status }) => {
   const steps = ["pending", "open", "in-progress", "completed"];
@@ -48,7 +49,7 @@ const StatusTracker = ({ status }) => {
 };
 
 export const RequestDetails = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const [tab, setTab] = useState("offers");
@@ -362,7 +363,7 @@ export const RequestDetails = () => {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 sm:mb-6 gap-4">
         <div className="min-w-0 flex-1">
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {request.title}
+            {getServiceTitleLabel(request.title, language || 'en')}
           </h1>
           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             {request.description}
@@ -586,7 +587,7 @@ export const RequestDetails = () => {
                   onClick={() => navigate("/client/request/new", { state: { editRequest: request } })}
                   className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
-                  Update & Resubmit Request
+                  Update Request
                 </button>
               </div>
             </div>
@@ -716,7 +717,7 @@ export const RequestDetails = () => {
                     </div>
                     <div className="flex items-center justify-between sm:justify-end space-x-3">
                       <div className="font-semibold text-gray-900 dark:text-white text-base sm:text-lg">
-                        ${(proposal.price || 0).toLocaleString()}
+                        {(proposal.price || 0).toLocaleString()} OMR
                       </div>
                       {!isAccepted && !isCanceled && (
                         <div className="flex items-center gap-2">

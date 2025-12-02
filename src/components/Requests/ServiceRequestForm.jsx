@@ -1,12 +1,18 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { requestsAPI } from "../../services/api";
 import { useLanguage } from "../../contexts/LanguageContext.jsx";
+import { useConfirmationToast } from "../ui/ConfirmationToast";
 
 export const ServiceRequestForm = () => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { showConfirmation, ConfirmationToastComponent } = useConfirmationToast();
+  const editRequest = location.state?.editRequest;
+  const isEditMode = !!editRequest && editRequest.status === "rejected";
+  
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState([]);
@@ -20,6 +26,21 @@ export const ServiceRequestForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (isEditMode && editRequest) {
+      setTitle(editRequest.title || "");
+      setDescription(editRequest.description || "");
+      setBudget(editRequest.budget || "");
+      setDeadline(editRequest.deadline ? new Date(editRequest.deadline).toISOString().split('T')[0] : "");
+      setLegalForm(editRequest.legalForm || "");
+      setBusinessActivity(editRequest.businessActivity || "");
+      setRegisteredCapital(editRequest.registeredCapital || "");
+      setEstimatedRevenue(editRequest.estimatedRevenue || "");
+      setEstimatedExpenses(editRequest.estimatedExpenses || "");
+    }
+  }, [isEditMode, editRequest]);
 
   // Legal form options
   const LEGAL_FORM_OPTIONS = [
@@ -110,6 +131,71 @@ export const ServiceRequestForm = () => {
     },
   ];
 
+  // Service title options - 15 options
+  const TITLE_OPTIONS = [
+    {
+      value: "",
+      label:
+        language === "ar" ? "اختر عنوان الخدمة" : "Select Service Title",
+    },
+    {
+      value: "option_1",
+      label: language === "ar" ? "الاستشارات المالية" : "Financial Consultancy",
+    },
+    {
+      value: "option_2",
+      label: language === "ar" ? "إستشارات الحوكمة وإدارة المخاطر ": "Governance Services",
+    },
+    {
+      value: "option_3",
+      label: language === "ar" ? "التقييم التجاري للشركات" : "Business Valuation services",
+    },
+    {
+      value: "option_4",
+      label: language === "ar" ? "التدقيق الخارجي وعمل الميزانيات السنوية " : "External Auditing",
+    },
+    {
+      value: "option_5",
+      label: language === "ar" ? "التدقيق الداخلي" : "Internal Auditing",
+    },
+    {
+      value: "option_6",
+      label: language === "ar" ? "مسك الدفاتر المحاسبية " : "Accounting bookkeeping",
+    },
+    {
+      value: "option_7",
+      label: language === "ar" ? " دراسات الجدوى الإقتصادية " : "Economic Feasibility Studies",
+    },
+    {
+      value: "option_8",
+      label: language === "ar" ? " تقارير الملاءة المالية" : "Financial Solvency Reports",
+    },
+    {
+      value: "option_9",
+      label: language === "ar" ? " تأسيس الشركات وادارة الأعمال " : "Business Setup",
+    },
+    {
+      value: "option_10",
+      label: language === "ar" ? "خدمات الضرائب وتقييم ضريبة القيمة المضافة" : "Tax and VAT Assessment Services",
+    },
+    {
+      value: "option_11",
+      label: language === "ar" ? "التصفيات وإغلاق السجل التجاري " : "Liquidation of the companies ",
+    },
+    {
+      value: "option_12",
+      label: language === "ar" ? "المحاسبة الجنائية والتحقيق في الاحتيال المالي وتقارير إساءة الأمانة" : "Forensic Accounting, Financial Fraud Investigations, and Reports of Abuse of Trust",
+    },
+    {
+      value: "option_13",
+      label: language === "ar" ? " تدقيق الامتثال والأداء " : "ISO Compliance Services ",
+    },
+    {
+      value: "option_14",
+      label: language === "ar" ? "خدمات أخرى" : "Other Services",
+    },
+  ];
+
   const handleFilesChange = (e) => {
     const list = Array.from(e.target.files || []);
     setFiles(list);
@@ -117,6 +203,21 @@ export const ServiceRequestForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Show confirmation toast
+    const confirmMessage = language === "ar" 
+      ? "هل أنت متأكد من صحة جميع البيانات؟"
+      : "Are you sure about all the data?";
+    
+    const confirmText = language === "ar" ? "نعم، متابعة" : "Yes, proceed";
+    const cancelText = language === "ar" ? "إلغاء" : "Cancel";
+    
+    const confirmed = await showConfirmation(confirmMessage, confirmText, cancelText);
+    
+    if (!confirmed) {
+      return; // User cancelled, don't submit
+    }
+
     setLoading(true);
     setError("");
 
@@ -155,9 +256,15 @@ export const ServiceRequestForm = () => {
           }
         }
 
-        const response = await requestsAPI.createWithFiles(formData);
-
-        toast.success(t("requestSubmittedSuccess"));
+        if (isEditMode && editRequest?._id) {
+          // Update existing request
+          const response = await requestsAPI.update(editRequest._id, formData);
+          toast.success(t("requestUpdatedSuccess") || "Request updated successfully!");
+        } else {
+          // Create new request
+          const response = await requestsAPI.createWithFiles(formData);
+          toast.success(t("requestSubmittedSuccess"));
+        }
         setSubmitted(true);
 
         // Redirect to Requests page after 1.5 seconds
@@ -178,9 +285,15 @@ export const ServiceRequestForm = () => {
           deadline: deadline || undefined,
         };
 
-        const response = await requestsAPI.create(payload);
-
-        toast.success(t("requestSubmittedSuccess"));
+        if (isEditMode && editRequest?._id) {
+          // Update existing request
+          const response = await requestsAPI.update(editRequest._id, payload);
+          toast.success(t("requestUpdatedSuccess") || "Request updated successfully!");
+        } else {
+          // Create new request
+          const response = await requestsAPI.create(payload);
+          toast.success(t("requestSubmittedSuccess"));
+        }
         setSubmitted(true);
 
         // Redirect to Requests page after 1.5 seconds
@@ -203,16 +316,40 @@ export const ServiceRequestForm = () => {
 
   return (
     <div className="p-3 sm:p-4 md:p-6">
+      <ConfirmationToastComponent />
       <div className="mx-auto max-w-3xl bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
         {/* Header */}
         <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 dark:border-gray-700">
           <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-            {t("createServiceRequest")}
+            {isEditMode ? (t("updateServiceRequest") || "Update Service Request") : t("createServiceRequest")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1 text-xs sm:text-sm">
-            {t("provideDetails")}
+            {isEditMode 
+              ? (t("updateRequestDetails") || "Update your request details and resubmit for review.")
+              : t("provideDetails")}
           </p>
         </div>
+
+        {/* Edit Mode Banner */}
+        {isEditMode && editRequest?.rejectionReason && (
+          <div className="mx-4 sm:mx-6 mt-4 rounded-lg border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 p-3 text-xs sm:text-sm">
+            <div className="flex items-start">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3 flex-1">
+                <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  {t("previousRejection") || "Previous Rejection Reason"}
+                </h3>
+                <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                  <p className="whitespace-pre-wrap">{editRequest.rejectionReason}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Success Message */}
         {submitted && (
@@ -238,14 +375,18 @@ export const ServiceRequestForm = () => {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("serviceTitle")}
             </label>
-            <input
-              type="text"
+            <select
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder={t("serviceTitlePlaceholder")}
-              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
-            />
+            >
+              {TITLE_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Description */}
@@ -337,7 +478,7 @@ export const ServiceRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
                 Estimated Revenue (Riyal)
               </label>
               <input
@@ -349,7 +490,7 @@ export const ServiceRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
                 Estimated Expenses (Riyal)
               </label>
               <input
@@ -375,7 +516,7 @@ export const ServiceRequestForm = () => {
               >
                 <option value="">Select a budget range</option>
                   <option value="10-50">0 - 50 Riyal</option>
-                <option value="50-100">50 - 00 Riyal</option>
+                <option value="50-100">50 - 100 Riyal</option>
                 <option value="100-250">200 - 250 Riyal</option>
                 <option value="250-500">250 - 500 Riyal</option>
                 <option value="500-1000">500 - 2000 Riyal</option>

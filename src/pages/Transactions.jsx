@@ -195,7 +195,7 @@ const Transactions = () => {
               {[
                 {
                   title: "Total Revenue",
-                  value: `$${totalRevenue.toFixed(2)}`,
+                  value: `${totalRevenue.toFixed(2)} OMR`,
                 },
                 {
                   title: "Total Transactions",
@@ -371,7 +371,7 @@ const Transactions = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            ${t.amount?.toFixed(2) || "0.00"}
+                            {t.amount?.toFixed(2) || "0.00"} OMR
                           </TableCell>
                           <TableCell>
                             <Badge
@@ -489,7 +489,7 @@ const Transactions = () => {
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">Amount</div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          ${selected.amount?.toFixed(2) || "0.00"}
+                          {selected.amount?.toFixed(2) || "0.00"} OMR
                         </div>
                       </div>
                       <div className="space-y-1">

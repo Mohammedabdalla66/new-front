@@ -1,8 +1,9 @@
 import React from "react";
 import { useLanguage } from "../../contexts/LanguageContext.jsx";
+import { getServiceTitleLabel } from "../../utils/titleUtils";
 
 export const RequestsTable = ({ requests, onViewDetails }) => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   return (
     <div className="overflow-x-auto">
@@ -29,7 +30,7 @@ export const RequestsTable = ({ requests, onViewDetails }) => {
           {requests.map((r) => (
             <tr key={r.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
               <td className="px-3 lg:px-6 py-4 text-sm text-gray-900 dark:text-white">
-                <div className="font-medium">{r.title}</div>
+                <div className="font-medium">{getServiceTitleLabel(r.title, language || 'en')}</div>
                 <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-xs">
                   {r.description}
                 </div>
@@ -84,7 +85,7 @@ export const RequestsTable = ({ requests, onViewDetails }) => {
             <div className="flex items-start justify-between mb-3">
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                  {r.title}
+                  {getServiceTitleLabel(r.title, language || 'en')}
                 </h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">
                   {r.description}

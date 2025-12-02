@@ -25,8 +25,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import Toast from '../components/ui/toast';
 import AlertDialog from '../components/ui/alert-dialog';
 import { adminAPI } from '../services/api';
+import { getServiceTitleLabel } from '../utils/titleUtils';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Proposals = () => {
+  const { language } = useLanguage();
   // Data
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,9 +42,12 @@ const Proposals = () => {
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   // Selection
   const [selectedProposal, setSelectedProposal] = useState(null);
+  const [proposalToReject, setProposalToReject] = useState(null);
 
   // Toast
   const [toast, setToast] = useState({ open: false });
@@ -56,6 +62,7 @@ const Proposals = () => {
         setProposals(proposalsData.map(proposal => ({
           id: proposal._id || proposal.id,
           requestTitle: proposal.request?.title || 'N/A',
+          requestTitleDisplay: getServiceTitleLabel(proposal.request?.title, language || 'en'),
           requestId: proposal.request?._id || proposal.request,
           serviceProviderName: proposal.serviceProvider?.name || 'N/A',
           serviceProviderEmail: proposal.serviceProvider?.email || '',
@@ -111,7 +118,7 @@ const Proposals = () => {
       setToast({
         open: true,
         title: 'Proposal approved',
-        description: `Proposal for "${proposal.requestTitle}" has been approved.`,
+        description: `Proposal for "${proposal.requestTitleDisplay || getServiceTitleLabel(proposal.requestTitle, language || 'en')}" has been approved.`,
         variant: 'success'
       });
       setTimeout(() => setToast((t) => ({ ...t, open: false })), 2500);
@@ -128,18 +135,29 @@ const Proposals = () => {
     }
   };
 
-  const rejectProposal = async (proposal) => {
+  const openRejectDialog = (proposal) => {
+    setProposalToReject(proposal);
+    setRejectionReason('');
+    setRejectDialogOpen(true);
+    setViewDialogOpen(false);
+  };
+
+  const rejectProposal = async () => {
+    if (!proposalToReject) return;
+    
     try {
-      await adminAPI.rejectProposal(proposal.id);
-      setProposals((prev) => prev.filter((p) => p.id !== proposal.id));
+      await adminAPI.rejectProposal(proposalToReject.id, rejectionReason);
+      setProposals((prev) => prev.filter((p) => p.id !== proposalToReject.id));
       setToast({
         open: true,
         title: 'Proposal rejected',
-        description: `Proposal for "${proposal.requestTitle}" has been rejected.`,
+        description: `Proposal for "${proposalToReject.requestTitleDisplay || getServiceTitleLabel(proposalToReject.requestTitle, language || 'en')}" has been rejected.`,
         variant: 'destructive'
       });
       setTimeout(() => setToast((t) => ({ ...t, open: false })), 2500);
-      setViewDialogOpen(false);
+      setRejectDialogOpen(false);
+      setProposalToReject(null);
+      setRejectionReason('');
     } catch (error) {
       console.error('Error rejecting proposal:', error);
       setToast({
@@ -154,7 +172,7 @@ const Proposals = () => {
 
   const formatCurrency = (amount) => {
     if (!amount || amount === 0) return 'Not specified';
-    return `$${amount.toLocaleString()}`;
+    return `${amount.toLocaleString()} OMR`;
   };
 
   const formatDate = (dateString) => {
@@ -263,7 +281,7 @@ const Proposals = () => {
                               className="border-b hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
                             >
                               <TableCell className="font-medium max-w-xs truncate">
-                                {proposal.requestTitle}
+                                {proposal.requestTitleDisplay || proposal.requestTitle}
                               </TableCell>
                               <TableCell>
                                 <div className="flex flex-col">
@@ -300,24 +318,6 @@ const Proposals = () => {
                                   </Button>
                                   {proposal.status === 'pending' && (
                                     <>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
-                                        onClick={() => approveProposal(proposal)}
-                                        aria-label="Approve proposal"
-                                      >
-                                        <CheckCircle className="w-4 h-4" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                        onClick={() => rejectProposal(proposal)}
-                                        aria-label="Reject proposal"
-                                      >
-                                        <XCircle className="w-4 h-4" />
-                                      </Button>
                                     </>
                                   )}
                                 </div>
@@ -352,7 +352,7 @@ const Proposals = () => {
                         <div className="space-y-1">
                           <div className="text-xs text-neutral-500">Request Title</div>
                           <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                            {selectedProposal.requestTitle}
+                            {selectedProposal.requestTitleDisplay || getServiceTitleLabel(selectedProposal.requestTitle, language || 'en')}
                           </div>
                         </div>
                         <div className="space-y-1">
@@ -430,7 +430,7 @@ const Proposals = () => {
                       <div className="text-sm text-neutral-500" />
                       {selectedProposal.status === 'pending' ? (
                         <div className="flex items-center gap-2">
-                          <Button variant="destructive" onClick={() => rejectProposal(selectedProposal)}>
+                          <Button variant="destructive" onClick={() => openRejectDialog(selectedProposal)}>
                             <XCircle className="w-4 h-4 mr-2" />
                             Reject
                           </Button>
@@ -450,6 +450,58 @@ const Proposals = () => {
                     </div>
                   </motion.div>
                 )}
+              </DialogContent>
+            </Dialog>
+
+            {/* Rejection Reason Dialog */}
+            <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Reject Proposal</DialogTitle>
+                  <DialogDescription>
+                    Please provide a reason for rejecting this proposal. This will be shown to the service provider.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-2">
+                      Rejection Reason *
+                    </label>
+                    <textarea
+                      value={rejectionReason}
+                      onChange={(e) => setRejectionReason(e.target.value)}
+                      placeholder="Enter the reason for rejecting this proposal..."
+                      rows={4}
+                      className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+                      required
+                    />
+                  </div>
+                  {proposalToReject && (
+                    <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                      <p className="font-medium mb-1">Proposal Details:</p>
+                      <p>Request: {proposalToReject.requestTitleDisplay || getServiceTitleLabel(proposalToReject.requestTitle, language || 'en')}</p>
+                      <p>Service Provider: {proposalToReject.serviceProviderName}</p>
+                      <p>Price: {proposalToReject.price?.toLocaleString()} OMR</p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center justify-end gap-2 pt-2">
+                  <Button variant="outline" onClick={() => {
+                    setRejectDialogOpen(false);
+                    setRejectionReason('');
+                    setProposalToReject(null);
+                  }}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    variant="destructive" 
+                    onClick={rejectProposal}
+                    disabled={!rejectionReason.trim()}
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    Reject Proposal
+                  </Button>
+                </div>
               </DialogContent>
             </Dialog>
           </div>

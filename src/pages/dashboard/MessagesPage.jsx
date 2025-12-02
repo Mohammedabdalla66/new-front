@@ -5,6 +5,7 @@ import { socket } from "../../services/socket";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
+import { getServiceTitleLabel } from "../../utils/titleUtils";
 import {
   Search,
   Send,
@@ -20,7 +21,7 @@ import {
 } from "lucide-react";
 
 const MessagesPage = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();

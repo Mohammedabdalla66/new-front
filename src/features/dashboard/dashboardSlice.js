@@ -193,7 +193,7 @@ export const fetchRecentActivity = createAsyncThunk(
           activities.push({
             id: `transaction-${txn._id}`,
             type: txn.type === 'payment' || txn.type === 'deposit' ? 'payment' : 'transaction',
-            message: `${txn.type === 'payment' ? 'Payment' : 'Transaction'}: $${txn.amount?.toFixed(2)}`,
+            message: `${txn.type === 'payment' ? 'Payment' : 'Transaction'}: ${txn.amount?.toFixed(2)} OMR`,
             timestamp: txn.createdAt,
             status: txn.status,
             userOrFirm: txn.owner?.name || 'Unknown',

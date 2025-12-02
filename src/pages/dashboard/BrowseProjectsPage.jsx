@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { requestsAPI } from "../../services/api";
+import { getServiceTitleLabel } from "../../utils/titleUtils";
 import {
   Search,
   Filter,
@@ -16,7 +17,7 @@ import {
 } from "lucide-react";
 
 const BrowseProjectsPage = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -83,7 +84,7 @@ const BrowseProjectsPage = () => {
 
   const formatCurrency = (amount) => {
     if (!amount || amount === 0) return "Not specified";
-    return `$${amount.toLocaleString()}`;
+    return `${amount.toLocaleString()} OMR`;
   };
 
 
@@ -182,7 +183,7 @@ const BrowseProjectsPage = () => {
                   <div className="flex items-start justify-between mb-3">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                        {project.title}
+                        {getServiceTitleLabel(project.title, language || 'en')}
                       </h3>
                       <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
                         <div className="flex items-center">
@@ -227,13 +228,6 @@ const BrowseProjectsPage = () => {
                   >
                     <Eye className="w-4 h-4 mr-1" />
                     View Details
-                  </button>
-                  <button 
-                    onClick={() => navigate(`/firm/browse/${project._id || project.id}`)}
-                    className="flex items-center px-3 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
-                  >
-                    <Send className="w-4 h-4 mr-1" />
-                    {project.hasProposal ? 'View Proposal' : 'Submit Proposal'}
                   </button>
                 </div>
               </div>

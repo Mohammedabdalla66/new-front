@@ -35,8 +35,11 @@ import {
 } from "../components/ui/table";
 import { adminAPI } from "../services/adminApi";
 import { toast } from "react-toastify";
+import { getServiceTitleLabel } from "../utils/titleUtils";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const ClientDetails = () => {
+  const { language } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
@@ -92,10 +95,8 @@ const ClientDetails = () => {
   };
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(amount || 0);
+    if (!amount || amount === 0) return "Not specified";
+    return `${amount.toLocaleString()} OMR`;
   };
 
   if (loading) {
@@ -328,7 +329,7 @@ const ClientDetails = () => {
                               {data.requests.map((request) => (
                                 <TableRow key={request.id}>
                                   <TableCell className="font-medium">
-                                    {request.title}
+                                    {getServiceTitleLabel(request.title, language || 'en')}
                                   </TableCell>
                                   <TableCell>{formatCurrency(request.budget)}</TableCell>
                                   <TableCell>
@@ -375,7 +376,7 @@ const ClientDetails = () => {
                               {data.proposals.map((proposal) => (
                                 <TableRow key={proposal.id}>
                                   <TableCell className="font-medium">
-                                    {proposal.requestTitle || "—"}
+                                    {proposal.requestTitle ? getServiceTitleLabel(proposal.requestTitle, language || 'en') : "—"}
                                   </TableCell>
                                   <TableCell>
                                     {proposal.serviceProvider?.name || "—"}

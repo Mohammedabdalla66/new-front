@@ -40,7 +40,7 @@ const RevenueChart = ({ data = [], loading }) => {
                 <div
                   className="w-full bg-blue-600 dark:bg-blue-500 rounded-t-lg transition-all hover:opacity-80"
                   style={{ height: `${Math.max(height, 5)}%` }}
-                  title={`${item.month}: $${item.revenue?.toLocaleString() || 0}`}
+                  title={`${item.month}: ${item.revenue?.toLocaleString() || 0} OMR`}
                 />
               </div>
               <span className="text-xs text-gray-600 dark:text-gray-400 mt-2">

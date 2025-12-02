@@ -3,9 +3,10 @@ import { useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import { messagesAPI } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
 import { useAuth } from "../hooks/useAuth";
+import { getServiceTitleLabel } from "../utils/titleUtils";
 
 export const Messages = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -456,7 +457,7 @@ export const Messages = () => {
                   </div>
                   {c.requestTitle && (
                     <div className="text-xs text-gray-500 truncate mt-1">
-                      {c.requestTitle}
+                      {getServiceTitleLabel(c.requestTitle, language || 'en')}
                     </div>
                   )}
                   <div className="mt-1 text-sm text-gray-600 truncate">

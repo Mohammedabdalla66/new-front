@@ -108,7 +108,7 @@ export const Wallet = () => {
                 {t("currentWalletBalance")}
               </div>
               <div className="mt-1 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-                {loading ? t("loading") : `$${Number(balance).toLocaleString()}`}
+                {loading ? t("loading") : `${Number(balance).toLocaleString()} OMR`}
               </div>
             </div>
             <div className="mt-2 sm:mt-0 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
@@ -266,8 +266,8 @@ export const Wallet = () => {
                             : "text-green-600 dark:text-green-400"
                         }`}
                       >
-                        {t.amount < 0 ? "-" : "+"}$
-                        {Math.abs(t.amount).toLocaleString()}
+                        {t.amount < 0 ? "-" : "+"}
+                        {Math.abs(t.amount).toLocaleString()} OMR
                       </td>
                       <td className="px-3 lg:px-6 py-4">
                         <span
@@ -310,8 +310,8 @@ export const Wallet = () => {
                             : "text-green-600 dark:text-green-400"
                         }`}
                       >
-                        {t.amount < 0 ? "-" : "+"}$
-                        {Math.abs(t.amount).toLocaleString()}
+                        {t.amount < 0 ? "-" : "+"}
+                        {Math.abs(t.amount).toLocaleString()} OMR
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
