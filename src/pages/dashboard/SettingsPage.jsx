@@ -45,8 +45,13 @@ const SettingsPage = () => {
   const tabs = [
     { id: "profile", label: t("profileSettings"), icon: User },
     { id: "security", label: t("changePassword"), icon: Lock },
+<<<<<<< HEAD
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "preferences", label: "Preferences", icon: Globe },
+=======
+    { id: "notifications", label: t("notifications"), icon: Bell },
+    { id: "preferences", label: t("preferences"), icon: Globe },
+>>>>>>> origin/mohamedAbdo
   ];
 
   const handleNotificationChange = (key) => {
@@ -73,10 +78,17 @@ const SettingsPage = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+<<<<<<< HEAD
           Settings
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
           Manage your account settings and preferences
+=======
+          {t("settings")}
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          {t("manageAccountSettings")}
+>>>>>>> origin/mohamedAbdo
         </p>
       </div>
 
@@ -109,7 +121,11 @@ const SettingsPage = () => {
           {activeTab === "profile" && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+<<<<<<< HEAD
                 Profile Information
+=======
+                {t("profileInformation")}
+>>>>>>> origin/mohamedAbdo
               </h2>
 
               <div className="space-y-6">
@@ -137,7 +153,11 @@ const SettingsPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+<<<<<<< HEAD
                       First Name
+=======
+                      {t("firstName")}
+>>>>>>> origin/mohamedAbdo
                     </label>
                     <input
                       type="text"
@@ -150,7 +170,11 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+<<<<<<< HEAD
                       Last Name
+=======
+                      {t("lastName")}
+>>>>>>> origin/mohamedAbdo
                     </label>
                     <input
                       type="text"
@@ -163,7 +187,11 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+<<<<<<< HEAD
                       Email
+=======
+                      {t("email")}
+>>>>>>> origin/mohamedAbdo
                     </label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -179,7 +207,11 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+<<<<<<< HEAD
                       Phone
+=======
+                      {t("phone")}
+>>>>>>> origin/mohamedAbdo
                     </label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -195,7 +227,11 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+<<<<<<< HEAD
                       Location
+=======
+                      {t("location")}
+>>>>>>> origin/mohamedAbdo
                     </label>
                     <div className="relative">
                       <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -211,7 +247,11 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+<<<<<<< HEAD
                       Professional Title
+=======
+                      {t("professionalTitle")}
+>>>>>>> origin/mohamedAbdo
                     </label>
                     <div className="relative">
                       <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -228,22 +268,35 @@ const SettingsPage = () => {
                 </div>
 
                 <div>
+<<<<<<< HEAD
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Bio
+=======
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t("bio")}
+>>>>>>> origin/mohamedAbdo
                   </label>
                   <textarea
                     rows={4}
                     value={profile.bio}
                     onChange={(e) => handleProfileChange("bio", e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+<<<<<<< HEAD
                     placeholder="Tell clients about your experience and expertise..."
+=======
+                    placeholder={t("tellClientsAboutExperience")}
+>>>>>>> origin/mohamedAbdo
                   />
                 </div>
 
                 <div className="flex justify-end">
                   <button className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
                     <Save className="w-4 h-4 mr-2" />
+<<<<<<< HEAD
                     Save Changes
+=======
+                    {t("saveChanges")}
+>>>>>>> origin/mohamedAbdo
                   </button>
                 </div>
               </div>
@@ -253,13 +306,21 @@ const SettingsPage = () => {
           {activeTab === "security" && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+<<<<<<< HEAD
                 Security Settings
+=======
+                {t("securitySettings")}
+>>>>>>> origin/mohamedAbdo
               </h2>
 
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+<<<<<<< HEAD
                     Current Password
+=======
+                    {t("currentPassword")}
+>>>>>>> origin/mohamedAbdo
                   </label>
                   <input
                     type="password"
@@ -268,7 +329,11 @@ const SettingsPage = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+<<<<<<< HEAD
                     New Password
+=======
+                    {t("newPassword")}
+>>>>>>> origin/mohamedAbdo
                   </label>
                   <input
                     type="password"
@@ -277,7 +342,11 @@ const SettingsPage = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+<<<<<<< HEAD
                     Confirm New Password
+=======
+                    {t("confirmNewPassword")}
+>>>>>>> origin/mohamedAbdo
                   </label>
                   <input
                     type="password"
@@ -287,7 +356,11 @@ const SettingsPage = () => {
                 <div className="flex justify-end">
                   <button className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
                     <Save className="w-4 h-4 mr-2" />
+<<<<<<< HEAD
                     Update Password
+=======
+                    {t("updatePassword")}
+>>>>>>> origin/mohamedAbdo
                   </button>
                 </div>
               </div>
@@ -297,7 +370,11 @@ const SettingsPage = () => {
           {activeTab === "notifications" && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+<<<<<<< HEAD
                 Notification Preferences
+=======
+                {t("notificationPreferences")}
+>>>>>>> origin/mohamedAbdo
               </h2>
 
               <div className="space-y-4">
@@ -309,6 +386,7 @@ const SettingsPage = () => {
                           key.slice(1).replace(/([A-Z])/g, " $1")}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
+<<<<<<< HEAD
                         {key === "email" && "Receive notifications via email"}
                         {key === "push" && "Receive push notifications"}
                         {key === "sms" && "Receive SMS notifications"}
@@ -318,6 +396,17 @@ const SettingsPage = () => {
                           "Get notified about new messages"}
                         {key === "deadlines" &&
                           "Get notified about upcoming deadlines"}
+=======
+                        {key === "email" && t("receiveNotificationsViaEmail")}
+                        {key === "push" && t("receivePushNotifications")}
+                        {key === "sms" && t("receiveSmsNotifications")}
+                        {key === "projectUpdates" &&
+                          t("getNotifiedAboutProjectUpdates")}
+                        {key === "messages" &&
+                          t("getNotifiedAboutNewMessages")}
+                        {key === "deadlines" &&
+                          t("getNotifiedAboutUpcomingDeadlines")}
+>>>>>>> origin/mohamedAbdo
                       </p>
                     </div>
                     <button
@@ -341,17 +430,28 @@ const SettingsPage = () => {
           {activeTab === "preferences" && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+<<<<<<< HEAD
                 Preferences
+=======
+                {t("preferences")}
+>>>>>>> origin/mohamedAbdo
               </h2>
 
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+<<<<<<< HEAD
                       Language
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Choose your preferred language
+=======
+                      {t("language")}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {t("choosePreferredLanguage")}
+>>>>>>> origin/mohamedAbdo
                     </p>
                   </div>
                   <button
@@ -366,10 +466,17 @@ const SettingsPage = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+<<<<<<< HEAD
                       Dark Mode
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                       Switch between light and dark themes
+=======
+                      {t("darkMode")}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {t("switchBetweenThemes")}
+>>>>>>> origin/mohamedAbdo
                     </p>
                   </div>
                   <button
@@ -381,7 +488,11 @@ const SettingsPage = () => {
                     ) : (
                       <Moon className="w-4 h-4 mr-2" />
                     )}
+<<<<<<< HEAD
                     {isDarkMode ? "Light" : "Dark"}
+=======
+                    {isDarkMode ? t("light") : t("dark")}
+>>>>>>> origin/mohamedAbdo
                   </button>
                 </div>
               </div>

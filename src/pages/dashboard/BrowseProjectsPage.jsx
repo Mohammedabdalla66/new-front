@@ -60,7 +60,11 @@ const BrowseProjectsPage = () => {
         }
       } catch (err) {
         console.error("Error loading projects:", err);
+<<<<<<< HEAD
         setError(err?.response?.data?.message || "Failed to load projects");
+=======
+        setError(err?.response?.data?.message || t("failedToLoadProjects"));
+>>>>>>> origin/mohamedAbdo
       } finally {
         setLoading(false);
       }
@@ -75,16 +79,28 @@ const BrowseProjectsPage = () => {
     const diffTime = Math.abs(now - date);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
+<<<<<<< HEAD
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Yesterday";
     if (diffDays < 7) return `${diffDays} days ago`;
     if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+=======
+    if (diffDays === 0) return t("today");
+    if (diffDays === 1) return t("yesterday");
+    if (diffDays < 7) return `${diffDays} ${t("daysAgo")}`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} ${t("weeksAgo")}`;
+>>>>>>> origin/mohamedAbdo
     return date.toLocaleDateString();
   };
 
   const formatCurrency = (amount) => {
+<<<<<<< HEAD
     if (!amount || amount === 0) return "Not specified";
     return `${amount.toLocaleString()} OMR`;
+=======
+    if (!amount || amount === 0) return t("notSpecified");
+    return `${amount.toLocaleString()} ${t("omr")}`;
+>>>>>>> origin/mohamedAbdo
   };
 
 
@@ -100,7 +116,11 @@ const BrowseProjectsPage = () => {
             {t("browseProjects")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
+<<<<<<< HEAD
             Find and apply for accounting projects that match your skills
+=======
+            {t("findAndApply")}
+>>>>>>> origin/mohamedAbdo
           </p>
         </div>
       </div>
@@ -114,7 +134,11 @@ const BrowseProjectsPage = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
+<<<<<<< HEAD
                 placeholder="Search projects..."
+=======
+                placeholder={t("searchProjects")}
+>>>>>>> origin/mohamedAbdo
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -132,9 +156,15 @@ const BrowseProjectsPage = () => {
               }}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
+<<<<<<< HEAD
               <option value="">All Status</option>
               <option value="pending">Pending</option>
               <option value="open">Open</option>
+=======
+              <option value="">{t("allStatus")}</option>
+              <option value="pending">{t("pending")}</option>
+              <option value="open">{t("open")}</option>
+>>>>>>> origin/mohamedAbdo
             </select>
           </div>
 
@@ -145,9 +175,15 @@ const BrowseProjectsPage = () => {
               onChange={(e) => setSortBy(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
+<<<<<<< HEAD
               <option value="newest">Newest First</option>
               <option value="budget">Highest Budget</option>
               <option value="proposals">Most Proposals</option>
+=======
+              <option value="newest">{t("newestFirst")}</option>
+              <option value="budget">{t("highestBudget")}</option>
+              <option value="proposals">{t("mostProposals")}</option>
+>>>>>>> origin/mohamedAbdo
             </select>
           </div>
         </div>
@@ -157,7 +193,11 @@ const BrowseProjectsPage = () => {
       {loading && (
         <div className="text-center py-12">
           <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+<<<<<<< HEAD
           <p className="mt-4 text-gray-600 dark:text-gray-400">Loading projects...</p>
+=======
+          <p className="mt-4 text-gray-600 dark:text-gray-400">{t("loadingProjects")}</p>
+>>>>>>> origin/mohamedAbdo
         </div>
       )}
 
@@ -215,7 +255,11 @@ const BrowseProjectsPage = () => {
                     {project.deadline && (
                       <div className="flex items-center">
                         <Clock className="w-4 h-4 mr-1" />
+<<<<<<< HEAD
                         Deadline: {formatDate(project.deadline)}
+=======
+                        {t("deadline")}: {formatDate(project.deadline)}
+>>>>>>> origin/mohamedAbdo
                       </div>
                     )}
                   </div>
@@ -227,7 +271,11 @@ const BrowseProjectsPage = () => {
                     className="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <Eye className="w-4 h-4 mr-1" />
+<<<<<<< HEAD
                     View Details
+=======
+                    {t("viewDetails")}
+>>>>>>> origin/mohamedAbdo
                   </button>
                 </div>
               </div>
@@ -240,11 +288,18 @@ const BrowseProjectsPage = () => {
         <div className="text-center py-12">
           <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+<<<<<<< HEAD
             No projects found
           </h3>
           <p className="text-gray-500 dark:text-gray-400">
             Try adjusting your search criteria or check back later for new
             projects.
+=======
+            {t("noProjectsFound")}
+          </h3>
+          <p className="text-gray-500 dark:text-gray-400">
+            {t("tryAdjustingSearch")}
+>>>>>>> origin/mohamedAbdo
           </p>
         </div>
       )}
@@ -257,17 +312,28 @@ const BrowseProjectsPage = () => {
             disabled={page === 1}
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700"
           >
+<<<<<<< HEAD
             Previous
           </button>
           <span className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
             Page {page} of {totalPages}
+=======
+            {t("previous")}
+          </button>
+          <span className="px-4 py-2 text-sm text-gray-600 dark:text-gray-400">
+            {t("page")} {page} {t("of")} {totalPages}
+>>>>>>> origin/mohamedAbdo
           </span>
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700"
           >
+<<<<<<< HEAD
             Next
+=======
+            {t("next")}
+>>>>>>> origin/mohamedAbdo
           </button>
         </div>
       )}

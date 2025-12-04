@@ -22,7 +22,11 @@ import {
 const ProposalDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+<<<<<<< HEAD
   const { language } = useLanguage();
+=======
+  const { t, language } = useLanguage();
+>>>>>>> origin/mohamedAbdo
   const { showConfirmation, ConfirmationToastComponent } = useConfirmationToast();
   const [proposal, setProposal] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -50,7 +54,11 @@ const ProposalDetailsPage = () => {
         }
       } catch (err) {
         console.error("Error loading proposal:", err);
+<<<<<<< HEAD
         setError(err?.response?.data?.message || "Failed to load proposal");
+=======
+        setError(err?.response?.data?.message || t("failedToLoadProposal"));
+>>>>>>> origin/mohamedAbdo
       } finally {
         setLoading(false);
       }
@@ -128,7 +136,11 @@ const ProposalDetailsPage = () => {
 
     const priceNum = parseFloat(priceValue);
     if (isNaN(priceNum) || priceNum < 0) {
+<<<<<<< HEAD
       setPriceError("Price must be a valid positive number");
+=======
+      setPriceError(t("priceMustBeValidNumber"));
+>>>>>>> origin/mohamedAbdo
       return false;
     }
 
@@ -142,7 +154,11 @@ const ProposalDetailsPage = () => {
     }
 
     if (priceNum < budgetRange.min) {
+<<<<<<< HEAD
       setPriceError(`Price must be at least ${budgetRange.min.toLocaleString()} OMR. The client's budget range is ${budgetRange.min.toLocaleString()} - ${budgetRange.max.toLocaleString()} OMR, but you can offer a higher price.`);
+=======
+      setPriceError(`${t("priceMustBeAtLeast")} ${budgetRange.min.toLocaleString()} ${t("omr")}. ${t("clientBudgetRangeIs")} ${budgetRange.min.toLocaleString()} - ${budgetRange.max.toLocaleString()} ${t("omr")}, ${t("butCanOfferHigher")}`);
+>>>>>>> origin/mohamedAbdo
       return false;
     }
 
@@ -180,13 +196,21 @@ const ProposalDetailsPage = () => {
     }
 
     if (!price || !endDate) {
+<<<<<<< HEAD
       toast.error("Price and end date are required");
+=======
+      toast.error(t("priceAndEndDateRequired"));
+>>>>>>> origin/mohamedAbdo
       return;
     }
 
     // Validate price against budget range (minimum only)
     if (!validatePrice(price)) {
+<<<<<<< HEAD
       toast.error(priceError || "Price must meet the minimum requirement");
+=======
+      toast.error(priceError || t("priceMustBeValidNumber"));
+>>>>>>> origin/mohamedAbdo
       return;
     }
 
@@ -200,7 +224,11 @@ const ProposalDetailsPage = () => {
       selectedDate.setHours(0, 0, 0, 0);
 
       if (selectedDate <= today) {
+<<<<<<< HEAD
         toast.error("End date must be in the future");
+=======
+        toast.error(t("endDateMustBeFuture"));
+>>>>>>> origin/mohamedAbdo
         setEditLoading(false);
         return;
       }
@@ -222,7 +250,11 @@ const ProposalDetailsPage = () => {
       const response = await proposalsAPI.update(id, formData);
       
       if (response.data.success) {
+<<<<<<< HEAD
         toast.success("Proposal updated successfully! Awaiting admin approval.");
+=======
+        toast.success(t("proposalUpdatedSuccess"));
+>>>>>>> origin/mohamedAbdo
         setShowEditForm(false);
         
         // Reload proposal to update status
@@ -240,7 +272,11 @@ const ProposalDetailsPage = () => {
       }
     } catch (err) {
       console.error("Error updating proposal:", err);
+<<<<<<< HEAD
       toast.error(err?.response?.data?.message || "Failed to update proposal");
+=======
+      toast.error(err?.response?.data?.message || t("failedToUpdateProposal"));
+>>>>>>> origin/mohamedAbdo
     } finally {
       setEditLoading(false);
     }
@@ -252,8 +288,13 @@ const ProposalDetailsPage = () => {
   };
 
   const formatCurrency = (amount) => {
+<<<<<<< HEAD
     if (!amount || amount === 0) return "Not specified";
     return `${amount.toLocaleString()} OMR`;
+=======
+    if (!amount || amount === 0) return t("notSpecified");
+    return `${amount.toLocaleString()} ${t("omr")}`;
+>>>>>>> origin/mohamedAbdo
   };
 
 
@@ -290,7 +331,11 @@ const ProposalDetailsPage = () => {
     return (
       <div className="text-center py-12">
         <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+<<<<<<< HEAD
         <p className="mt-4 text-gray-600 dark:text-gray-400">Loading proposal...</p>
+=======
+        <p className="mt-4 text-gray-600 dark:text-gray-400">{t("loadingProposal")}</p>
+>>>>>>> origin/mohamedAbdo
       </div>
     );
   }
@@ -299,13 +344,21 @@ const ProposalDetailsPage = () => {
     return (
       <div className="text-center py-12">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+<<<<<<< HEAD
           <p className="text-red-800 dark:text-red-200">{error || "Proposal not found"}</p>
+=======
+          <p className="text-red-800 dark:text-red-200">{error || t("proposalNotFound")}</p>
+>>>>>>> origin/mohamedAbdo
         </div>
         <button
           onClick={() => navigate("/firm/requests")}
           className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
         >
+<<<<<<< HEAD
           Back to My Proposals
+=======
+          {t("backToMyProposals")}
+>>>>>>> origin/mohamedAbdo
         </button>
       </div>
     );
@@ -324,10 +377,17 @@ const ProposalDetailsPage = () => {
         </button>
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+<<<<<<< HEAD
             Proposal Details
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
             View your proposal information and status
+=======
+            {t("proposalDetails")}
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            {t("viewProposalInfo")}
+>>>>>>> origin/mohamedAbdo
           </p>
         </div>
       </div>
@@ -341,6 +401,7 @@ const ProposalDetailsPage = () => {
             </div>
             <div className="ml-3 flex-1">
               <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+<<<<<<< HEAD
                 Proposal Rejected
               </h3>
               <div className="mt-2 text-sm text-red-700 dark:text-red-300">
@@ -349,6 +410,16 @@ const ProposalDetailsPage = () => {
                   <p className="whitespace-pre-wrap">{proposal.rejectionReason}</p>
                 ) : (
                   <p className="text-red-600 dark:text-red-400 italic">No rejection reason provided.</p>
+=======
+                {t("proposalRejected")}
+              </h3>
+              <div className="mt-2 text-sm text-red-700 dark:text-red-300">
+                <p className="font-medium mb-1">{t("rejectionReason")}</p>
+                {proposal.rejectionReason ? (
+                  <p className="whitespace-pre-wrap">{proposal.rejectionReason}</p>
+                ) : (
+                  <p className="text-red-600 dark:text-red-400 italic">{t("noRejectionReason")}</p>
+>>>>>>> origin/mohamedAbdo
                 )}
               </div>
               <div className="mt-4">
@@ -356,7 +427,11 @@ const ProposalDetailsPage = () => {
                   onClick={() => setShowEditForm(true)}
                   className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
+<<<<<<< HEAD
                   Edit Proposal
+=======
+                  {t("editProposal")}
+>>>>>>> origin/mohamedAbdo
                 </button>
               </div>
             </div>
@@ -371,7 +446,11 @@ const ProposalDetailsPage = () => {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-start justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+<<<<<<< HEAD
                 Proposal for: {proposal.request?.title ? getServiceTitleLabel(proposal.request.title) : "Request"}
+=======
+                {t("proposalFor")} {proposal.request?.title ? getServiceTitleLabel(proposal.request.title) : t("request")}
+>>>>>>> origin/mohamedAbdo
               </h2>
               <div className="flex items-center space-x-2">
                 {getStatusIcon(proposal.status)}
@@ -389,7 +468,11 @@ const ProposalDetailsPage = () => {
               <div className="flex items-center space-x-2">
                 <DollarSign className="w-5 h-5 text-gray-400" />
                 <div>
+<<<<<<< HEAD
                   <p className="text-sm text-gray-500 dark:text-gray-400">Price</p>
+=======
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("price")}</p>
+>>>>>>> origin/mohamedAbdo
                   <p className="font-medium text-gray-900 dark:text-white">
                     {formatCurrency(proposal.price)}
                   </p>
@@ -398,16 +481,26 @@ const ProposalDetailsPage = () => {
               <div className="flex items-center space-x-2">
                 <CalendarIcon className="w-5 h-5 text-gray-400" />
                 <div>
+<<<<<<< HEAD
                   <p className="text-sm text-gray-500 dark:text-gray-400">Duration</p>
                   <p className="font-medium text-gray-900 dark:text-white">
                     {proposal.durationDays || "N/A"} days
+=======
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("duration")}</p>
+                  <p className="font-medium text-gray-900 dark:text-white">
+                    {proposal.durationDays || "N/A"} {t("days")}
+>>>>>>> origin/mohamedAbdo
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
                 <Clock className="w-5 h-5 text-gray-400" />
                 <div>
+<<<<<<< HEAD
                   <p className="text-sm text-gray-500 dark:text-gray-400">Submitted</p>
+=======
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("submitted")}</p>
+>>>>>>> origin/mohamedAbdo
                   <p className="font-medium text-gray-900 dark:text-white">
                     {formatDate(proposal.createdAt)}
                   </p>
@@ -418,7 +511,11 @@ const ProposalDetailsPage = () => {
             {proposal.notes && (
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+<<<<<<< HEAD
                   Notes
+=======
+                  {t("notes")}
+>>>>>>> origin/mohamedAbdo
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
                   {proposal.notes}
@@ -430,7 +527,11 @@ const ProposalDetailsPage = () => {
             {proposal.attachments && proposal.attachments.length > 0 && (
               <div className="mt-6">
                 <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
+<<<<<<< HEAD
                   Attachments
+=======
+                  {t("attachments")}
+>>>>>>> origin/mohamedAbdo
                 </h3>
                 <div className="space-y-2">
                   {proposal.attachments.map((att, index) => (
@@ -480,19 +581,31 @@ const ProposalDetailsPage = () => {
           {showEditForm && proposal?.status === "rejected" && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+<<<<<<< HEAD
                 Update Proposal
+=======
+                {t("updateProposal")}
+>>>>>>> origin/mohamedAbdo
               </h2>
               <form onSubmit={handleUpdateProposal} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+<<<<<<< HEAD
                       Price (OMR) *
+=======
+                      {t("priceOMR")}
+>>>>>>> origin/mohamedAbdo
                       {proposal?.request?.budget && (() => {
                         const budgetRange = parseBudgetRange(proposal.request.budget);
                         if (budgetRange) {
                           return (
                             <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+<<<<<<< HEAD
                               (Minimum: {budgetRange.min.toLocaleString()} OMR, Budget range: {budgetRange.min.toLocaleString()} - {budgetRange.max.toLocaleString()} OMR)
+=======
+                              ({t("minimum")} {budgetRange.min.toLocaleString()} {t("omr")}, {t("budgetRange")} {budgetRange.min.toLocaleString()} - {budgetRange.max.toLocaleString()} {t("omr")})
+>>>>>>> origin/mohamedAbdo
                             </span>
                           );
                         }
@@ -525,13 +638,21 @@ const ProposalDetailsPage = () => {
                           if (priceNum <= budgetRange.max) {
                             return (
                               <p className="mt-1 text-sm text-green-600 dark:text-green-400">
+<<<<<<< HEAD
                                 ✓ Price is within the client's budget range
+=======
+                                {t("priceWithinRange")}
+>>>>>>> origin/mohamedAbdo
                               </p>
                             );
                           } else {
                             return (
                               <p className="mt-1 text-sm text-blue-600 dark:text-blue-400">
+<<<<<<< HEAD
                                 ✓ Price exceeds the client's maximum budget, but is allowed
+=======
+                                {t("priceExceedsMax")}
+>>>>>>> origin/mohamedAbdo
                               </p>
                             );
                           }
@@ -542,7 +663,11 @@ const ProposalDetailsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
+<<<<<<< HEAD
                       End Date *
+=======
+                      {t("endDate")}
+>>>>>>> origin/mohamedAbdo
                     </label>
                     <input
                       type="date"
@@ -553,27 +678,43 @@ const ProposalDetailsPage = () => {
                       required
                     />
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+<<<<<<< HEAD
                       Select the project completion date
+=======
+                      {t("selectProjectCompletionDate")}
+>>>>>>> origin/mohamedAbdo
                     </p>
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+<<<<<<< HEAD
                     Notes
+=======
+                    {t("notes")}
+>>>>>>> origin/mohamedAbdo
                   </label>
                   <textarea
                     rows={4}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
+<<<<<<< HEAD
                     placeholder="Add any additional information about your proposal..."
+=======
+                    placeholder={t("addAdditionalInfo")}
+>>>>>>> origin/mohamedAbdo
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+<<<<<<< HEAD
                     Attachments (Optional)
+=======
+                    {t("attachmentsOptional")}
+>>>>>>> origin/mohamedAbdo
                   </label>
                   <input
                     type="file"
@@ -614,12 +755,20 @@ const ProposalDetailsPage = () => {
                     {editLoading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+<<<<<<< HEAD
                         Updating...
+=======
+                        {t("updating")}
+>>>>>>> origin/mohamedAbdo
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4 mr-2" />
+<<<<<<< HEAD
                         Update Proposal
+=======
+                        {t("updateProposalButton")}
+>>>>>>> origin/mohamedAbdo
                       </>
                     )}
                   </button>
@@ -648,18 +797,30 @@ const ProposalDetailsPage = () => {
           {proposal.request && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+<<<<<<< HEAD
                 Request Information
               </h3>
               <div className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Request Title</p>
+=======
+                {t("requestInformation")}
+              </h3>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("requestTitle")}</p>
+>>>>>>> origin/mohamedAbdo
                   <p className="font-medium text-gray-900 dark:text-white">
                     {getServiceTitleLabel(proposal.request.title, language)}
                   </p>
                 </div>
                 {proposal.request.budget && (
                   <div>
+<<<<<<< HEAD
                     <p className="text-sm text-gray-500 dark:text-gray-400">Client Budget</p>
+=======
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t("clientBudget")}</p>
+>>>>>>> origin/mohamedAbdo
                     <p className="font-medium text-gray-900 dark:text-white">
                       {formatCurrency(proposal.request.budget)}
                     </p>
@@ -669,7 +830,11 @@ const ProposalDetailsPage = () => {
                   onClick={() => navigate(`/firm/browse/${proposal.request._id || proposal.request.id}`)}
                   className="w-full mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
                 >
+<<<<<<< HEAD
                   View Request Details
+=======
+                  {t("viewRequestDetails")}
+>>>>>>> origin/mohamedAbdo
                 </button>
               </div>
             </div>

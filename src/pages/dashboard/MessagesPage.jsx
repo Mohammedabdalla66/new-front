@@ -79,10 +79,17 @@ const MessagesPage = () => {
             return {
               id: conversationId,
               conversationId: conversationId,
+<<<<<<< HEAD
               client: chat.client?.name || 'Unknown Client',
               clientId: chat.client?._id || chat.client,
               company: chat.client?.name || 'Unknown',
               lastMessage: chat.lastMessage?.text || 'No messages yet',
+=======
+              client: chat.client?.name || t("unknownClient"),
+              clientId: chat.client?._id || chat.client,
+              company: chat.client?.name || t("unknown"),
+              lastMessage: chat.lastMessage?.text || t("noMessagesYet"),
+>>>>>>> origin/mohamedAbdo
               timestamp: chat.lastMessage?.timestamp 
                 ? new Date(chat.lastMessage.timestamp).toLocaleTimeString() 
                 : '',
@@ -119,7 +126,11 @@ const MessagesPage = () => {
         }
       } catch (e) {
         console.error('Error loading conversations:', e);
+<<<<<<< HEAD
         toast.error('Failed to load conversations');
+=======
+        toast.error(t("failedToLoadConversations"));
+>>>>>>> origin/mohamedAbdo
       } finally {
         setConversationsLoading(false);
         setLoading(false);
@@ -185,7 +196,11 @@ const MessagesPage = () => {
         }
       } catch (err) {
         console.error('Error loading messages:', err);
+<<<<<<< HEAD
         toast.error('Failed to load messages');
+=======
+        toast.error(t("failedToLoadMessages"));
+>>>>>>> origin/mohamedAbdo
         setMessages([]);
       } finally {
         setLoading(false);
@@ -231,10 +246,17 @@ const MessagesPage = () => {
                   return {
                     id: conversationId,
                     conversationId: conversationId,
+<<<<<<< HEAD
                     client: chat.client?.name || 'Unknown Client',
                     clientId: chat.client?._id || chat.client,
                     company: chat.client?.name || 'Unknown',
                     lastMessage: chat.lastMessage?.text || 'No messages yet',
+=======
+                    client: chat.client?.name || t("unknownClient"),
+                    clientId: chat.client?._id || chat.client,
+                    company: chat.client?.name || t("unknown"),
+                    lastMessage: chat.lastMessage?.text || t("noMessagesYet"),
+>>>>>>> origin/mohamedAbdo
                     timestamp: chat.lastMessage?.timestamp 
                       ? new Date(chat.lastMessage.timestamp).toLocaleTimeString() 
                       : '',
@@ -338,10 +360,17 @@ const MessagesPage = () => {
               return {
                 id: conversationId,
                 conversationId: conversationId,
+<<<<<<< HEAD
                 client: chat.client?.name || 'Unknown Client',
                 clientId: chat.client?._id || chat.client,
                 company: chat.client?.name || 'Unknown',
                 lastMessage: chat.lastMessage?.text || 'No messages yet',
+=======
+                client: chat.client?.name || t("unknownClient"),
+                clientId: chat.client?._id || chat.client,
+                company: chat.client?.name || t("unknown"),
+                lastMessage: chat.lastMessage?.text || t("noMessagesYet"),
+>>>>>>> origin/mohamedAbdo
                 timestamp: chat.lastMessage?.timestamp 
                   ? new Date(chat.lastMessage.timestamp).toLocaleTimeString() 
                   : '',
@@ -364,7 +393,11 @@ const MessagesPage = () => {
       }
     } catch (err) {
       console.error('Error sending message:', err);
+<<<<<<< HEAD
       toast.error('Failed to send message');
+=======
+      toast.error(t("failedToSendMessage"));
+>>>>>>> origin/mohamedAbdo
     } finally {
       setSending(false);
     }
@@ -431,12 +464,21 @@ const MessagesPage = () => {
         <div className="flex-1 overflow-y-auto">
           {conversationsLoading ? (
             <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+<<<<<<< HEAD
               Loading conversations...
             </div>
           ) : conversations.length === 0 ? (
             <div className="p-4 text-center text-gray-500 dark:text-gray-400">
               <p>No conversations yet</p>
               <p className="text-sm mt-2">Start messaging clients from your bookings or proposals</p>
+=======
+              {t("loadingConversations")}
+            </div>
+          ) : conversations.length === 0 ? (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              <p>{t("noConversationsYet")}</p>
+              <p className="text-sm mt-2">{t("startMessagingClients")}</p>
+>>>>>>> origin/mohamedAbdo
             </div>
           ) : (
             conversations.map((conversation) => (
@@ -512,7 +554,11 @@ const MessagesPage = () => {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="text"
+<<<<<<< HEAD
                     placeholder="Search conversations..."
+=======
+                    placeholder={t("searchConversations")}
+>>>>>>> origin/mohamedAbdo
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -520,11 +566,19 @@ const MessagesPage = () => {
               <div className="overflow-y-auto h-full">
                 {conversationsLoading ? (
                   <div className="p-4 text-center text-gray-500 text-sm">
+<<<<<<< HEAD
                     Loading conversations...
                   </div>
                 ) : conversations.length === 0 ? (
                   <div className="p-4 text-center text-gray-500 text-sm">
                     No conversations yet.
+=======
+                    {t("loadingConversations")}
+                  </div>
+                ) : conversations.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500 text-sm">
+                    {t("noConversationsYet")}
+>>>>>>> origin/mohamedAbdo
                   </div>
                 ) : (
                   conversations.map((conversation) => (
@@ -663,8 +717,13 @@ const MessagesPage = () => {
                 </div>
               ) : messages.length === 0 ? (
                 <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+<<<<<<< HEAD
                   <p>No messages yet</p>
                   <p className="text-sm mt-2">Start the conversation!</p>
+=======
+                  <p>{t("noMessagesYet")}</p>
+                  <p className="text-sm mt-2">{t("startConversation")}</p>
+>>>>>>> origin/mohamedAbdo
                 </div>
               ) : (
                 messages.map((msg) => (
@@ -684,7 +743,11 @@ const MessagesPage = () => {
                       }`}
                     >
                       <div className="text-xs opacity-80 mb-1">
+<<<<<<< HEAD
                         {msg.sender === "provider" ? "You" : msg.avatar} •{" "}
+=======
+                        {msg.sender === "provider" ? t("you") : msg.avatar} •{" "}
+>>>>>>> origin/mohamedAbdo
                         {msg.timestamp}
                       </div>
                       <p className="text-sm leading-relaxed break-words">
@@ -714,7 +777,11 @@ const MessagesPage = () => {
                     type="text"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
+<<<<<<< HEAD
                     placeholder="Type a message..."
+=======
+                    placeholder={t("typeMessage")}
+>>>>>>> origin/mohamedAbdo
                       className="w-full px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -743,10 +810,17 @@ const MessagesPage = () => {
               <div className="text-center p-6">
                 <MessageSquare className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+<<<<<<< HEAD
                 Select a conversation
               </h3>
                 <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
                 Choose a conversation from the list to start messaging
+=======
+                {t("selectConversation")}
+              </h3>
+                <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto">
+                {t("chooseConversationToStart")}
+>>>>>>> origin/mohamedAbdo
               </p>
             </div>
           </div>

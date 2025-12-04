@@ -29,17 +29,36 @@ const DashboardPage = () => {
         if (response.data.success) {
           setStats(response.data.data);
         } else {
+<<<<<<< HEAD
           console.error("Dashboard stats response not successful:", response.data);
           toast.error(response.data.message || "Failed to load dashboard statistics");
         }
       } catch (error) {
         console.error("Error loading dashboard stats:", error);
         const errorMessage = error?.response?.data?.message || error?.message || "Failed to load dashboard statistics";
+=======
+          console.error(
+            "Dashboard stats response not successful:",
+            response.data
+          );
+          toast.error(response.data.message || t("failedToLoadDashboardStats"));
+        }
+      } catch (error) {
+        console.error("Error loading dashboard stats:", error);
+        const errorMessage =
+          error?.response?.data?.message ||
+          error?.message ||
+          t("failedToLoadDashboardStats");
+>>>>>>> origin/mohamedAbdo
         console.error("Error details:", {
           status: error?.response?.status,
           statusText: error?.response?.statusText,
           data: error?.response?.data,
+<<<<<<< HEAD
           url: error?.config?.url
+=======
+          url: error?.config?.url,
+>>>>>>> origin/mohamedAbdo
         });
         toast.error(errorMessage);
         // Set default stats on error so UI doesn't break
@@ -47,7 +66,11 @@ const DashboardPage = () => {
           bookings: { total: 0, active: 0, completed: 0 },
           proposals: { total: 0, pending: 0, active: 0, accepted: 0 },
           earnings: 0,
+<<<<<<< HEAD
           messages: { unread: 0 }
+=======
+          messages: { unread: 0 },
+>>>>>>> origin/mohamedAbdo
         });
       } finally {
         setLoading(false);
@@ -56,6 +79,7 @@ const DashboardPage = () => {
     loadStats();
   }, []);
 
+<<<<<<< HEAD
   const statsCards = stats ? [
     {
       title: t("totalBookings"),
@@ -123,25 +147,108 @@ const DashboardPage = () => {
       color: "yellow",
     },
   ];
+=======
+  const statsCards = stats
+    ? [
+        {
+          title: t("totalBookings"),
+          value: stats.bookings?.total || 0,
+          change: "",
+          changeType: "positive",
+          icon: Calendar,
+          color: "blue",
+        },
+        {
+          title: t("activeProjects"),
+          value: stats.bookings?.active || 0,
+          change: "",
+          changeType: "positive",
+          icon: TrendingUp,
+          color: "green",
+        },
+        {
+          title: t("completedProjects"),
+          value: stats.bookings?.completed || 0,
+          change: "",
+          changeType: "positive",
+          icon: CheckCircle,
+          color: "purple",
+        },
+        {
+          title: t("earnings"),
+          value: `$${stats.earnings?.toLocaleString() || 0}`,
+          change: "",
+          changeType: "positive",
+          icon: DollarSign,
+          color: "yellow",
+        },
+      ]
+    : [
+        {
+          title: t("totalBookings"),
+          value: "0",
+          change: "",
+          changeType: "positive",
+          icon: Calendar,
+          color: "blue",
+        },
+        {
+          title: t("activeProjects"),
+          value: "0",
+          change: "",
+          changeType: "positive",
+          icon: TrendingUp,
+          color: "green",
+        },
+        {
+          title: t("completedProjects"),
+          value: "0",
+          change: "",
+          changeType: "positive",
+          icon: CheckCircle,
+          color: "purple",
+        },
+        {
+          title: t("earnings"),
+          value: "$0",
+          change: "",
+          changeType: "positive",
+          icon: DollarSign,
+          color: "yellow",
+        },
+      ];
+>>>>>>> origin/mohamedAbdo
 
   const quickActions = [
     {
       title: t("createProposal"),
       icon: Plus,
       color: "blue",
+<<<<<<< HEAD
       description: "Submit a new project proposal",
+=======
+      description: t("submitNewProjectProposal"),
+>>>>>>> origin/mohamedAbdo
     },
     {
       title: t("scheduleCall"),
       icon: Phone,
       color: "green",
+<<<<<<< HEAD
       description: "Schedule a client meeting",
+=======
+      description: t("scheduleClientMeeting"),
+>>>>>>> origin/mohamedAbdo
     },
     {
       title: t("uploadDocument"),
       icon: Upload,
       color: "purple",
+<<<<<<< HEAD
       description: "Upload project documents",
+=======
+      description: t("uploadProjectDocuments"),
+>>>>>>> origin/mohamedAbdo
     },
   ];
 
@@ -149,32 +256,52 @@ const DashboardPage = () => {
     {
       id: 1,
       type: "proposal",
+<<<<<<< HEAD
       title: "New proposal submitted for Tax Filing project",
       time: "2 hours ago",
+=======
+      title: t("newProposalSubmitted"),
+      time: `2 ${t("hoursAgo")}`,
+>>>>>>> origin/mohamedAbdo
       icon: FileText,
       color: "blue",
     },
     {
       id: 2,
       type: "message",
+<<<<<<< HEAD
       title: "Received message from Sarah Johnson",
       time: "4 hours ago",
+=======
+      title: `${t("receivedMessageFrom")} Sarah Johnson`,
+      time: `4 ${t("hoursAgo")}`,
+>>>>>>> origin/mohamedAbdo
       icon: MessageSquare,
       color: "green",
     },
     {
       id: 3,
       type: "deadline",
+<<<<<<< HEAD
       title: "Financial Statements project deadline in 2 days",
       time: "1 day ago",
+=======
+      title: `${t("projectDeadlineIn")} 2 ${t("days")}`,
+      time: `1 ${t("dayAgo")}`,
+>>>>>>> origin/mohamedAbdo
       icon: AlertCircle,
       color: "red",
     },
     {
       id: 4,
       type: "completion",
+<<<<<<< HEAD
       title: "Bookkeeping project completed successfully",
       time: "2 days ago",
+=======
+      title: t("projectCompletedSuccessfully"),
+      time: `2 ${t("daysAgoShort")}`,
+>>>>>>> origin/mohamedAbdo
       icon: CheckCircle,
       color: "green",
     },
@@ -183,25 +310,43 @@ const DashboardPage = () => {
   const upcomingDeadlines = [
     {
       id: 1,
+<<<<<<< HEAD
       title: "Q4 Financial Statements",
       client: "ABC Company",
       deadline: "Dec 31, 2024",
+=======
+      title: t("deadline1Title"),
+      client: t("deadline1Client"),
+      deadline: t("deadline1Date"),
+>>>>>>> origin/mohamedAbdo
       priority: "high",
       daysLeft: 3,
     },
     {
       id: 2,
+<<<<<<< HEAD
       title: "Tax Return Filing",
       client: "XYZ Corp",
       deadline: "Jan 15, 2025",
+=======
+      title: t("deadline2Title"),
+      client: t("deadline2Client"),
+      deadline: t("deadline2Date"),
+>>>>>>> origin/mohamedAbdo
       priority: "medium",
       daysLeft: 18,
     },
     {
       id: 3,
+<<<<<<< HEAD
       title: "Monthly Bookkeeping",
       client: "DEF Ltd",
       deadline: "Jan 31, 2025",
+=======
+      title: t("deadline3Title"),
+      client: t("deadline3Client"),
+      deadline: t("deadline3Date"),
+>>>>>>> origin/mohamedAbdo
       priority: "low",
       daysLeft: 34,
     },
@@ -254,7 +399,11 @@ const DashboardPage = () => {
                         : "text-red-600"
                     }`}
                   >
+<<<<<<< HEAD
                     {card.change} from last month
+=======
+                    {card.change} {t("fromLastMonth")}
+>>>>>>> origin/mohamedAbdo
                   </p>
                 </div>
                 <div
@@ -361,7 +510,11 @@ const DashboardPage = () => {
                     {deadline.client}
                   </p>
                   <p className="text-xs text-gray-400 dark:text-gray-500">
+<<<<<<< HEAD
                     Due: {deadline.deadline}
+=======
+                    {t("due")}: {deadline.deadline}
+>>>>>>> origin/mohamedAbdo
                   </p>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -370,10 +523,18 @@ const DashboardPage = () => {
                       deadline.priority
                     )}`}
                   >
+<<<<<<< HEAD
                     {deadline.priority}
                   </span>
                   <span className="text-sm font-medium text-gray-900 dark:text-white">
                     {deadline.daysLeft}d
+=======
+                    {t(deadline.priority)}
+                  </span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    {deadline.daysLeft}
+                    {t("daysShort")}
+>>>>>>> origin/mohamedAbdo
                   </span>
                 </div>
               </div>
@@ -390,7 +551,11 @@ const DashboardPage = () => {
             <div className="text-center">
               <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-2" />
               <p className="text-gray-500 dark:text-gray-400">
+<<<<<<< HEAD
                 Chart placeholder for monthly performance
+=======
+                {t("chartPlaceholder")}
+>>>>>>> origin/mohamedAbdo
               </p>
             </div>
           </div>
