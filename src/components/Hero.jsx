@@ -1,6 +1,7 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
+import { TrendingUp, BarChart3, Users } from "lucide-react";
 
 const Hero = () => {
   const { t, language } = useLanguage();
@@ -10,81 +11,81 @@ const Hero = () => {
   } 
 
   return (
-    <section className="relative py-20 overflow-hidden">
-      {/* Background Image with Blur */}
-      <div className="absolute inset-0 z-0">
+    <section className="relative bg-gradient-to-l from-blue-100 to-blue-50 py-20 overflow-hidden">
+    <div className="absolute inset-0 opacity-20">
+      <div className="absolute right-0 top-0 w-96 h-96 bg-[#FF6B35] rounded-full transform translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute right-20 top-10 w-64 h-64 bg-[#1976D2] rounded-full transform rotate-45"></div>
+    </div>
+
+    <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 gap-12 items-center relative z-10">
+      <div className="relative">
         <img
-          src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=1200"
-          alt="Background"
-          className="w-full h-full object-cover"
+          src="https://images.pexels.com/photos/7681670/pexels-photo-7681670.jpeg?auto=compress&cs=tinysrgb&w=1200"
+          alt="Business"
+          className="rounded-lg shadow-2xl w-full"
         />
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content - Left Side (RTL: Right Side) */}
-          <div className="text-center lg:text-right rtl:lg:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1E40AF] leading-tight mb-6">
-              {t("heroTitle") || "منصة المحاسب القانوني"}
-            </h1>
-            <p className="text-xl text-gray-700 mb-4 leading-relaxed font-medium">
-              {t("heroSubtitle") || "إحصل على أفضل خدمات الإستشارات والتدقيق بأسعار تنافسية"}
-            </p>
-            <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-              {language === "ar" 
-                ? "تواصل مع مكاتب تدقيق معتمدة ومرخصة وإحصل على عروض أسعار متعددة وإختر أفضل عرض يناسب إحتياجات عملك"
-                : "Connect with accredited and licensed auditing offices and get multiple price offers and choose the best offer that suits your business needs"}
-            </p>
-
-            {/* CTA Button */}
-            <div className="flex flex-col items-center lg:items-end rtl:lg:items-start mb-8">
-              <button 
-                onClick={GoToLogin}
-                className="bg-[#FF6B35] text-white px-10 py-4 rounded-lg text-lg font-semibold hover:bg-[#E55A2B] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 mb-4">
-                {t("findService") || "ابدء الخدمة"}
-              </button>
-              <p className="text-gray-700 text-sm">
-                {language === "ar" ? "ما هي الخدمة التي تحتاجها ؟" : "What service do you need?"}
-              </p>
-            </div>
+        <div className="absolute top-10 -left-10 bg-white rounded-lg shadow-xl p-4 flex items-center gap-3">
+          <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center text-white">
+            <TrendingUp size={24} />
           </div>
-
-          {/* Hero Image - Right Side (RTL: Left Side) */}
-          <div className="relative">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img
-                src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt="Accounting Professional"
-                className="w-full h-[500px] object-cover"
-              />
-              
-              {/* Statistics Overlays */}
-              <div className="absolute top-8 left-8 rtl:left-auto rtl:right-8 bg-[#1E40AF] rounded-full p-6 shadow-xl">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-white mb-1">1000 +</div>
-                  <div className="text-sm text-white/90">{language === "ar" ? "عميل" : "Client"}</div>
-                </div>
-              </div>
-              
-              <div className="absolute top-1/2 -translate-y-1/2 right-8 rtl:right-auto rtl:left-8 bg-[#FF6B35] rounded-full p-6 shadow-xl">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-white mb-1">500 +</div>
-                  <div className="text-sm text-white/90">{language === "ar" ? "مكاتب مرخصة ومعتمدة" : "Licensed Offices"}</div>
-                </div>
-              </div>
-              
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-[#1E40AF] rounded-full p-6 shadow-xl">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-white mb-1">200 +</div>
-                  <div className="text-sm text-white/90">{language === "ar" ? "خدمة منفذة" : "Services Executed"}</div>
-                </div>
-              </div>
-            </div>
+          <div>
+            <div className="text-2xl font-bold text-[#1976D2]">1000 +</div>
+            <div className="text-sm text-gray-600">عميل راضي</div>
+          </div>
+        </div>
+        <div className="absolute top-32 -left-10 bg-white rounded-lg shadow-xl p-4 flex items-center gap-3">
+          <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center text-white">
+            <BarChart3 size={24} />
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-[#1976D2]">80 +</div>
+            <div className="text-sm text-gray-600">كفاءة الخدمة المقدمة</div>
+          </div>
+        </div>
+        <div className="absolute bottom-10 -left-10 bg-white rounded-lg shadow-xl p-4 flex items-center gap-3">
+          <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center text-white">
+            <Users size={24} />
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-[#1976D2]">200 +</div>
+            <div className="text-sm text-gray-600">كادر مؤهل</div>
           </div>
         </div>
       </div>
-    </section>
+
+      <div className="text-right">
+        <div className="flex items-center justify-end gap-3 mb-6">
+          <h1 className="text-4xl font-bold text-[#1976D2]">منصة المحاسب القانوني</h1>
+          <div className="w-16 h-16 bg-white rounded-sm shadow-lg flex items-center justify-center">
+            <div className="relative">
+              <div className="w-10 h-10 bg-[#FF6B35] transform rotate-45"></div>
+              <div className="absolute top-0 left-0 w-10 h-10 bg-[#1976D2] transform rotate-45 translate-x-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="text-3xl font-bold text-[#1976D2] mb-4">
+          إحصل على أفضل خدمات الإستشارات
+          <br />
+          والتدقيق بأسعار تنافسية وسريعة
+        </h2>
+
+        <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+          تواصل مع مكاتب تدقيق معتمدة ومرخصة
+          <br />
+          واحصل على عرض أسعار مفصلة وقائمة احتياجاتك بنفسك احتياجاتك عملك
+        </p>
+
+        <button className="bg-[#FF6B35] text-white px-8 py-3 rounded-md text-lg font-semibold hover:bg-[#E55A28] transition-colors">
+          ابدأ الآن
+        </button>
+
+        <p className="text-sm text-gray-500 mt-4">
+          أو اطلع على الخدمة التي تناسبك ←
+        </p>
+      </div>
+    </div>
+  </section>
   );
 };
 

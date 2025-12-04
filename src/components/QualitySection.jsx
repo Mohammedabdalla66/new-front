@@ -1,6 +1,6 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
-import { Users, Shield, FolderOpen, MessageSquare, CheckCircle, Headphones } from "lucide-react";
+import { Users, Shield, FolderOpen, MessageSquare, CheckCircle, Headphones, Network, Lock } from "lucide-react";
 
 const QualitySection = () => {
   const { t, language } = useLanguage();
@@ -51,62 +51,92 @@ const QualitySection = () => {
   ];
 
   return (
-    <section className="py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {language === "ar" 
-              ? "كيف نضمن حقوقك وجودة أعمالك" 
-              : "How We Ensure Your Rights & Quality of Your Work"}
-          </h2>
+    <section className="py-16 bg-gray-50">
+    <div className="max-w-7xl mx-auto px-6 text-center">
+      <h2 className="text-4xl font-bold text-[#1976D2] mb-12">كيف نضمن حقوقك وجودة أعمالك</h2>
+
+      <div className="grid grid-cols-3 gap-8">
+        <div className="text-right">
+          <div className="flex items-start gap-4 mb-8">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-[#1976D2] mb-2">تواصل مستمر</h3>
+              <p className="text-gray-600">
+                تواصل مع عدة مكاتب معتمدة، أسرع رد على عدة استفسارات، حصل على عروض تنافسية سعر
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center flex-shrink-0">
+              <Shield className="text-white" size={24} />
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-[#1976D2] mb-2">ضمان معاملتك</h3>
+              <p className="text-gray-600">
+                سنضمن لك سلامة تواصلك، سندعم قراراتك ونحفظ أموالك من أي خلل
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center flex-shrink-0">
+              <Lock className="text-white" size={24} />
+            </div>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <div key={index} className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-all duration-300">
-                <div className="flex items-start space-x-4 rtl:space-x-reverse mb-4">
-                  <div
-                    className={`inline-flex items-center justify-center w-14 h-14 ${feature.bgColor} rounded-lg flex-shrink-0`}
-                  >
-                    <IconComponent className={`h-7 w-7 ${feature.iconColor}`} />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {t(feature.titleKey) || (language === "ar" 
-                        ? ["مكاتب مرخصة ومعتمدة", "الحفاظ على حقوقك المالية", "ملفات متكاملة", "التواصل المسبق", "ضمان الحقوق", "الدعم والمساعدة"][index]
-                        : ["Accredited Providers", "Financial Rights", "Integrated Files", "Prior Communication", "Guarantee Rights", "Support & Assistance"][index])}
-                    </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {t(feature.descriptionKey) || (language === "ar"
-                        ? [
-                            "نعمل مع مكاتب مسجلة لدى هيئة الخدمات المالية في عمان",
-                            "تبقى قيمة الصفقة في الحساب حتى يتم استلام المشروع بالكامل",
-                            "ملفات توضح تقييمات وخبرات فريدة لمقدمي الخدمات",
-                            "التواصل داخل المنصة لتوضيح الاتفاقيات قبل بدء المشروع",
-                            "استرداد كامل إذا لم يتم استلام العمل المتفق عليه",
-                            "فريق متاح على مدار الساعة لتقديم المساعدة"
-                          ][index]
-                        : [
-                            "Working with offices registered with the Financial Services Authority in Oman",
-                            "Deal value remains in account until project is fully received",
-                            "Files showing unique evaluations and experience of service providers",
-                            "In-platform communication to clarify agreements before starting project",
-                            "Full refund if agreed work is not received",
-                            "24/7 team availability for assistance"
-                          ][index])}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="text-right">
+          <div className="flex items-start gap-4 mb-8">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-[#1976D2] mb-2">منفذات مختلفة</h3>
+              <p className="text-gray-600">
+                عدة قنوات متاحة، أصدر عروض أسعار وقائمة احتياجات متوافقة معك لمعرفة احتياجاتك
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center flex-shrink-0">
+              <Network className="text-white" size={24} />
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-[#1976D2] mb-2">ضمان الجودة</h3>
+              <p className="text-gray-600">
+                نضمن لك تلقي عمل مطابق للمعايير المحلية والدولية، تحمل أي فروق من نقع
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center flex-shrink-0">
+              <CheckCircle className="text-white" size={24} />
+            </div>
+          </div>
+        </div>
+
+        <div className="text-right">
+          <div className="flex items-start gap-4 mb-8">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-[#1976D2] mb-2">مدقيق خدمات محاسبين ومدققين</h3>
+              <p className="text-gray-600">
+                قائمة من محاسبين متخصصين من بدعدارة اعتمادات من اعلام يدعم المعرفة المؤسسات البنائية جهة
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center flex-shrink-0">
+              <Users className="text-white" size={24} />
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="flex-1">
+              <h3 className="text-xl font-bold text-[#1976D2] mb-2">حفظ حقوقكم الفكرية</h3>
+              <p className="text-gray-600">
+                تمتع بمنصة دمج بيانات المصلحة ترفع تلقائية تجارية عروض الخدمات الثانوية عائلية
+              </p>
+            </div>
+            <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center flex-shrink-0">
+              <Shield className="text-white" size={24} />
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
   );
 };
 
-export default QualitySection;
-
+export default QualitySection;  

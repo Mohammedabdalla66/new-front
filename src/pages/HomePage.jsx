@@ -7,6 +7,7 @@ import FeaturedServices from "../components/FeaturedServices";
 import QualitySection from "../components/QualitySection";
 import WhyChooseUs from "../components/WhyChooseUs";
 import FAQSection from "../components/FAQSection";
+import SupportersSection from "../components/SupportersSection";
 import Footer from "../components/Footer";
 import AddProjectModal from "../components/AddProjectModal";
 
@@ -24,6 +25,7 @@ const HomePage = () => {
         <QualitySection />
         <WhyChooseUs />
         <FAQSection />
+        <SupportersSection />
       </main>
       <Footer />
 
