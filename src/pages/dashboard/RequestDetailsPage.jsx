@@ -233,7 +233,9 @@ const RequestDetailsPage = () => {
       }
     } catch (err) {
       console.error("Error submitting proposal:", err);
-      toast.error(err?.response?.data?.message || "Failed to submit proposal");
+      console.error("Error response:", err?.response?.data);
+      const errorMessage = err?.response?.data?.message || err?.message || "Failed to submit proposal";
+      toast.error(errorMessage);
     } finally {
       setProposalLoading(false);
     }

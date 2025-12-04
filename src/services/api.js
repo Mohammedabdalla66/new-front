@@ -196,6 +196,13 @@ export const adminAPI = {
   listPendingProposals: (params) => api.get('/admin/proposals/pending', { params }),
   approveProposal: (id) => api.patch(`/admin/proposals/${id}/approve`),
   rejectProposal: (id, reason) => api.patch(`/admin/proposals/${id}/reject`, { reason }),
+  // Admin Order Management
+  getInProgressOrders: (params) => api.get('/admin/orders/in-progress', { params }),
+  getOrderDetails: (orderId) => api.get(`/admin/orders/${orderId}`),
+  updateOrderStatus: (orderId, status) => api.patch(`/admin/orders/${orderId}/status`, { status }),
+  sendSystemMessage: (orderId, message) => api.post(`/admin/orders/${orderId}/system-message`, { message }),
+  recalculateRiskScore: (orderId) => api.post(`/admin/orders/${orderId}/risk/recalculate`),
+  addWarning: (orderId, target, message) => api.post(`/admin/orders/${orderId}/warning`, { target, message }),
 };
 
 // Response interceptor for error handling

@@ -15,7 +15,6 @@ import { usersAPI } from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 import "./ProfileForm.css";
-import { DarkModeToggle } from "./DarkModeToggle";
 
 export const ProfileForm = ({ onSave }) => {
   const { user: authUser, login } = useAuth();
@@ -134,9 +133,21 @@ export const ProfileForm = ({ onSave }) => {
           const avatarResponse = await usersAPI.uploadAvatar(formData);
           
           if (avatarResponse.data.success) {
-            setLocalUser({ ...localUser, avatar: avatarResponse.data.data.avatar });
-            setPreview(avatarResponse.data.data.avatar);
+            const newAvatar = avatarResponse.data.data.avatar;
+            const updatedUserWithAvatar = { ...localUser, avatar: newAvatar };
+            setLocalUser(updatedUserWithAvatar);
+            setPreview(newAvatar);
             setAvatarFile(null);
+            
+            // Immediately update auth context with new avatar so header updates
+            const userToStore = {
+              ...updatedUserWithAvatar,
+              id: updatedUserWithAvatar._id || updatedUserWithAvatar.id || authUser?.id,
+              email: updatedUserWithAvatar.email || authUser?.email,
+              name: updatedUserWithAvatar.name || authUser?.name,
+            };
+            login(userToStore);
+            
             toast.success("Avatar uploaded successfully");
           } else {
             toast.error(avatarResponse.data.message || "Failed to upload avatar");
@@ -174,12 +185,18 @@ export const ProfileForm = ({ onSave }) => {
       
       if (response.data.success) {
         const updatedUser = response.data.data;
-        setLocalUser(updatedUser);
+        // Preserve avatar if it exists in localUser (in case profile update doesn't return it)
+        const finalUser = {
+          ...updatedUser,
+          avatar: updatedUser.avatar || localUser.avatar,
+        };
+        setLocalUser(finalUser);
+        setPreview(finalUser.avatar || "/assets/default-avatar.png");
         
         // Update auth context and localStorage
         const userToStore = {
-          ...updatedUser,
-          id: updatedUser._id || updatedUser.id,
+          ...finalUser,
+          id: finalUser._id || finalUser.id,
         };
         login(userToStore);
         
@@ -549,7 +566,6 @@ export const ProfileForm = ({ onSave }) => {
 
   return (
     <div className="min-h-screen profile-form-container py-4 sm:py-8">
-      <DarkModeToggle />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-4 sm:mb-8">

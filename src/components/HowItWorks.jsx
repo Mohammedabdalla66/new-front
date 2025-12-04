@@ -37,24 +37,19 @@ const HowItWorks = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {t("howItWorks")}
+            {t("howItWorks") || "كيف نعمل"}
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {steps.map((step, index) => {
             const IconComponent = step.icon;
             return (
-              <div key={index} className="text-center group">
+              <div key={index} className="bg-white border-2 border-gray-200 rounded-xl p-6 text-center group hover:shadow-lg transition-all duration-300 hover:border-blue-300">
                 <div
-                  className={`inline-flex items-center justify-center w-16 h-16 ${step.bgColor} rounded-full mb-4 group-hover:scale-110 transition-transform duration-300`}
+                  className={`inline-flex items-center justify-center w-20 h-20 ${step.bgColor} rounded-full mb-4 group-hover:scale-110 transition-transform duration-300`}
                 >
-                  <IconComponent className={`h-8 w-8 ${step.iconColor}`} />
-                </div>
-                <div className="mb-2">
-                  <span className="inline-flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full text-sm font-bold mb-3">
-                    {index + 1}
-                  </span>
+                  <IconComponent className={`h-10 w-10 ${step.iconColor}`} />
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   {t(step.titleKey)}

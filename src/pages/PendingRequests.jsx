@@ -73,6 +73,12 @@ const PendingRequests = () => {
             status: request.status || 'pending',
             rejectionReason: request.rejectionReason || '',
             createdAt: request.createdAt,
+            // Additional fields
+            legalForm: request.legalForm || '',
+            businessActivity: request.businessActivity || '',
+            registeredCapital: request.registeredCapital || '',
+            estimatedRevenue: request.estimatedRevenue || '',
+            estimatedExpenses: request.estimatedExpenses || '',
           };
         }));
       } catch (error) {
@@ -181,6 +187,12 @@ const PendingRequests = () => {
                 status: request.status || 'pending',
                 rejectionReason: request.rejectionReason || '',
                 createdAt: request.createdAt,
+                // Additional fields
+                legalForm: request.legalForm || '',
+                businessActivity: request.businessActivity || '',
+                registeredCapital: request.registeredCapital || '',
+                estimatedRevenue: request.estimatedRevenue || '',
+                estimatedExpenses: request.estimatedExpenses || '',
               };
             }));
           } catch (e) {
@@ -204,6 +216,46 @@ const PendingRequests = () => {
   const formatCurrency = (amount) => {
     if (!amount || amount === 0) return 'Not specified';
     return `${amount.toLocaleString()} OMR`;
+  };
+
+  // Helper function to get label for legal form
+  const getLegalFormLabel = (value) => {
+    if (!value) return 'N/A';
+    const legalForms = {
+      individual_trader: 'Individual Trader',
+      sole_partner: 'Sole Partner',
+      limited_liability: 'Limited Liability',
+      public_company: 'Public Company',
+      closed_company: 'Closed Company',
+      limited_partnership: 'Limited Partnership',
+      solidarity_company: 'Solidarity Company',
+    };
+    return legalForms[value] || value;
+  };
+
+  // Helper function to get label for business activity
+  const getBusinessActivityLabel = (value) => {
+    if (!value) return 'N/A';
+    const activities = {
+      financial_sector: 'Financial Sector',
+      industrial_sector: 'Industrial Sector',
+      oil_gas_sector: 'Oil & Gas Sector',
+      tourism_sector: 'Tourism Sector',
+      service_sector: 'Service Sector',
+      construction_sector: 'Construction Sector',
+      retail_sector: 'Retail Sector',
+      telecommunications_it: 'Telecommunications & IT',
+      education_sector: 'Education Sector',
+      public_sector: 'Public Sector',
+    };
+    return activities[value] || value;
+  };
+
+  const formatRiyal = (amount) => {
+    if (!amount) return 'Not specified';
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    if (isNaN(numAmount)) return amount;
+    return `${numAmount.toLocaleString()} Riyal`;
   };
 
   return (
@@ -353,52 +405,122 @@ const PendingRequests = () => {
             </DialogDescription>
           </DialogHeader>
           {selectedRequest && (
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div>
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Description
                 </label>
                 <p className="mt-1 text-sm text-gray-900 dark:text-white whitespace-pre-wrap">
-                  {selectedRequest.description}
+                  {selectedRequest.description || 'N/A'}
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Client
-                  </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {selectedRequest.clientName}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {selectedRequest.clientEmail}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Budget
-                  </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {formatCurrency(selectedRequest.budget)}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Deadline
-                  </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {formatDate(selectedRequest.deadline)}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Submitted
-                  </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {formatDate(selectedRequest.createdAt)}
-                  </p>
+              
+              {/* Basic Information */}
+              <div>
+                <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
+                  Basic Information
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Client
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                      {selectedRequest.clientName}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {selectedRequest.clientEmail}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Budget
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                      {formatCurrency(selectedRequest.budget)}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Deadline
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                      {formatDate(selectedRequest.deadline)}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Submitted
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                      {formatDate(selectedRequest.createdAt)}
+                    </p>
+                  </div>
                 </div>
               </div>
+
+              {/* Business Details */}
+              {(selectedRequest.legalForm || selectedRequest.businessActivity || selectedRequest.registeredCapital || selectedRequest.estimatedRevenue || selectedRequest.estimatedExpenses) && (
+                <div>
+                  <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
+                    Business Details
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {selectedRequest.legalForm && (
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Legal Form
+                        </label>
+                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                          {getLegalFormLabel(selectedRequest.legalForm)}
+                        </p>
+                      </div>
+                    )}
+                    {selectedRequest.businessActivity && (
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Business Activity
+                        </label>
+                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                          {getBusinessActivityLabel(selectedRequest.businessActivity)}
+                        </p>
+                      </div>
+                    )}
+                    {selectedRequest.registeredCapital && (
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Registered Capital (Riyal)
+                        </label>
+                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                          {formatRiyal(selectedRequest.registeredCapital)}
+                        </p>
+                      </div>
+                    )}
+                    {selectedRequest.estimatedRevenue && (
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Estimated Revenue (Riyal)
+                        </label>
+                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                          {formatRiyal(selectedRequest.estimatedRevenue)}
+                        </p>
+                      </div>
+                    )}
+                    {selectedRequest.estimatedExpenses && (
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Estimated Expenses (Riyal)
+                        </label>
+                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                          {formatRiyal(selectedRequest.estimatedExpenses)}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Attachments */}
               {selectedRequest.attachments.length > 0 && (
                 <div>
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">

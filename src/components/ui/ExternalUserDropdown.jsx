@@ -6,11 +6,11 @@ import { useAuth } from "../../hooks/useAuth";
 import { useLanguage } from "../../contexts/LanguageContext";
 
 /**
- * Internal UserDropdown component for dashboard/internal pages
+ * External UserDropdown component for homepage/public pages
  * @param {Object} user - User object with name, email, avatar, role
  * @param {string} className - Additional CSS classes for the dropdown container
  */
-const UserDropdown = ({ user, className = "" }) => {
+const ExternalUserDropdown = ({ user, className = "" }) => {
   const { logout } = useAuth();
   const { language, t } = useLanguage();
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ const UserDropdown = ({ user, className = "" }) => {
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const dropdownRef = useRef(null);
   const triggerRef = useRef(null);
-  const isNavigatingRef = useRef(false);
 
   // Calculate dropdown position
   useEffect(() => {
@@ -46,11 +45,6 @@ const UserDropdown = ({ user, className = "" }) => {
     if (!isOpen) return;
 
     const handleClickOutside = (event) => {
-      // Don't close if navigating or clicking inside dropdown/trigger
-      if (isNavigatingRef.current) {
-        return;
-      }
-      
       if (
         (dropdownRef.current && dropdownRef.current.contains(event.target)) ||
         (triggerRef.current && triggerRef.current.contains(event.target))
@@ -58,7 +52,6 @@ const UserDropdown = ({ user, className = "" }) => {
         return;
       }
       
-      // Close if clicking outside
       setIsOpen(false);
     };
 
@@ -68,10 +61,9 @@ const UserDropdown = ({ user, className = "" }) => {
       }
     };
 
-    // Delay click outside handler to allow navigation clicks to process first
     const timeoutId = setTimeout(() => {
       document.addEventListener("click", handleClickOutside, true);
-    }, 300);
+    }, 100);
     
     document.addEventListener("keydown", handleEscape);
     
@@ -125,13 +117,17 @@ const UserDropdown = ({ user, className = "" }) => {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     logout();
     setIsOpen(false);
     navigate("/auth/login");
   };
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsOpen(!isOpen);
   };
 
@@ -142,39 +138,35 @@ const UserDropdown = ({ user, className = "" }) => {
       <div ref={triggerRef} className={`relative ${className}`}>
         {/* Trigger Button */}
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleDropdown();
-          }}
+          onClick={toggleDropdown}
           className="flex items-center space-x-2 rtl:space-x-reverse text-gray-700 hover:text-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg px-2 py-1"
           aria-expanded={isOpen}
           aria-haspopup="true"
         >
-        {/* Avatar */}
-        <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center overflow-hidden">
-          {user.avatar ? (
-            <img
-              src={user.avatar}
-              alt={user.name || user.email || "User"}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <User className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-          )}
-        </div>
+          {/* Avatar */}
+          <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center overflow-hidden">
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt={user.name || user.email || "User"}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+            )}
+          </div>
 
-        {/* User Name - hidden on mobile */}
-        <span className="hidden md:block text-sm font-medium dark:text-white">
-          {user.name || user.email || "User"}
-        </span>
+          {/* User Name - hidden on mobile */}
+          <span className="hidden md:block text-sm font-medium dark:text-white">
+            {user.name || user.email || "User"}
+          </span>
 
-        {/* Chevron Icon */}
-        <ChevronDown
-          className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
+          {/* Chevron Icon */}
+          <ChevronDown
+            className={`h-4 w-4 text-gray-400 dark:text-gray-500 transition-transform duration-200 ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
         </button>
       </div>
 
@@ -255,7 +247,7 @@ const UserDropdown = ({ user, className = "" }) => {
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center space-x-3 rtl:space-x-reverse px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            className="w-full flex items-center space-x-3 rtl:space-x-reverse px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
             role="menuitem"
           >
             <LogOut className="h-4 w-4" />
@@ -268,5 +260,5 @@ const UserDropdown = ({ user, className = "" }) => {
   );
 };
 
-export default UserDropdown;
+export default ExternalUserDropdown;
 
