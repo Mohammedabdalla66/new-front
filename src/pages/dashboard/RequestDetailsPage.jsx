@@ -24,11 +24,7 @@ import {
 const RequestDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-<<<<<<< HEAD
-  const { language } = useLanguage();
-=======
   const { t, language } = useLanguage();
->>>>>>> origin/mohamedAbdo
   const { showConfirmation, ConfirmationToastComponent } = useConfirmationToast();
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -60,11 +56,7 @@ const RequestDetailsPage = () => {
         }
       } catch (err) {
         console.error("Error loading request:", err);
-<<<<<<< HEAD
         setError(err?.response?.data?.message || "Failed to load request");
-=======
-        setError(err?.response?.data?.message || t("failedToLoadRequest"));
->>>>>>> origin/mohamedAbdo
       } finally {
         setLoading(false);
       }
@@ -124,11 +116,7 @@ const RequestDetailsPage = () => {
 
     const priceNum = parseFloat(priceValue);
     if (isNaN(priceNum) || priceNum < 0) {
-<<<<<<< HEAD
       setPriceError("Price must be a valid positive number");
-=======
-      setPriceError(t("priceMustBeValidNumber"));
->>>>>>> origin/mohamedAbdo
       return false;
     }
 
@@ -142,11 +130,7 @@ const RequestDetailsPage = () => {
     }
 
     if (priceNum < budgetRange.min) {
-<<<<<<< HEAD
       setPriceError(`Price must be at least ${budgetRange.min.toLocaleString()} OMR. The client's budget range is ${budgetRange.min.toLocaleString()} - ${budgetRange.max.toLocaleString()} OMR, but you can offer a higher price.`);
-=======
-      setPriceError(`${t("priceMustBeAtLeast")} ${budgetRange.min.toLocaleString()} ${t("omr")}. ${t("clientBudgetRangeIs")} ${budgetRange.min.toLocaleString()} - ${budgetRange.max.toLocaleString()} ${t("omr")}, ${t("butCanOfferHigher")}`);
->>>>>>> origin/mohamedAbdo
       return false;
     }
 
@@ -184,21 +168,13 @@ const RequestDetailsPage = () => {
     }
 
     if (!price || !endDate) {
-<<<<<<< HEAD
       toast.error("Price and end date are required");
-=======
-      toast.error(t("priceAndEndDateRequired"));
->>>>>>> origin/mohamedAbdo
       return;
     }
 
     // Validate price against budget range (minimum only)
     if (!validatePrice(price)) {
-<<<<<<< HEAD
       toast.error(priceError || "Price must meet the minimum requirement");
-=======
-      toast.error(priceError || t("priceMustBeValidNumber"));
->>>>>>> origin/mohamedAbdo
       return;
     }
 
@@ -209,11 +185,7 @@ const RequestDetailsPage = () => {
     selectedDate.setHours(0, 0, 0, 0);
 
     if (selectedDate <= today) {
-<<<<<<< HEAD
       toast.error("End date must be in the future");
-=======
-      toast.error(t("endDateMustBeFuture"));
->>>>>>> origin/mohamedAbdo
       return;
     }
 
@@ -237,11 +209,7 @@ const RequestDetailsPage = () => {
       const response = await proposalsAPI.create(id, formData);
 
       if (response.data.success) {
-<<<<<<< HEAD
         toast.success("Proposal submitted successfully! Awaiting admin approval.");
-=======
-        toast.success(t("proposalSubmittedSuccess"));
->>>>>>> origin/mohamedAbdo
         setShowProposalForm(false);
 
         // Get proposal ID from response
@@ -265,13 +233,9 @@ const RequestDetailsPage = () => {
       }
     } catch (err) {
       console.error("Error submitting proposal:", err);
-<<<<<<< HEAD
       console.error("Error response:", err?.response?.data);
       const errorMessage = err?.response?.data?.message || err?.message || "Failed to submit proposal";
       toast.error(errorMessage);
-=======
-      toast.error(err?.response?.data?.message || t("failedToSubmitProposal"));
->>>>>>> origin/mohamedAbdo
     } finally {
       setProposalLoading(false);
     }
@@ -283,19 +247,13 @@ const RequestDetailsPage = () => {
   };
 
   const formatCurrency = (amount) => {
-<<<<<<< HEAD
     if (!amount || amount === 0) return "Not specified";
     return `${amount.toLocaleString()} OMR`;
-=======
-    if (!amount || amount === 0) return t("notSpecified");
-    return `${amount.toLocaleString()} ${t("omr")}`;
->>>>>>> origin/mohamedAbdo
   };
 
   // Helper function to get label for legal form
   const getLegalFormLabel = (value) => {
     const legalForms = {
-<<<<<<< HEAD
       individual_trader: "Individual Trader",
       sole_partner: "Sole Partner",
       limited_liability: "Limited Liability",
@@ -303,15 +261,6 @@ const RequestDetailsPage = () => {
       closed_company: "Closed Company",
       limited_partnership: "Limited Partnership",
       solidarity_company: "Solidarity Company",
-=======
-      individual_trader: t("individualTrader"),
-      sole_partner: t("solePartner"),
-      limited_liability: t("limitedLiability"),
-      public_company: t("publicCompany"),
-      closed_company: t("closedCompany"),
-      limited_partnership: t("limitedPartnership"),
-      solidarity_company: t("solidarityCompany"),
->>>>>>> origin/mohamedAbdo
     };
     return legalForms[value] || value;
   };
@@ -319,7 +268,6 @@ const RequestDetailsPage = () => {
   // Helper function to get label for business activity
   const getBusinessActivityLabel = (value) => {
     const activities = {
-<<<<<<< HEAD
       financial_sector: "Financial Sector",
       industrial_sector: "Industrial Sector",
       oil_gas_sector: "Oil & Gas Sector",
@@ -330,42 +278,21 @@ const RequestDetailsPage = () => {
       telecommunications_it: "Telecommunications & IT",
       education_sector: "Education Sector",
       public_sector: "Public Sector",
-=======
-      financial_sector: t("financialSector"),
-      industrial_sector: t("industrialSector"),
-      oil_gas_sector: t("oilGasSector"),
-      tourism_sector: t("tourismSector"),
-      service_sector: t("serviceSector"),
-      construction_sector: t("constructionSector"),
-      retail_sector: t("retailSector"),
-      telecommunications_it: t("telecommunicationsIT"),
-      education_sector: t("educationSector"),
-      public_sector: t("publicSector"),
->>>>>>> origin/mohamedAbdo
     };
     return activities[value] || value;
   };
 
   // Format currency in Riyal
   const formatRiyal = (amount) => {
-<<<<<<< HEAD
     if (!amount || amount === 0) return "Not specified";
     return `${parseFloat(amount).toLocaleString()} Riyal`;
-=======
-    if (!amount || amount === 0) return t("notSpecified");
-    return `${parseFloat(amount).toLocaleString()} ${t("omr")}`;
->>>>>>> origin/mohamedAbdo
   };
 
   if (loading) {
     return (
       <div className="text-center py-12">
         <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-<<<<<<< HEAD
         <p className="mt-4 text-gray-600 dark:text-gray-400">Loading request...</p>
-=======
-        <p className="mt-4 text-gray-600 dark:text-gray-400">{t("loadingRequest")}</p>
->>>>>>> origin/mohamedAbdo
       </div>
     );
   }
@@ -374,21 +301,13 @@ const RequestDetailsPage = () => {
     return (
       <div className="text-center py-12">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-<<<<<<< HEAD
           <p className="text-red-800 dark:text-red-200">{error || "Request not found"}</p>
-=======
-          <p className="text-red-800 dark:text-red-200">{error || t("requestNotFound")}</p>
->>>>>>> origin/mohamedAbdo
         </div>
         <button
           onClick={() => navigate("/firm/browse")}
           className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
         >
-<<<<<<< HEAD
           Back to Browse
-=======
-          {t("backToBrowse")}
->>>>>>> origin/mohamedAbdo
         </button>
       </div>
     );
@@ -407,17 +326,10 @@ const RequestDetailsPage = () => {
         </button>
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-<<<<<<< HEAD
             Request Details
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
             View request information and submit a proposal
-=======
-            {t("requestDetails")}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            {t("viewRequestInfo")}
->>>>>>> origin/mohamedAbdo
           </p>
         </div>
       </div>
@@ -440,11 +352,7 @@ const RequestDetailsPage = () => {
               <div className="flex items-center space-x-2">
                 <DollarSign className="w-5 h-5 text-gray-400" />
                 <div>
-<<<<<<< HEAD
                   <p className="text-sm text-gray-500 dark:text-gray-400">Budget</p>
-=======
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("requestBudget")}</p>
->>>>>>> origin/mohamedAbdo
                   <p className="font-medium text-gray-900 dark:text-white">
                     {formatCurrency(request.budget)}
                   </p>
@@ -453,11 +361,7 @@ const RequestDetailsPage = () => {
               <div className="flex items-center space-x-2">
                 <CalendarIcon className="w-5 h-5 text-gray-400" />
                 <div>
-<<<<<<< HEAD
                   <p className="text-sm text-gray-500 dark:text-gray-400">Deadline</p>
-=======
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("deadline")}</p>
->>>>>>> origin/mohamedAbdo
                   <p className="font-medium text-gray-900 dark:text-white">
                     {formatDate(request.deadline)}
                   </p>
@@ -466,30 +370,18 @@ const RequestDetailsPage = () => {
               <div className="flex items-center space-x-2">
                 <Clock className="w-5 h-5 text-gray-400" />
                 <div>
-<<<<<<< HEAD
                   <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
                   <p className="font-medium text-gray-900 dark:text-white">
                     {request.status || "pending"}
-=======
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("status")}</p>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {request.status || t("pending")}
->>>>>>> origin/mohamedAbdo
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
                 <FileText className="w-5 h-5 text-gray-400" />
                 <div>
-<<<<<<< HEAD
                   <p className="text-sm text-gray-500 dark:text-gray-400">Attachments</p>
                   <p className="font-medium text-gray-900 dark:text-white">
                     {request.attachments?.length || 0} files
-=======
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("attachments")}</p>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    {request.attachments?.length || 0} {t("files")}
->>>>>>> origin/mohamedAbdo
                   </p>
                 </div>
               </div>
@@ -500,11 +392,7 @@ const RequestDetailsPage = () => {
                   <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-<<<<<<< HEAD
                       Legal Form
-=======
-                      {t("legalForm")}
->>>>>>> origin/mohamedAbdo
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {getLegalFormLabel(request.legalForm)}
@@ -519,11 +407,7 @@ const RequestDetailsPage = () => {
                   <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-<<<<<<< HEAD
                       Business Activity
-=======
-                      {t("businessActivity")}
->>>>>>> origin/mohamedAbdo
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {getBusinessActivityLabel(request.businessActivity)}
@@ -538,11 +422,7 @@ const RequestDetailsPage = () => {
                   <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-<<<<<<< HEAD
                       Capital as per the commercial register (Riyal)
-=======
-                      {t("capitalAsPerRegister")}
->>>>>>> origin/mohamedAbdo
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {formatRiyal(request.registeredCapital)}
@@ -557,11 +437,7 @@ const RequestDetailsPage = () => {
                   <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-<<<<<<< HEAD
                       Estimated Revenue (Riyal)
-=======
-                      {t("estimatedRevenue")}
->>>>>>> origin/mohamedAbdo
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {formatRiyal(request.estimatedRevenue)}
@@ -576,11 +452,7 @@ const RequestDetailsPage = () => {
                   <DollarSign className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-<<<<<<< HEAD
                       Estimated Expenses (Riyal)
-=======
-                      {t("estimatedExpenses")}
->>>>>>> origin/mohamedAbdo
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {formatRiyal(request.estimatedExpenses)}
@@ -594,11 +466,7 @@ const RequestDetailsPage = () => {
             {request.attachments && request.attachments.length > 0 && (
               <div className="mt-6">
                 <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
-<<<<<<< HEAD
                   Attachments
-=======
-                  {t("attachments")}
->>>>>>> origin/mohamedAbdo
                 </h3>
                 <div className="space-y-2">
                   {request.attachments.map((att, index) => (
@@ -624,31 +492,19 @@ const RequestDetailsPage = () => {
           {showProposalForm && !request.hasProposal && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-<<<<<<< HEAD
                 Submit Proposal
-=======
-                {t("submitProposal")}
->>>>>>> origin/mohamedAbdo
               </h2>
               <form onSubmit={handleSubmitProposal} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-<<<<<<< HEAD
                       Price (OMR) *
-=======
-                      {t("priceOMR")}
->>>>>>> origin/mohamedAbdo
                       {request.budget && (() => {
                         const budgetRange = parseBudgetRange(request.budget);
                         if (budgetRange) {
                           return (
                             <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-<<<<<<< HEAD
                               (Minimum: {budgetRange.min.toLocaleString()} OMR, Budget range: {budgetRange.min.toLocaleString()} - {budgetRange.max.toLocaleString()} OMR)
-=======
-                              ({t("minimum")} {budgetRange.min.toLocaleString()} {t("omr")}, {t("budgetRange")} {budgetRange.min.toLocaleString()} - {budgetRange.max.toLocaleString()} {t("omr")})
->>>>>>> origin/mohamedAbdo
                             </span>
                           );
                         }
@@ -681,21 +537,13 @@ const RequestDetailsPage = () => {
                           if (priceNum <= budgetRange.max) {
                             return (
                               <p className="mt-1 text-sm text-green-600 dark:text-green-400">
-<<<<<<< HEAD
                                 ✓ Price is within the client's budget range
-=======
-                                {t("priceWithinRange")}
->>>>>>> origin/mohamedAbdo
                               </p>
                             );
                           } else {
                             return (
                               <p className="mt-1 text-sm text-blue-600 dark:text-blue-400">
-<<<<<<< HEAD
                                 ✓ Price exceeds the client's maximum budget, but is allowed
-=======
-                                {t("priceExceedsMax")}
->>>>>>> origin/mohamedAbdo
                               </p>
                             );
                           }
@@ -706,11 +554,7 @@ const RequestDetailsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
-<<<<<<< HEAD
                       End Date *
-=======
-                      {t("endDate")}
->>>>>>> origin/mohamedAbdo
                     </label>
                     <input
                       type="date"
@@ -721,11 +565,7 @@ const RequestDetailsPage = () => {
                       required
                     />
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-<<<<<<< HEAD
                       Select the project completion date
-=======
-                      {t("selectProjectCompletionDate")}
->>>>>>> origin/mohamedAbdo
                     </p>
                   </div>
 
@@ -733,32 +573,20 @@ const RequestDetailsPage = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-<<<<<<< HEAD
                     Notes
-=======
-                    {t("notes")}
->>>>>>> origin/mohamedAbdo
                   </label>
                   <textarea
                     rows={4}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-<<<<<<< HEAD
                     placeholder="Add any additional information about your proposal..."
-=======
-                    placeholder={t("addAdditionalInfo")}
->>>>>>> origin/mohamedAbdo
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-<<<<<<< HEAD
                     Attachments (Optional)
-=======
-                    {t("attachmentsOptional")}
->>>>>>> origin/mohamedAbdo
                   </label>
                   <input
                     type="file"
@@ -799,20 +627,12 @@ const RequestDetailsPage = () => {
                     {proposalLoading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-<<<<<<< HEAD
                         Submitting...
-=======
-                        {t("submitting")}
->>>>>>> origin/mohamedAbdo
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4 mr-2" />
-<<<<<<< HEAD
                         Submit Proposal
-=======
-                        {t("submitProposalButton")}
->>>>>>> origin/mohamedAbdo
                       </>
                     )}
                   </button>
@@ -821,11 +641,7 @@ const RequestDetailsPage = () => {
                     onClick={() => setShowProposalForm(false)}
                     className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
-<<<<<<< HEAD
                     Cancel
-=======
-                    {t("cancel")}
->>>>>>> origin/mohamedAbdo
                   </button>
                 </div>
               </form>
@@ -835,22 +651,14 @@ const RequestDetailsPage = () => {
           {request.hasProposal && (
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
               <p className="text-blue-800 dark:text-blue-200">
-<<<<<<< HEAD
                 You have already submitted a proposal for this request.
-=======
-                {t("alreadySubmittedProposal")}
->>>>>>> origin/mohamedAbdo
               </p>
               {request.proposalId && (
                 <button
                   onClick={() => navigate(`/firm/proposals/${request.proposalId}`)}
                   className="mt-2 text-blue-600 dark:text-blue-400 hover:underline"
                 >
-<<<<<<< HEAD
                   View your proposal
-=======
-                  {t("viewYourProposal")}
->>>>>>> origin/mohamedAbdo
                 </button>
               )}
             </div>
@@ -865,17 +673,10 @@ const RequestDetailsPage = () => {
                 </div>
                 <div className="ml-3 flex-1">
                   <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
-<<<<<<< HEAD
                     Proposal Rejected
                   </h3>
                   <div className="mt-2 text-sm text-red-700 dark:text-red-300">
                     <p className="font-medium mb-1">Rejection Reason:</p>
-=======
-                    {t("proposalRejected")}
-                  </h3>
-                  <div className="mt-2 text-sm text-red-700 dark:text-red-300">
-                    <p className="font-medium mb-1">{t("rejectionReason")}</p>
->>>>>>> origin/mohamedAbdo
                     <p className="whitespace-pre-wrap">{request.proposal.rejectionReason}</p>
                   </div>
                 </div>
@@ -889,11 +690,7 @@ const RequestDetailsPage = () => {
           {/* Client Info */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-<<<<<<< HEAD
               Client Information
-=======
-              {t("clientInformation")}
->>>>>>> origin/mohamedAbdo
             </h3>
             {request.client ? (
               <div className="space-y-3">
@@ -912,11 +709,7 @@ const RequestDetailsPage = () => {
                 </div>
               </div>
             ) : (
-<<<<<<< HEAD
               <p className="text-gray-500 dark:text-gray-400">Client information not available</p>
-=======
-              <p className="text-gray-500 dark:text-gray-400">{t("clientInfoNotAvailable")}</p>
->>>>>>> origin/mohamedAbdo
             )}
           </div>
         </div>
