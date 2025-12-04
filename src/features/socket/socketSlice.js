@@ -31,6 +31,28 @@ const socketSlice = createSlice({
         state.unreadCount = Math.max(0, state.unreadCount - 1);
       }
     },
+    markNotificationsByType: (state, action) => {
+      // Mark all notifications of a specific type as read
+      // action.payload: { type: 'message' | 'order' | 'chat', id?: string }
+      const { type, id } = action.payload;
+      let markedCount = 0;
+      
+      state.notifications.forEach(n => {
+        const matchesType = n.type === type || 
+                           (type === 'message' && (n.type === 'message' || n.link?.includes('/messages'))) ||
+                           (type === 'order' && (n.type === 'order' || n.link?.includes('/orders') || n.link?.includes('/bookings'))) ||
+                           (type === 'chat' && (n.type === 'chat' || n.data?.conversationId));
+        
+        const matchesId = !id || n.id === id || n.data?.id === id || n.data?.conversationId === id || n.data?.orderId === id;
+        
+        if (matchesType && matchesId && !n.read) {
+          n.read = true;
+          markedCount++;
+        }
+      });
+      
+      state.unreadCount = Math.max(0, state.unreadCount - markedCount);
+    },
     markAllNotificationsAsRead: (state) => {
       state.notifications.forEach(n => {
         if (!n.read) {
@@ -71,6 +93,7 @@ export const {
   setConnected,
   addNotification,
   markNotificationAsRead,
+  markNotificationsByType,
   markAllNotificationsAsRead,
   removeNotification,
   clearNotifications,
