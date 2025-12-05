@@ -163,3 +163,4 @@ export const rejectPayment = async (transactionId) => {
   await delay(1000);
   return { success: true, transactionId };
 };
+console.log("first")
