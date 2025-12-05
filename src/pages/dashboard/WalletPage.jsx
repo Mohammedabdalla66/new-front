@@ -46,7 +46,7 @@ const WalletPage = () => {
         console.error("Error loading wallet:", err);
         console.error("Error response:", err?.response?.data);
         console.error("Error status:", err?.response?.status);
-        setError(err?.response?.data?.message || err?.response?.data?.error || "Failed to load wallet data");
+        setError(err?.response?.data?.message || err?.response?.data?.error || t("failedToLoadWallet"));
       } finally {
         setLoading(false);
       }
@@ -118,8 +118,8 @@ const WalletPage = () => {
   };
 
   const tabs = [
-    { id: "overview", label: "Overview" },
-    { id: "transactions", label: "Transactions" },
+    { id: "overview", label: t("overview") },
+    { id: "transactions", label: t("transactions") },
     { id: "withdrawals", label: t("withdrawals") },
   ];
 
@@ -127,7 +127,7 @@ const WalletPage = () => {
     return (
       <div className="text-center py-12">
         <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-gray-600 dark:text-gray-400">Loading wallet...</p>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">{t("loading")}...</p>
       </div>
     );
   }
@@ -151,17 +151,17 @@ const WalletPage = () => {
             {t("wallet")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Manage your earnings and withdrawals
+            {t("manageEarnings")}
           </p>
         </div>
         <div className="mt-4 sm:mt-0 flex space-x-3">
           <button className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
             <Download className="w-4 h-4 mr-2" />
-            Export
+            {t("export")}
           </button>
           <button className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
             <Plus className="w-4 h-4 mr-2" />
-            Withdraw
+            {t("withdraw")}
           </button>
         </div>
       </div>
@@ -172,7 +172,7 @@ const WalletPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Available {t("balance")}
+                {t("availableBalance")}
               </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 ${walletStats.balance.toLocaleString()}
@@ -188,7 +188,7 @@ const WalletPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Pending
+                {t("pending")}
               </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 ${walletStats.pending.toLocaleString()}
@@ -204,7 +204,7 @@ const WalletPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Total {t("earnings")}
+                {t("totalEarnings")}
               </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 ${walletStats.totalEarnings.toLocaleString()}
@@ -220,7 +220,7 @@ const WalletPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                This Month
+                {t("thisMonth")}
               </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 ${walletStats.thisMonth.toLocaleString()}
@@ -256,7 +256,7 @@ const WalletPage = () => {
           {/* Recent Transactions */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Recent Transactions
+              {t("recentTransactions")}
             </h3>
             <div className="space-y-4">
               {transactions.slice(0, 5).map((transaction) => (
@@ -302,17 +302,17 @@ const WalletPage = () => {
           {/* Quick Actions */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Quick Actions
+              {t("quickActions")}
             </h3>
             <div className="space-y-3">
               <button className="w-full flex items-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <CreditCard className="w-5 h-5 text-blue-600 mr-3" />
                 <div className="text-left">
                   <p className="font-medium text-gray-900 dark:text-white">
-                    Withdraw to Bank
+                    {t("withdrawToBank")}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Transfer funds to your bank account
+                    {t("transferFundsToBank")}
                   </p>
                 </div>
               </button>
@@ -320,10 +320,10 @@ const WalletPage = () => {
                 <Banknote className="w-5 h-5 text-green-600 mr-3" />
                 <div className="text-left">
                   <p className="font-medium text-gray-900 dark:text-white">
-                    Set Up Auto-Withdrawal
+                    {t("setUpAutoWithdrawal")}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Automatically transfer earnings
+                    {t("automaticallyTransferEarnings")}
                   </p>
                 </div>
               </button>
@@ -341,7 +341,7 @@ const WalletPage = () => {
               </h3>
               <button className="flex items-center px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-gray-600 rounded-lg">
                 <Filter className="w-4 h-4 mr-2" />
-                Filter
+                {t("filter")}
               </button>
             </div>
           </div>
@@ -395,13 +395,13 @@ const WalletPage = () => {
           <div className="text-center py-12">
             <Banknote className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No withdrawals yet
+              {t("noWithdrawalsYet")}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-4">
-              You haven't made any withdrawals from your wallet.
+              {t("noWithdrawalsMessage")}
             </p>
             <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-              Make First Withdrawal
+              {t("makeFirstWithdrawal")}
             </button>
           </div>
         </div>

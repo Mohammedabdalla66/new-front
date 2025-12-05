@@ -66,21 +66,21 @@ export const ConfirmationToast = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -50, scale: 0.95 }}
             transition={{ duration: 0.2, type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-4 sm:top-6 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] sm:w-auto sm:min-w-[320px] sm:max-w-md mx-4 sm:mx-0"
+            className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50"
             role="alertdialog"
             aria-live="assertive"
             aria-modal="true"
           >
-            <div className="w-full rounded-lg shadow-xl border border-yellow-200 dark:border-yellow-900/50 bg-white dark:bg-neutral-800 p-3 sm:p-4">
+            <div className="min-w-[320px] max-w-md rounded-lg shadow-xl border border-yellow-200 dark:border-yellow-900/50 bg-white dark:bg-neutral-800 p-4">
               {/* Header with icon */}
-              <div className="flex items-start gap-2 sm:gap-3">
+              <div className="flex items-start gap-3">
                 <div className="flex-shrink-0">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-                    <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 dark:text-yellow-400" />
+                  <div className="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
                   </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs sm:text-sm font-medium text-neutral-900 dark:text-neutral-100 break-words">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                     {message}
                   </p>
                 </div>
@@ -89,21 +89,21 @@ export const ConfirmationToast = ({
                   className="flex-shrink-0 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
                   aria-label="Close"
                 >
-                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Action buttons */}
-              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 mt-3 sm:mt-4">
+              <div className="flex items-center justify-end gap-2 mt-4">
                 <button
                   onClick={handleCancel}
-                  className="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-600 rounded-lg transition-colors"
                 >
                   {cancelText}
                 </button>
                 <button
                   onClick={handleConfirm}
-                  className="w-full sm:w-auto px-4 py-2 text-xs sm:text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-white bg-yellow-600 hover:bg-yellow-700 dark:bg-yellow-500 dark:hover:bg-yellow-600 rounded-lg transition-colors"
                 >
                   {confirmText}
                 </button>

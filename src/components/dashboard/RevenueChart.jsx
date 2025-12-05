@@ -1,7 +1,9 @@
 import React from "react";
 import { TrendingUp } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const RevenueChart = ({ data = [], loading }) => {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 animate-pulse">
@@ -27,7 +29,7 @@ const RevenueChart = ({ data = [], loading }) => {
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Revenue Trend
+          {t("revenueTrend")}
         </h3>
         <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
       </div>

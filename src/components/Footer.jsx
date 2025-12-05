@@ -1,7 +1,7 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
 import CaHupLogo from "./CaHupLogo";
-import { Facebook, Linkedin, Instagram, Mail, Phone } from "lucide-react";
+import { Facebook, Linkedin, Twitter, Mail, Phone } from "lucide-react";
 
 const Footer = () => {
   const { t, language } = useLanguage();
@@ -14,28 +14,13 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Linkedin, href: "#", color: "hover:text-blue-500" },
-    { icon: Instagram, href: "#", color: "hover:text-pink-500" },
-    { icon: Facebook, href: "#", color: "hover:text-blue-600" },
+    { icon: Facebook, href: "#", color: "hover:text-blue-500" },
+    { icon: Linkedin, href: "#", color: "hover:text-blue-600" },
+    { icon: Twitter, href: "#", color: "hover:text-blue-400" },
   ];
 
   return (
     <footer className="bg-gray-900 text-white">
-      {/* Partner Logos Section */}
-      <div className="bg-gray-800 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-center gap-8 opacity-80">
-            {/* Partner logos - using text placeholders as actual logos would need to be provided */}
-            {/* {["AMWAL", "Talal Abu-Ghazaleh Legal", "TAG-Legal", "MUSCAT", "First Choice"].map((partner, index) => (
-              <div key={index} className="text-gray-400 text-sm font-medium px-4 py-2 border border-gray-700 rounded">
-                {partner}
-              </div>
-            ))} */}
-          </div>
-        </div>
-      </div>
-
-      {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -47,9 +32,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-gray-400 mb-4 leading-relaxed">
-              {language === "ar"
-                ? "منصتك الموثوقة لجميع الخدمات المحاسبية. نربطك بأفضل المحاسبين المعتمدين لتلبية احتياجاتك المالية."
-                : "Your trusted platform for all accounting services. We connect you with certified professionals for your financial needs."}
+              {t('trustedPlatformDescription')}
             </p>
             <div className="flex space-x-4 rtl:space-x-reverse">
               {socialLinks.map((social, index) => {
@@ -71,7 +54,7 @@ const Footer = () => {
           {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-lg mb-4">
-              {language === "ar" ? "روابط سريعة" : "Quick Links"}
+              {t('quickLinks')}
             </h3>
             <ul className="space-y-2">
               {footerLinks.map((link) => (
@@ -90,32 +73,28 @@ const Footer = () => {
           {/* Contact Info */}
           <div>
             <h3 className="font-semibold text-lg mb-4">
-              {language === "ar" ? "تواصل معنا" : "Contact Us"}
+              {t('contactUs')}
             </h3>
             <div className="space-y-2">
               <div className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400">
                 <Mail className="h-4 w-4" />
-                <span>info@CaHup.com</span>
+                <span>info@accountpro.com</span>
               </div>
               <div className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400">
                 <Phone className="h-4 w-4" />
-                <span>1+ (555) 123-4567</span>
+                <span>+1 (555) 123-4567</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Additional Partners */}
-       
-      
-
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-            <p>
-              &copy; 2025 CaHup {language === "ar" ? "جميع الحقوق محفوظة." : "All rights reserved."}
-            </p>
-          </div>
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+          <p>
+            &copy; 2025 {language === "ar" ? "CaHup" : "CaHup"}.{" "}
+            {t('allRightsReserved')}
+          </p>
         </div>
-      
+      </div>
     </footer>
   );
 };

@@ -7,22 +7,23 @@ import { toast } from 'react-toastify';
 import { Eye, EyeOff } from 'lucide-react';
 import { clientRegisterSchema } from '../../utils/validationSchemas';
 import { authAPI } from '../../services/api';
+import { useLanguage } from '../../contexts/LanguageContext';
 
-const NATIONALITIES = [
-  { value: '', label: 'Select Nationality' },
-  { value: 'omani', label: 'Omani' },
-  { value: 'saudi', label: 'Saudi Arabian' },
-  { value: 'emirati', label: 'Emirati' },
-  { value: 'kuwaiti', label: 'Kuwaiti' },
-  { value: 'qatari', label: 'Qatari' },
-  { value: 'bahraini', label: 'Bahraini' },
-  { value: 'indian', label: 'Indian' },
-  { value: 'pakistani', label: 'Pakistani' },
-  { value: 'bangladeshi', label: 'Bangladeshi' },
-  { value: 'filipino', label: 'Filipino' },
-  { value: 'egyptian', label: 'Egyptian' },
-  { value: 'jordanian', label: 'Jordanian' },
-  { value: 'other', label: 'Other' }
+const getNationalities = (t) => [
+  { value: '', label: t('selectNationality') },
+  { value: 'omani', label: t('omani') },
+  { value: 'saudi', label: t('saudiArabian') },
+  { value: 'emirati', label: t('emirati') },
+  { value: 'kuwaiti', label: t('kuwaiti') },
+  { value: 'qatari', label: t('qatari') },
+  { value: 'bahraini', label: t('bahraini') },
+  { value: 'indian', label: t('indian') },
+  { value: 'pakistani', label: t('pakistani') },
+  { value: 'bangladeshi', label: t('bangladeshi') },
+  { value: 'filipino', label: t('filipino') },
+  { value: 'egyptian', label: t('egyptian') },
+  { value: 'jordanian', label: t('jordanian') },
+  { value: 'other', label: t('other') }
 ];
 
 const ClientRegisterForm = () => {
@@ -36,6 +37,7 @@ const ClientRegisterForm = () => {
   const [verified, setVerified] = useState(false);
 
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const {
     register,
@@ -57,7 +59,7 @@ const ClientRegisterForm = () => {
 
   const onSendCode = async () => {
     if (!phoneNumber) {
-      toast.error('Enter phone number first');
+      toast.error(t('enterPhoneNumberFirst'));
       return;
     }
     try {
@@ -67,24 +69,24 @@ const ClientRegisterForm = () => {
       // Handle skipped verification (Twilio not configured or trial account)
       if (response.data?.skipped) {
         setVerified(true); // Auto-verify if skipped
-        toast.warning(response.data?.message || 'Phone verification skipped (service not configured)');
+        toast.warning(response.data?.message || t('phoneVerificationSkipped'));
       } else {
-        toast.success('Verification code sent');
+        toast.success(t('verificationCodeSent'));
       }
     } catch (e) {
       // If error but response indicates skip, allow it
       if (e?.response?.data?.skipped) {
         setVerified(true);
-        toast.warning(e.response.data.message || 'Phone verification skipped');
+        toast.warning(e.response.data.message || t('phoneVerificationSkipped'));
       } else {
-        toast.error(e?.response?.data?.message || 'Failed to send code');
+        toast.error(e?.response?.data?.message || t('failedToSendCode'));
       }
     }
   };
 
   const onVerifyCode = async () => {
     if (!code) {
-      toast.error('Enter the verification code');
+      toast.error(t('enterVerificationCode'));
       return;
     }
     setVerifying(true);
@@ -93,22 +95,22 @@ const ClientRegisterForm = () => {
       if (res.data?.verified || res.data?.skipped) {
         setVerified(true);
         if (res.data?.skipped) {
-          toast.warning('Phone verification skipped (service not configured)');
+          toast.warning(t('phoneVerificationSkipped'));
         } else {
-          toast.success('Phone verified');
+          toast.success(t('phoneVerified'));
         }
       } else {
         setVerified(false);
-        toast.error('Invalid code');
+        toast.error(t('invalidCode'));
       }
     } catch (e) {
       // If error but response indicates skip, allow it
       if (e?.response?.data?.skipped) {
         setVerified(true);
-        toast.warning('Phone verification skipped');
+        toast.warning(t('phoneVerificationSkipped'));
       } else {
         setVerified(false);
-        toast.error(e?.response?.data?.message || 'Verification failed');
+        toast.error(e?.response?.data?.message || t('verificationFailed'));
       }
     } finally {
       setVerifying(false);
@@ -117,7 +119,7 @@ const ClientRegisterForm = () => {
 
   const onSubmit = async (data) => {
     if (!verified) {
-      toast.error('Please verify your phone number before submitting');
+      toast.error(t('pleaseVerifyPhoneBeforeSubmit'));
       return;
     }
     setLoading(true);
@@ -148,7 +150,7 @@ const ClientRegisterForm = () => {
       // Get user role from response
       const userRole = response.data?.user?.role || response.data?.role || 'client';
       
-      toast.success('Client registration successful! Redirecting...');
+      toast.success(t('clientRegistrationSuccessful'));
       setTimeout(() => {
         // Redirect client to requests page
         navigate('/dashboard/requests');
@@ -159,7 +161,7 @@ const ClientRegisterForm = () => {
       const message = error.response?.data?.message || 
                       error.response?.data?.errors?.join(', ') ||
                       error.message || 
-                      'Registration failed. Please try again.';
+                      t('registrationFailed');
       toast.error(message);
     } finally {
       setLoading(false);
@@ -170,21 +172,21 @@ const ClientRegisterForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="text-center mb-6">
         <h3 className="text-xl font-semibold text-gray-900 mb-2">
-          Create Your Client Account
+          {t('createClientAccount')}
         </h3>
         <p className="text-sm text-gray-600">
-          Fill in your personal information to get started
+          {t('fillPersonalInfo')}
         </p>
       </div>
 
       {/* Full Name */}
       <div>
-        <label className="form-label">Full Name *</label>
+        <label className="form-label">{t('fullNameLabel')}</label>
         <input
           type="text"
           {...register('fullName')}
           className="form-input"
-          placeholder="Enter your full name"
+          placeholder={t('enterFullName')}
         />
         {errors.fullName && (
           <p className="form-error">{errors.fullName.message}</p>
@@ -193,12 +195,12 @@ const ClientRegisterForm = () => {
 
       {/* Email */}
       <div>
-        <label className="form-label">Email Address *</label>
+        <label className="form-label">{t('emailAddressLabel')}</label>
         <input
           type="email"
           {...register('email')}
           className="form-input"
-          placeholder="Enter your email address"
+          placeholder={t('enterEmailAddressLabel')}
         />
         {errors.email && (
           <p className="form-error">{errors.email.message}</p>
@@ -207,7 +209,7 @@ const ClientRegisterForm = () => {
 
       {/* Phone Number */}
       <div>
-        <label className="form-label">Phone Number *</label>
+        <label className="form-label">{t('phoneNumberLabel')}</label>
         <PhoneInput
           defaultCountry="om"
           value={phoneNumber}
@@ -219,30 +221,30 @@ const ClientRegisterForm = () => {
         )}
         <div className="mt-2 flex items-center gap-2">
           <button type="button" onClick={onSendCode} className="px-3 py-1.5 text-sm rounded-md border border-gray-300 hover:bg-gray-50">
-            Send Code
+            {t('sendCode')}
           </button>
           <input
             type="text"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            placeholder="Enter code"
+            placeholder={t('enterCode')}
             className="flex-1 form-input"
           />
           <button type="button" disabled={verifying} onClick={onVerifyCode} className="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-green-700 disabled:bg-gray-300">
-            {verifying ? 'Verifying...' : 'Verify'}
+            {verifying ? t('verifying') : t('verify')}
           </button>
-          {verified && <span className="text-blue-600 text-sm">Verified</span>}
+          {verified && <span className="text-blue-600 text-sm">{t('verified')}</span>}
         </div>
       </div>
 
       {/* Nationality */}
       <div>
-        <label className="form-label">Nationality *</label>
+        <label className="form-label">{t('nationalityLabel')}</label>
         <select
           {...register('nationality')}
           className="form-input"
         >
-          {NATIONALITIES.map(nationality => (
+          {getNationalities(t).map(nationality => (
             <option key={nationality.value} value={nationality.value}>
               {nationality.label}
             </option>
@@ -255,12 +257,12 @@ const ClientRegisterForm = () => {
 
       {/* Address */}
       <div>
-        <label className="form-label">Address *</label>
+        <label className="form-label">{t('addressLabel')}</label>
         <textarea
           {...register('address')}
           rows={3}
           className="form-input resize-none"
-          placeholder="Enter your full address"
+          placeholder={t('enterFullAddress')}
         />
         {errors.address && (
           <p className="form-error">{errors.address.message}</p>
@@ -270,13 +272,13 @@ const ClientRegisterForm = () => {
       {/* Password Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="form-label">Password *</label>
+          <label className="form-label">{t('passwordLabel')}</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
               className="form-input pr-10"
-              placeholder="Create password"
+              placeholder={t('createPassword')}
             />
             <button
               type="button"
@@ -295,13 +297,13 @@ const ClientRegisterForm = () => {
           )}
         </div>
         <div>
-          <label className="form-label">Confirm Password *</label>
+          <label className="form-label">{t('confirmPasswordLabel')}</label>
           <div className="relative">
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               {...register('confirmPassword')}
               className="form-input pr-10"
-              placeholder="Confirm password"
+              placeholder={t('confirmPassword')}
             />
             <button
               type="button"
@@ -332,13 +334,13 @@ const ClientRegisterForm = () => {
         </div>
         <div className="ml-3 text-sm">
           <label className="text-gray-700">
-            I accept the{' '}
+            {t('iAcceptThe')}{' '}
             <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-              Terms and Conditions
+              {t('termsAndConditions')}
             </a>{' '}
-            and{' '}
+            {t('and')}{' '}
             <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-              Privacy Policy
+              {t('privacyPolicy')}
             </a>
           </label>
         </div>
@@ -356,10 +358,10 @@ const ClientRegisterForm = () => {
         {loading ? (
           <div className="flex items-center justify-center">
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-            Creating Account...
+            {t('creatingAccount')}
           </div>
         ) : (
-          'Create Client Account'
+          t('createClientAccountBtn')
         )}
       </button>
     </form>

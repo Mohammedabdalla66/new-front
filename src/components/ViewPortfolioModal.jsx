@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
-  const { language } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Helper function to get first image file
   const getFirstImageFile = () => {
@@ -29,13 +29,13 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
   const getModalTitle = () => {
     switch (activeTab) {
       case "samples":
-        return language === "ar" ? "عرض عينة العمل" : "View Work Sample";
+        return t("viewWorkSample");
       case "cases":
-        return language === "ar" ? "عرض دراسة الحالة" : "View Case Study";
+        return t("viewCaseStudy");
       case "certifications":
-        return language === "ar" ? "عرض الشهادة" : "View Certification";
+        return t("viewCertification");
       default:
-        return language === "ar" ? "عرض العنصر" : "View Item";
+        return t("viewItem");
     }
   };
 
@@ -110,7 +110,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                   {item.tags && item.tags.length > 0 && (
                     <div>
                       <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                        {language === "ar" ? "العلامات" : "Tags"}
+                        {t("tags")}
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {item.tags.map((tag, index) => (
@@ -123,7 +123,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                   )}
                   <div>
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
-                      {language === "ar" ? "تاريخ الإنجاز" : "Date"}
+                      {t("date")}
                     </p>
                     <p className="text-gray-900 dark:text-white">
                       {formatDate(item.date)}
@@ -134,7 +134,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                 {item.files && item.files.length > 0 && (
                   <div>
                     <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                      {language === "ar" ? "الملفات المرفقة" : "Attached Files"}
+                      {t("attachedFiles")}
                     </p>
                     <div className="space-y-2">
                       {item.files.map((file, index) => (
@@ -177,7 +177,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                    {language === "ar" ? "العميل" : "Client"}
+                    {t("client")}
                   </p>
                   <p className="text-lg text-gray-900 dark:text-white">
                     {item.client}
@@ -185,7 +185,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                    {language === "ar" ? "الصناعة" : "Industry"}
+                    {t("industry")}
                   </p>
                   <p className="text-lg text-gray-900 dark:text-white">
                     {item.industry}
@@ -193,7 +193,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                    {language === "ar" ? "المدة" : "Duration"}
+                    {t("duration")}
                   </p>
                   <p className="text-lg text-gray-900 dark:text-white">
                     {item.duration}
@@ -203,7 +203,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
 
               <div>
                 <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
-                  {language === "ar" ? "النتائج الرئيسية" : "Key Results"}
+                  {t("keyResults")}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {item.results &&
@@ -248,12 +248,11 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
 
               <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {language === "ar" ? "تاريخ الإنجاز" : "Completion Date"}:{" "}
-                  {formatDate(item.date)}
+                  {t("completionDate")}: {formatDate(item.date)}
                 </p>
                 <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                   <Share2 className="w-4 h-4 mr-2" />
-                  {language === "ar" ? "مشاركة" : "Share"}
+                  {t("share")}
                 </button>
               </div>
             </div>
@@ -296,7 +295,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                    {language === "ar" ? "تاريخ الإصدار" : "Issue Date"}
+                    {t("issueDate")}
                   </p>
                   <div className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4 text-gray-400" />
@@ -307,7 +306,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                    {language === "ar" ? "تاريخ الانتهاء" : "Expiry Date"}
+                    {t("expiryDate")}
                   </p>
                   <div className="flex items-center space-x-2">
                     <Calendar className="w-4 h-4 text-gray-400" />
@@ -318,7 +317,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                    {language === "ar" ? "رقم الشهادة" : "Credential ID"}
+                    {t("credentialID")}
                   </p>
                   <p className="text-gray-900 dark:text-white font-mono text-lg">
                     {item.credentialId}
@@ -364,7 +363,7 @@ const ViewPortfolioModal = ({ isOpen, onClose, item, activeTab }) => {
                       className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       <Download className="w-4 h-4 mr-2" />
-                      {language === "ar" ? "تحميل" : "Download"}
+                      {t("download")}
                     </a>
                   )}
                   <button className="flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">

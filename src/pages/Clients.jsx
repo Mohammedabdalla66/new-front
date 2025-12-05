@@ -24,8 +24,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import Toast from '../components/ui/toast';
 import AlertDialog from '../components/ui/alert-dialog';
 import { adminAPI } from '../services/api';
+import { useTranslation } from 'react-i18next';
 
 const Clients = () => {
+  const { t } = useTranslation();
+  
+  // Helper function to translate status
+  const translateStatus = (status) => {
+    if (!status) return '';
+    const statusLower = status.toLowerCase();
+    return t(statusLower) || status;
+  };
+  
   // Data
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +78,7 @@ const Clients = () => {
           name: user.name || 'N/A',
           email: user.email || '',
           phone: user.phone || 'N/A',
-          status: user.status === 'active' ? 'Active' : user.status === 'pending' ? 'Pending' : 'Inactive',
+          status: user.status === 'active' ? 'Active' : user.status === 'pending' ? 'Pending' : user.status === 'inactive' ? 'Inactive' : 'Pending',
           role: user.role,
           createdAt: user.createdAt,
         })));
@@ -76,8 +86,8 @@ const Clients = () => {
         console.error('Error loading clients:', error);
         setToast({
           open: true,
-          title: 'Error',
-          description: error?.response?.data?.message || 'Failed to load clients',
+          title: t("error"),
+          description: error?.response?.data?.message || t("failedToLoadClients"),
           variant: 'destructive'
         });
         setTimeout(() => setToast((t) => ({ ...t, open: false })), 3000);
@@ -129,8 +139,8 @@ const Clients = () => {
       console.error('Error updating user status:', error);
       setToast({
         open: true,
-        title: 'Error',
-        description: error?.response?.data?.message || 'Failed to update user status',
+        title: t("error"),
+        description: error?.response?.data?.message || t("failedToUpdateUserStatus"),
         variant: 'destructive'
       });
       setTimeout(() => setToast((t) => ({ ...t, open: false })), 3000);
@@ -141,7 +151,7 @@ const Clients = () => {
   const approveClient = async (client) => {
     const success = await updateClientStatus(client.id, 'Active');
     if (success) {
-      setToast({ open: true, title: 'Client approved', description: `${client.name} is now Active and can sign in.`, variant: 'success' });
+      setToast({ open: true, title: t("clientApproved"), description: `${client.name} ${t("isNowActive")}`, variant: 'success' });
       setTimeout(() => setToast((t) => ({ ...t, open: false })), 2500);
       // Reload users to get updated data
       const response = await adminAPI.listUsers({ role: 'client' });
@@ -161,7 +171,7 @@ const Clients = () => {
   const rejectClient = async (client) => {
     const success = await updateClientStatus(client.id, 'Pending');
     if (success) {
-      setToast({ open: true, title: 'Client deactivated', description: `${client.name} is now Pending and cannot sign in.`, variant: 'success' });
+      setToast({ open: true, title: t("clientDeactivated"), description: `${client.name} ${t("isNowPending")}`, variant: 'success' });
       setTimeout(() => setToast((t) => ({ ...t, open: false })), 2500);
       // Reload users to get updated data
       const response = await adminAPI.listUsers({ role: 'client' });
@@ -244,12 +254,12 @@ const Clients = () => {
     if (confirmAction === 'deactivate') {
       const success = await updateClientStatus(selectedClient.id, 'Pending');
       if (success) {
-        setToast({ open: true, title: 'Client deactivated', description: `${selectedClient.name} has been set to Pending.`, variant: 'destructive' });
+        setToast({ open: true, title: t("clientDeactivated"), description: `${selectedClient.name} ${t("hasBeenSetToPending")}`, variant: 'destructive' });
       }
     } else if (confirmAction === 'reactivate') {
       const success = await updateClientStatus(selectedClient.id, 'Active');
       if (success) {
-        setToast({ open: true, title: 'Client reactivated', description: `${selectedClient.name} is now Active.`, variant: 'success' });
+        setToast({ open: true, title: t("clientReactivated"), description: `${selectedClient.name} ${t("isNowActiveStatus")}`, variant: 'success' });
       }
     }
     // Close view dialog if it was open (requirement)
@@ -274,17 +284,17 @@ const Clients = () => {
             {/* Page Header with Breadcrumb */}
             <div className="space-y-2">
               <div className="flex items-center space-x-2 text-sm text-neutral-600 dark:text-neutral-400">
-                <span>Dashboard</span>
+                <span>{t("dashboard")}</span>
                 <ChevronRight className="w-4 h-4" />
-                <span className="text-neutral-900 dark:text-white font-medium">Clients</span>
+                <span className="text-neutral-900 dark:text-white font-medium">{t("clients")}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Clients</h1>
-                  <p className="text-neutral-600 dark:text-neutral-400">Manage client accounts and details</p>
+                  <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">{t("clients")}</h1>
+                  <p className="text-neutral-600 dark:text-neutral-400">{t("manageClientAccountsDetails")}</p>
                 </div>
               </div>
             </div>
@@ -298,7 +308,7 @@ const Clients = () => {
                     <div className="relative flex-1 max-w-md">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4" />
                       <Input
-                        placeholder="Search clients by name or email..."
+                        placeholder={t("searchClientsByNameEmail")}
                         className="pl-10"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -308,13 +318,13 @@ const Clients = () => {
                     {/* Status Filter */}
                     <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v)}>
                       <SelectTrigger className="w-40">
-                        <SelectValue placeholder="Filter by status" />
+                        <SelectValue placeholder={t("filterByStatus")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="All">All Status</SelectItem>
-                        <SelectItem value="Pending">Pending</SelectItem>
-                        <SelectItem value="Active">Active</SelectItem>
-                        <SelectItem value="Inactive">Inactive</SelectItem>
+                        <SelectItem value="All">{t("allStatus")}</SelectItem>
+                        <SelectItem value="Pending">{t("pending")}</SelectItem>
+                        <SelectItem value="Active">{t("active")}</SelectItem>
+                        <SelectItem value="Inactive">{t("inactive")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -322,7 +332,7 @@ const Clients = () => {
                   {/* Add Client Button */}
                   <Button className="w-full sm:w-auto" onClick={openAdd}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Add Client
+                    {t("addClient")}
                   </Button>
                 </div>
               </CardContent>
@@ -331,7 +341,7 @@ const Clients = () => {
             {/* Clients Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Clients List</CardTitle>
+                <CardTitle>{t("clientsList")}</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -344,18 +354,18 @@ const Clients = () => {
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-12"></TableHead>
-                          <TableHead>Client Name</TableHead>
-                          <TableHead>Email</TableHead>
-                          <TableHead>Phone</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          <TableHead>{t("clientName")}</TableHead>
+                          <TableHead>{t("email")}</TableHead>
+                          <TableHead>{t("phone")}</TableHead>
+                          <TableHead>{t("status")}</TableHead>
+                          <TableHead className="text-right">{t("actions")}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {filteredClients.length === 0 ? (
                           <TableRow>
                             <TableCell colSpan={6} className="text-center py-8 text-neutral-500">
-                              No clients found
+                              {t("noClientsFound")}
                             </TableCell>
                           </TableRow>
                         ) : (
@@ -397,7 +407,7 @@ const Clients = () => {
                                   : 'secondary'
                               }
                             >
-                              {client.status}
+                              {translateStatus(client.status)}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right">
@@ -407,7 +417,7 @@ const Clients = () => {
                                 size="sm"
                                 className="h-8 w-8 p-0"
                                 onClick={() => openView(client)}
-                                aria-label="View details"
+                                aria-label={t("viewDetails")}
                               >
                                 <Eye className="w-4 h-4" />
                               </Button>
@@ -417,7 +427,7 @@ const Clients = () => {
                                   size="sm"
                                   className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                                   onClick={() => requestDeactivate(client)}
-                                  aria-label="Deactivate client"
+                                  aria-label={t("deactivateClient")}
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
@@ -428,7 +438,7 @@ const Clients = () => {
                                   size="sm"
                                   className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
                                   onClick={() => requestReactivate(client)}
-                                  aria-label="Reactivate client"
+                                  aria-label={t("reactivateClient")}
                                 >
                                   <Plus className="w-4 h-4" />
                                 </Button>
@@ -438,7 +448,7 @@ const Clients = () => {
                                 size="sm"
                                 className="h-8 w-8 p-0"
                                 onClick={() => openEdit(client)}
-                                aria-label="Edit client"
+                                aria-label={t("editClient")}
                               >
                                 <Edit className="w-4 h-4" />
                               </Button>
@@ -447,7 +457,7 @@ const Clients = () => {
                                 size="sm"
                                 className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                                 onClick={() => openDelete(client)}
-                                aria-label="Delete client"
+                                aria-label={t("deleteClientAction")}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -474,8 +484,8 @@ const Clients = () => {
                     className="space-y-4"
                   >
                     <DialogHeader>
-                      <DialogTitle>Client Details</DialogTitle>
-                      <DialogDescription>Review client information.</DialogDescription>
+                      <DialogTitle>{t("clientDetails")}</DialogTitle>
+                      <DialogDescription>{t("reviewClientInformation")}</DialogDescription>
                     </DialogHeader>
 
                     <div className="flex items-center space-x-3">
@@ -492,11 +502,11 @@ const Clients = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <div className="text-xs text-neutral-500">Phone</div>
+                        <div className="text-xs text-neutral-500">{t("phone")}</div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">{selectedClient.phone}</div>
                       </div>
                       <div className="space-y-1">
-                        <div className="text-xs text-neutral-500">Status</div>
+                        <div className="text-xs text-neutral-500">{t("status")}</div>
                         <Badge
                           variant={
                             selectedClient.status === 'Active'
@@ -506,20 +516,20 @@ const Clients = () => {
                               : 'secondary'
                           }
                         >
-                          {selectedClient.status}
+                          {translateStatus(selectedClient.status)}
                         </Badge>
                       </div>
                       <div className="space-y-1">
-                        <div className="text-xs text-neutral-500">Company</div>
+                        <div className="text-xs text-neutral-500">{t("company")}</div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">Acme Corp</div>
                       </div>
                       <div className="space-y-1">
-                        <div className="text-xs text-neutral-500">Created</div>
+                        <div className="text-xs text-neutral-500">{t("created")}</div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">2024-07-12</div>
                       </div>
                       <div className="space-y-1 sm:col-span-2">
-                        <div className="text-xs text-neutral-500">Notes</div>
-                        <div className="text-sm text-neutral-700 dark:text-neutral-300">Additional details can go here.</div>
+                        <div className="text-xs text-neutral-500">{t("notes")}</div>
+                        <div className="text-sm text-neutral-700 dark:text-neutral-300">{t("additionalDetailsCanGoHere")}</div>
                       </div>
                     </div>
 
@@ -528,31 +538,31 @@ const Clients = () => {
                       {selectedClient.status === 'Pending' ? (
                         <div className="flex items-center gap-2">
                           <Button variant="destructive" onClick={() => rejectClient(selectedClient)}>
-                            Reject
+                            {t("reject")}
                           </Button>
                           <Button onClick={() => approveClient(selectedClient)}>
-                            Approve
+                            {t("approve")}
                           </Button>
                           <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
-                            Close
+                            {t("close")}
                           </Button>
                         </div>
                       ) : selectedClient.status === 'Active' ? (
                         <div className="flex items-center gap-2">
                           <Button variant="destructive" onClick={() => requestDeactivate(selectedClient)}>
-                            Deactivate
+                            {t("deactivate")}
                           </Button>
                           <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
-                            Close
+                            {t("close")}
                           </Button>
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
                           <Button onClick={() => requestReactivate(selectedClient)}>
-                            Reactivate
+                            {t("reactivate")}
                           </Button>
                           <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
-                            Close
+                            {t("close")}
                           </Button>
                         </div>
                       )}
@@ -572,49 +582,49 @@ const Clients = () => {
                   className="space-y-4"
                 >
                   <DialogHeader>
-                    <DialogTitle>Add New Client</DialogTitle>
-                    <DialogDescription>Enter details to create a client.</DialogDescription>
+                    <DialogTitle>{t("addNewClient")}</DialogTitle>
+                    <DialogDescription>{t("enterDetailsToCreateClient")}</DialogDescription>
                   </DialogHeader>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Name *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t("name")} *</label>
                       <Input
-                        placeholder="Enter client name"
+                        placeholder={t("enterClientName")}
                         value={formData.name}
                         onChange={(e) => onFormChange('name', e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Email *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t("email")} *</label>
                       <Input
                         type="email"
-                        placeholder="Enter email address"
+                        placeholder={t("enterEmailAddress")}
                         value={formData.email}
                         onChange={(e) => onFormChange('email', e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Phone *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t("phone")} *</label>
                       <Input
-                        placeholder="Enter phone number"
+                        placeholder={t("enterPhoneNumber")}
                         value={formData.phone}
                         onChange={(e) => onFormChange('phone', e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Status</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t("status")}</label>
                       <Select value={formData.status} onValueChange={(v) => onFormChange('status', v)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select status" />
+                          <SelectValue placeholder={t("selectStatus")} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Pending">Pending</SelectItem>
-                          <SelectItem value="Active">Active</SelectItem>
-                          <SelectItem value="Inactive">Inactive</SelectItem>
+                          <SelectItem value="Pending">{t("pending")}</SelectItem>
+                          <SelectItem value="Active">{t("active")}</SelectItem>
+                          <SelectItem value="Inactive">{t("inactive")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -622,10 +632,10 @@ const Clients = () => {
 
                   <div className="flex items-center justify-end gap-2 pt-2">
                     <Button variant="outline" onClick={() => setAddDialogOpen(false)}>
-                      Cancel
+                      {t("cancel")}
                     </Button>
                     <Button onClick={saveAdd} disabled={!formData.name || !formData.email || !formData.phone}>
-                      Save
+                      {t("save")}
                     </Button>
                   </div>
                 </motion.div>
@@ -642,49 +652,49 @@ const Clients = () => {
                   className="space-y-4"
                 >
                   <DialogHeader>
-                    <DialogTitle>Edit Client</DialogTitle>
-                    <DialogDescription>Update client information.</DialogDescription>
+                    <DialogTitle>{t("editClient")}</DialogTitle>
+                    <DialogDescription>{t("updateClientInformation")}</DialogDescription>
                   </DialogHeader>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Name *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t("name")} *</label>
                       <Input
-                        placeholder="Enter client name"
+                        placeholder={t("enterClientName")}
                         value={formData.name}
                         onChange={(e) => onFormChange('name', e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Email *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t("email")} *</label>
                       <Input
                         type="email"
-                        placeholder="Enter email address"
+                        placeholder={t("enterEmailAddress")}
                         value={formData.email}
                         onChange={(e) => onFormChange('email', e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Phone *</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t("phone")} *</label>
                       <Input
-                        placeholder="Enter phone number"
+                        placeholder={t("enterPhoneNumber")}
                         value={formData.phone}
                         onChange={(e) => onFormChange('phone', e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Status</label>
+                      <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{t("status")}</label>
                       <Select value={formData.status} onValueChange={(v) => onFormChange('status', v)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select status" />
+                          <SelectValue placeholder={t("selectStatus")} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Pending">Pending</SelectItem>
-                          <SelectItem value="Active">Active</SelectItem>
-                          <SelectItem value="Inactive">Inactive</SelectItem>
+                          <SelectItem value="Pending">{t("pending")}</SelectItem>
+                          <SelectItem value="Active">{t("active")}</SelectItem>
+                          <SelectItem value="Inactive">{t("inactive")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -692,10 +702,10 @@ const Clients = () => {
 
                   <div className="flex items-center justify-end gap-2 pt-2">
                     <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
-                      Cancel
+                      {t("cancel")}
                     </Button>
                     <Button onClick={saveEdit} disabled={!formData.name || !formData.email || !formData.phone}>
-                      Save Changes
+                      {t("saveChanges")}
                     </Button>
                   </div>
                 </motion.div>
@@ -706,17 +716,17 @@ const Clients = () => {
             <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Delete Client</DialogTitle>
+                  <DialogTitle>{t("deleteClient")}</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to delete this client? This action cannot be undone.
+                    {t("areYouSureDeleteClient")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center justify-end gap-2 pt-2">
                   <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-                    Cancel
+                    {t("cancel")}
                   </Button>
                   <Button variant="destructive" onClick={confirmDelete}>
-                    Delete
+                    {t("delete")}
                   </Button>
                 </div>
               </DialogContent>
@@ -735,13 +745,13 @@ const Clients = () => {
         <AlertDialog
           open={confirmDialogOpen}
           onOpenChange={setConfirmDialogOpen}
-          title={confirmAction === 'deactivate' ? 'Deactivate Client' : 'Reactivate Client'}
+          title={confirmAction === 'deactivate' ? t("deactivateClient") : t("reactivateClient")}
           description={
             confirmAction === 'deactivate'
-              ? 'Are you sure you want to deactivate this client? They will lose access until reactivated.'
-              : 'Are you sure you want to reactivate this client? They will regain access.'
+              ? t("areYouSureDeactivateClient")
+              : t("areYouSureReactivateClient")
           }
-          confirmText={confirmAction === 'deactivate' ? 'Deactivate' : 'Reactivate'}
+          confirmText={confirmAction === 'deactivate' ? t("deactivate") : t("reactivate")}
           variant={confirmAction === 'deactivate' ? 'destructive' : 'default'}
           onConfirm={onConfirmLifecycle}
         />

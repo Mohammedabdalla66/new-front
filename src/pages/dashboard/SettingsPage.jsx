@@ -45,8 +45,8 @@ const SettingsPage = () => {
   const tabs = [
     { id: "profile", label: t("profileSettings"), icon: User },
     { id: "security", label: t("changePassword"), icon: Lock },
-    { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "preferences", label: "Preferences", icon: Globe },
+    { id: "notifications", label: t("notifications"), icon: Bell },
+    { id: "preferences", label: t("preferences"), icon: Globe },
   ];
 
   const handleNotificationChange = (key) => {
@@ -73,10 +73,10 @@ const SettingsPage = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Settings
+          {t("settings")}
         </h1>
         <p className="text-gray-600 dark:text-gray-400">
-          Manage your account settings and preferences
+          {t("manageAccountSettings")}
         </p>
       </div>
 
@@ -109,7 +109,7 @@ const SettingsPage = () => {
           {activeTab === "profile" && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-                Profile Information
+                {t("profileInformation")}
               </h2>
 
               <div className="space-y-6">
@@ -137,7 +137,7 @@ const SettingsPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      First Name
+                      {t("firstName")}
                     </label>
                     <input
                       type="text"
@@ -150,7 +150,7 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Last Name
+                      {t("lastName")}
                     </label>
                     <input
                       type="text"
@@ -163,7 +163,7 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Email
+                      {t("email")}
                     </label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -179,7 +179,7 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Phone
+                      {t("phone")}
                     </label>
                     <div className="relative">
                       <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -195,7 +195,7 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Location
+                      {t("location")}
                     </label>
                     <div className="relative">
                       <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -211,7 +211,7 @@ const SettingsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Professional Title
+                      {t("professionalTitle")}
                     </label>
                     <div className="relative">
                       <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -228,22 +228,22 @@ const SettingsPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Bio
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    {t("bio")}
                   </label>
                   <textarea
                     rows={4}
                     value={profile.bio}
                     onChange={(e) => handleProfileChange("bio", e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Tell clients about your experience and expertise..."
+                    placeholder={t("tellClientsAboutExperience")}
                   />
                 </div>
 
                 <div className="flex justify-end">
                   <button className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
                     <Save className="w-4 h-4 mr-2" />
-                    Save Changes
+                    {t("saveChanges")}
                   </button>
                 </div>
               </div>
@@ -253,13 +253,13 @@ const SettingsPage = () => {
           {activeTab === "security" && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-                Security Settings
+                {t("securitySettings")}
               </h2>
 
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Current Password
+                    {t("currentPassword")}
                   </label>
                   <input
                     type="password"
@@ -268,7 +268,7 @@ const SettingsPage = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    New Password
+                    {t("newPassword")}
                   </label>
                   <input
                     type="password"
@@ -277,7 +277,7 @@ const SettingsPage = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Confirm New Password
+                    {t("confirmNewPassword")}
                   </label>
                   <input
                     type="password"
@@ -287,7 +287,7 @@ const SettingsPage = () => {
                 <div className="flex justify-end">
                   <button className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
                     <Save className="w-4 h-4 mr-2" />
-                    Update Password
+                    {t("updatePassword")}
                   </button>
                 </div>
               </div>
@@ -297,7 +297,7 @@ const SettingsPage = () => {
           {activeTab === "notifications" && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-                Notification Preferences
+                {t("notificationPreferences")}
               </h2>
 
               <div className="space-y-4">
@@ -309,15 +309,15 @@ const SettingsPage = () => {
                           key.slice(1).replace(/([A-Z])/g, " $1")}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {key === "email" && "Receive notifications via email"}
-                        {key === "push" && "Receive push notifications"}
-                        {key === "sms" && "Receive SMS notifications"}
+                        {key === "email" && t("receiveNotificationsViaEmail")}
+                        {key === "push" && t("receivePushNotifications")}
+                        {key === "sms" && t("receiveSmsNotifications")}
                         {key === "projectUpdates" &&
-                          "Get notified about project updates"}
+                          t("getNotifiedAboutProjectUpdates")}
                         {key === "messages" &&
-                          "Get notified about new messages"}
+                          t("getNotifiedAboutNewMessages")}
                         {key === "deadlines" &&
-                          "Get notified about upcoming deadlines"}
+                          t("getNotifiedAboutUpcomingDeadlines")}
                       </p>
                     </div>
                     <button
@@ -341,17 +341,17 @@ const SettingsPage = () => {
           {activeTab === "preferences" && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-                Preferences
+                {t("preferences")}
               </h2>
 
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                      Language
+                      {t("language")}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Choose your preferred language
+                      {t("choosePreferredLanguage")}
                     </p>
                   </div>
                   <button
@@ -366,10 +366,10 @@ const SettingsPage = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                      Dark Mode
+                      {t("darkMode")}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Switch between light and dark themes
+                      {t("switchBetweenThemes")}
                     </p>
                   </div>
                   <button
@@ -381,7 +381,7 @@ const SettingsPage = () => {
                     ) : (
                       <Moon className="w-4 h-4 mr-2" />
                     )}
-                    {isDarkMode ? "Light" : "Dark"}
+                    {isDarkMode ? t("light") : t("dark")}
                   </button>
                 </div>
               </div>

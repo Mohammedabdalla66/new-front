@@ -53,7 +53,15 @@ export const RequestsTable = ({ requests, onViewDetails }) => {
                       : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                   }`}
                 >
-                  {r.status.replace("-", " ")}
+                  {r.status === "pending" ? t("pending") :
+                   r.status === "submitted" ? t("submitted") :
+                   r.status === "open" ? t("open") :
+                   r.status === "in-progress" ? t("inProgress") :
+                   r.status === "completed" ? t("completed") :
+                   r.status === "rejected" ? t("rejected") :
+                   r.status === "canceled" || r.status === "cancelled" ? t("canceled") :
+                   r.status === "active" ? t("active") :
+                   r.status}
                 </span>
               </td>
               <td className="px-3 lg:px-6 py-4 text-sm text-gray-900 dark:text-white">
@@ -108,7 +116,15 @@ export const RequestsTable = ({ requests, onViewDetails }) => {
                     : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
                 }`}
               >
-                {r.status.replace("-", " ")}
+                {r.status === "pending" ? t("pending") :
+                 r.status === "submitted" ? t("submitted") :
+                 r.status === "open" ? t("open") :
+                 r.status === "in-progress" ? t("inProgress") :
+                 r.status === "completed" ? t("completed") :
+                 r.status === "rejected" ? t("rejected") :
+                 r.status === "canceled" || r.status === "cancelled" ? t("canceled") :
+                 r.status === "active" ? t("active") :
+                 r.status}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">

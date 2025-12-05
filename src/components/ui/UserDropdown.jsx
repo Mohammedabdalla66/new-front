@@ -6,11 +6,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useLanguage } from "../../contexts/LanguageContext";
 
 /**
-<<<<<<< HEAD
- * Internal UserDropdown component for dashboard/internal pages
-=======
  * Reusable UserDropdown component for header menus
->>>>>>> origin/mohamedAbdo
  * @param {Object} user - User object with name, email, avatar, role
  * @param {string} className - Additional CSS classes for the dropdown container
  */

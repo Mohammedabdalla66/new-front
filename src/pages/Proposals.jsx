@@ -26,10 +26,11 @@ import Toast from '../components/ui/toast';
 import AlertDialog from '../components/ui/alert-dialog';
 import { adminAPI } from '../services/api';
 import { getServiceTitleLabel } from '../utils/titleUtils';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslation } from 'react-i18next';
 
 const Proposals = () => {
-  const { language } = useLanguage();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language || 'en';
   // Data
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -78,8 +79,8 @@ const Proposals = () => {
         console.error('Error loading proposals:', error);
         setToast({
           open: true,
-          title: 'Error',
-          description: error?.response?.data?.message || 'Failed to load proposals',
+          title: t("error"),
+          description: error?.response?.data?.message || t("failedToLoadRequests"),
           variant: 'destructive'
         });
         setTimeout(() => setToast((t) => ({ ...t, open: false })), 3000);
@@ -117,8 +118,8 @@ const Proposals = () => {
       setProposals((prev) => prev.filter((p) => p.id !== proposal.id));
       setToast({
         open: true,
-        title: 'Proposal approved',
-        description: `Proposal for "${proposal.requestTitleDisplay || getServiceTitleLabel(proposal.requestTitle, language || 'en')}" has been approved.`,
+        title: t("proposalApproved"),
+        description: `${t("proposalFor")} "${proposal.requestTitleDisplay || getServiceTitleLabel(proposal.requestTitle, language || 'en')}" ${t("proposalForHasBeenApproved")}`,
         variant: 'success'
       });
       setTimeout(() => setToast((t) => ({ ...t, open: false })), 2500);
@@ -127,8 +128,8 @@ const Proposals = () => {
       console.error('Error approving proposal:', error);
       setToast({
         open: true,
-        title: 'Error',
-        description: error?.response?.data?.message || 'Failed to approve proposal',
+        title: t("error"),
+        description: error?.response?.data?.message || t("failedToApproveProposal"),
         variant: 'destructive'
       });
       setTimeout(() => setToast((t) => ({ ...t, open: false })), 3000);
@@ -150,8 +151,8 @@ const Proposals = () => {
       setProposals((prev) => prev.filter((p) => p.id !== proposalToReject.id));
       setToast({
         open: true,
-        title: 'Proposal rejected',
-        description: `Proposal for "${proposalToReject.requestTitleDisplay || getServiceTitleLabel(proposalToReject.requestTitle, language || 'en')}" has been rejected.`,
+        title: t("proposalRejected"),
+        description: `${t("proposalFor")} "${proposalToReject.requestTitleDisplay || getServiceTitleLabel(proposalToReject.requestTitle, language || 'en')}" ${t("proposalForHasBeenRejected")}`,
         variant: 'destructive'
       });
       setTimeout(() => setToast((t) => ({ ...t, open: false })), 2500);
@@ -162,8 +163,8 @@ const Proposals = () => {
       console.error('Error rejecting proposal:', error);
       setToast({
         open: true,
-        title: 'Error',
-        description: error?.response?.data?.message || 'Failed to reject proposal',
+        title: t("error"),
+        description: error?.response?.data?.message || t("failedToRejectProposal"),
         variant: 'destructive'
       });
       setTimeout(() => setToast((t) => ({ ...t, open: false })), 3000);
@@ -171,13 +172,14 @@ const Proposals = () => {
   };
 
   const formatCurrency = (amount) => {
-    if (!amount || amount === 0) return 'Not specified';
+    if (!amount || amount === 0) return t("notSpecified");
     return `${amount.toLocaleString()} OMR`;
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString();
+    if (!dateString) return t("notAvailable");
+    const locale = language === 'ar' ? 'ar-SA' : 'en-US';
+    return new Date(dateString).toLocaleDateString(locale);
   };
 
   return (
@@ -192,17 +194,17 @@ const Proposals = () => {
             {/* Page Header with Breadcrumb */}
             <div className="space-y-2">
               <div className="flex items-center space-x-2 text-sm text-neutral-600 dark:text-neutral-400">
-                <span>Dashboard</span>
+                <span>{t("dashboard")}</span>
                 <ChevronRight className="w-4 h-4" />
-                <span className="text-neutral-900 dark:text-white font-medium">Proposals</span>
+                <span className="text-neutral-900 dark:text-white font-medium">{t("proposals")}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">Proposal Management</h1>
-                  <p className="text-neutral-600 dark:text-neutral-400">Review and approve/reject service provider proposals</p>
+                  <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">{t("proposalManagement")}</h1>
+                  <p className="text-neutral-600 dark:text-neutral-400">{t("reviewApproveRejectProposals")}</p>
                 </div>
               </div>
             </div>
@@ -216,7 +218,7 @@ const Proposals = () => {
                     <div className="relative flex-1 max-w-md">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4" />
                       <Input
-                        placeholder="Search proposals by request title, provider name, or notes..."
+                        placeholder={t("searchProposalsByRequestProvider")}
                         className="pl-10"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -226,13 +228,13 @@ const Proposals = () => {
                     {/* Status Filter */}
                     <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v)}>
                       <SelectTrigger className="w-40">
-                        <SelectValue placeholder="Filter by status" />
+                        <SelectValue placeholder={t("filterByStatus")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
+                        <SelectItem value="all">{t("allStatus")}</SelectItem>
+                        <SelectItem value="pending">{t("pending")}</SelectItem>
+                        <SelectItem value="active">{t("active")}</SelectItem>
+                        <SelectItem value="rejected">{t("rejected")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -243,7 +245,7 @@ const Proposals = () => {
             {/* Proposals Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Pending Proposals</CardTitle>
+                <CardTitle>{t("pendingProposals")}</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -255,20 +257,20 @@ const Proposals = () => {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Request</TableHead>
-                          <TableHead>Service Provider</TableHead>
-                          <TableHead>Price</TableHead>
-                          <TableHead>Duration</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Submitted</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          <TableHead>{t("request")}</TableHead>
+                          <TableHead>{t("serviceProvider")}</TableHead>
+                          <TableHead>{t("price")}</TableHead>
+                          <TableHead>{t("duration")}</TableHead>
+                          <TableHead>{t("status")}</TableHead>
+                          <TableHead>{t("submitted")}</TableHead>
+                          <TableHead className="text-right">{t("actions")}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {filteredProposals.length === 0 ? (
                           <TableRow>
                             <TableCell colSpan={7} className="text-center py-8 text-neutral-500">
-                              {statusFilter === 'pending' ? 'No pending proposals' : 'No proposals found'}
+                              {statusFilter === 'pending' ? t("noPendingProposals") : t("noProposalsFound")}
                             </TableCell>
                           </TableRow>
                         ) : (
@@ -290,7 +292,7 @@ const Proposals = () => {
                                 </div>
                               </TableCell>
                               <TableCell>{formatCurrency(proposal.price)}</TableCell>
-                              <TableCell>{proposal.durationDays} days</TableCell>
+                              <TableCell>{proposal.durationDays} {t("days")}</TableCell>
                               <TableCell>
                                 <Badge
                                   variant={
@@ -301,7 +303,7 @@ const Proposals = () => {
                                       : 'secondary'
                                   }
                                 >
-                                  {proposal.status}
+                                  {t(proposal.status.toLowerCase())}
                                 </Badge>
                               </TableCell>
                               <TableCell>{formatDate(proposal.createdAt)}</TableCell>
@@ -312,7 +314,7 @@ const Proposals = () => {
                                     size="sm"
                                     className="h-8 w-8 p-0"
                                     onClick={() => openView(proposal)}
-                                    aria-label="View details"
+                                    aria-label={t("viewDetails")}
                                   >
                                     <Eye className="w-4 h-4" />
                                   </Button>
@@ -343,20 +345,20 @@ const Proposals = () => {
                     className="space-y-4"
                   >
                     <DialogHeader>
-                      <DialogTitle>Proposal Details</DialogTitle>
-                      <DialogDescription>Review proposal information before approval.</DialogDescription>
+                      <DialogTitle>{t("proposalDetails")}</DialogTitle>
+                      <DialogDescription>{t("reviewProposalBeforeApproval")}</DialogDescription>
                     </DialogHeader>
 
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <div className="text-xs text-neutral-500">Request Title</div>
+                          <div className="text-xs text-neutral-500">{t("requestTitle")}</div>
                           <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                             {selectedProposal.requestTitleDisplay || getServiceTitleLabel(selectedProposal.requestTitle, language || 'en')}
                           </div>
                         </div>
                         <div className="space-y-1">
-                          <div className="text-xs text-neutral-500">Status</div>
+                          <div className="text-xs text-neutral-500">{t("status")}</div>
                           <Badge
                             variant={
                               selectedProposal.status === 'active'
@@ -366,39 +368,39 @@ const Proposals = () => {
                                 : 'secondary'
                             }
                           >
-                            {selectedProposal.status}
+                            {t(selectedProposal.status.toLowerCase())}
                           </Badge>
                         </div>
                         <div className="space-y-1">
-                          <div className="text-xs text-neutral-500">Service Provider</div>
+                          <div className="text-xs text-neutral-500">{t("serviceProvider")}</div>
                           <div className="text-sm text-neutral-900 dark:text-neutral-100">
                             {selectedProposal.serviceProviderName}
                           </div>
                           <div className="text-xs text-neutral-500">{selectedProposal.serviceProviderEmail}</div>
                         </div>
                         <div className="space-y-1">
-                          <div className="text-xs text-neutral-500">Submitted</div>
+                          <div className="text-xs text-neutral-500">{t("submitted")}</div>
                           <div className="text-sm text-neutral-900 dark:text-neutral-100">
                             {formatDate(selectedProposal.createdAt)}
                           </div>
                         </div>
                         <div className="space-y-1">
-                          <div className="text-xs text-neutral-500">Price</div>
+                          <div className="text-xs text-neutral-500">{t("price")}</div>
                           <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                             {formatCurrency(selectedProposal.price)}
                           </div>
                         </div>
                         <div className="space-y-1">
-                          <div className="text-xs text-neutral-500">Duration</div>
+                          <div className="text-xs text-neutral-500">{t("duration")}</div>
                           <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                            {selectedProposal.durationDays} days
+                            {selectedProposal.durationDays} {t("days")}
                           </div>
                         </div>
                       </div>
 
                       {selectedProposal.notes && (
                         <div className="space-y-1">
-                          <div className="text-xs text-neutral-500">Notes</div>
+                          <div className="text-xs text-neutral-500">{t("notes")}</div>
                           <div className="text-sm text-neutral-700 dark:text-neutral-300 p-3 bg-neutral-50 dark:bg-neutral-800 rounded-lg">
                             {selectedProposal.notes}
                           </div>
@@ -407,7 +409,7 @@ const Proposals = () => {
 
                       {selectedProposal.attachments && selectedProposal.attachments.length > 0 && (
                         <div className="space-y-1">
-                          <div className="text-xs text-neutral-500">Attachments</div>
+                          <div className="text-xs text-neutral-500">{t("attachments")}</div>
                           <div className="space-y-2">
                             {selectedProposal.attachments.map((att, index) => (
                               <a
@@ -418,7 +420,7 @@ const Proposals = () => {
                                 className="flex items-center space-x-2 p-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg text-sm text-blue-600 dark:text-blue-400"
                               >
                                 <FileText className="w-4 h-4" />
-                                <span>{att.name || `Attachment ${index + 1}`}</span>
+                                <span>{att.name || `${t("attachment")} ${index + 1}`}</span>
                               </a>
                             ))}
                           </div>
@@ -432,19 +434,19 @@ const Proposals = () => {
                         <div className="flex items-center gap-2">
                           <Button variant="destructive" onClick={() => openRejectDialog(selectedProposal)}>
                             <XCircle className="w-4 h-4 mr-2" />
-                            Reject
+                            {t("reject")}
                           </Button>
                           <Button onClick={() => approveProposal(selectedProposal)}>
                             <CheckCircle className="w-4 h-4 mr-2" />
-                            Approve
+                            {t("approve")}
                           </Button>
                           <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
-                            Close
+                            {t("close")}
                           </Button>
                         </div>
                       ) : (
                         <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
-                          Close
+                          {t("close")}
                         </Button>
                       )}
                     </div>
@@ -457,20 +459,20 @@ const Proposals = () => {
             <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Reject Proposal</DialogTitle>
+                  <DialogTitle>{t("rejectProposal")}</DialogTitle>
                   <DialogDescription>
-                    Please provide a reason for rejecting this proposal. This will be shown to the service provider.
+                    {t("provideReasonForRejectingProposal")}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div>
                     <label className="block text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-2">
-                      Rejection Reason *
+                      {t("rejectionReason")} *
                     </label>
                     <textarea
                       value={rejectionReason}
                       onChange={(e) => setRejectionReason(e.target.value)}
-                      placeholder="Enter the reason for rejecting this proposal..."
+                      placeholder={t("enterReasonForRejectingProposal")}
                       rows={4}
                       className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
                       required
@@ -478,10 +480,10 @@ const Proposals = () => {
                   </div>
                   {proposalToReject && (
                     <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                      <p className="font-medium mb-1">Proposal Details:</p>
-                      <p>Request: {proposalToReject.requestTitleDisplay || getServiceTitleLabel(proposalToReject.requestTitle, language || 'en')}</p>
-                      <p>Service Provider: {proposalToReject.serviceProviderName}</p>
-                      <p>Price: {proposalToReject.price?.toLocaleString()} OMR</p>
+                      <p className="font-medium mb-1">{t("proposalDetailsLabel")}</p>
+                      <p>{t("request")}: {proposalToReject.requestTitleDisplay || getServiceTitleLabel(proposalToReject.requestTitle, language || 'en')}</p>
+                      <p>{t("serviceProvider")}: {proposalToReject.serviceProviderName}</p>
+                      <p>{t("price")}: {proposalToReject.price?.toLocaleString()} OMR</p>
                     </div>
                   )}
                 </div>
@@ -491,7 +493,7 @@ const Proposals = () => {
                     setRejectionReason('');
                     setProposalToReject(null);
                   }}>
-                    Cancel
+                    {t("cancel")}
                   </Button>
                   <Button 
                     variant="destructive" 
@@ -499,7 +501,7 @@ const Proposals = () => {
                     disabled={!rejectionReason.trim()}
                   >
                     <XCircle className="w-4 h-4 mr-2" />
-                    Reject Proposal
+                    {t("rejectProposalButton")}
                   </Button>
                 </div>
               </DialogContent>

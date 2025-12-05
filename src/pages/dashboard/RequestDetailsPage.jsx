@@ -56,7 +56,7 @@ const RequestDetailsPage = () => {
         }
       } catch (err) {
         console.error("Error loading request:", err);
-        setError(err?.response?.data?.message || "Failed to load request");
+        setError(err?.response?.data?.message || t("failedToLoadRequest"));
       } finally {
         setLoading(false);
       }
@@ -116,7 +116,7 @@ const RequestDetailsPage = () => {
 
     const priceNum = parseFloat(priceValue);
     if (isNaN(priceNum) || priceNum < 0) {
-      setPriceError("Price must be a valid positive number");
+      setPriceError(t("priceMustBeValidNumber"));
       return false;
     }
 
@@ -130,7 +130,7 @@ const RequestDetailsPage = () => {
     }
 
     if (priceNum < budgetRange.min) {
-      setPriceError(`Price must be at least ${budgetRange.min.toLocaleString()} OMR. The client's budget range is ${budgetRange.min.toLocaleString()} - ${budgetRange.max.toLocaleString()} OMR, but you can offer a higher price.`);
+      setPriceError(`${t("priceMustBeAtLeast")} ${budgetRange.min.toLocaleString()} ${t("omr")}. ${t("clientBudgetRangeIs")} ${budgetRange.min.toLocaleString()} - ${budgetRange.max.toLocaleString()} ${t("omr")}, ${t("butCanOfferHigher")}`);
       return false;
     }
 
@@ -168,13 +168,13 @@ const RequestDetailsPage = () => {
     }
 
     if (!price || !endDate) {
-      toast.error("Price and end date are required");
+      toast.error(t("priceAndEndDateRequired"));
       return;
     }
 
     // Validate price against budget range (minimum only)
     if (!validatePrice(price)) {
-      toast.error(priceError || "Price must meet the minimum requirement");
+      toast.error(priceError || t("priceMustBeValidNumber"));
       return;
     }
 
@@ -185,7 +185,7 @@ const RequestDetailsPage = () => {
     selectedDate.setHours(0, 0, 0, 0);
 
     if (selectedDate <= today) {
-      toast.error("End date must be in the future");
+      toast.error(t("endDateMustBeFuture"));
       return;
     }
 
@@ -209,7 +209,7 @@ const RequestDetailsPage = () => {
       const response = await proposalsAPI.create(id, formData);
 
       if (response.data.success) {
-        toast.success("Proposal submitted successfully! Awaiting admin approval.");
+        toast.success(t("proposalSubmittedSuccess"));
         setShowProposalForm(false);
 
         // Get proposal ID from response
@@ -233,9 +233,7 @@ const RequestDetailsPage = () => {
       }
     } catch (err) {
       console.error("Error submitting proposal:", err);
-      console.error("Error response:", err?.response?.data);
-      const errorMessage = err?.response?.data?.message || err?.message || "Failed to submit proposal";
-      toast.error(errorMessage);
+      toast.error(err?.response?.data?.message || t("failedToSubmitProposal"));
     } finally {
       setProposalLoading(false);
     }
@@ -247,20 +245,20 @@ const RequestDetailsPage = () => {
   };
 
   const formatCurrency = (amount) => {
-    if (!amount || amount === 0) return "Not specified";
-    return `${amount.toLocaleString()} OMR`;
+    if (!amount || amount === 0) return t("notSpecified");
+    return `${amount.toLocaleString()} ${t("omr")}`;
   };
 
   // Helper function to get label for legal form
   const getLegalFormLabel = (value) => {
     const legalForms = {
-      individual_trader: "Individual Trader",
-      sole_partner: "Sole Partner",
-      limited_liability: "Limited Liability",
-      public_company: "Public Company",
-      closed_company: "Closed Company",
-      limited_partnership: "Limited Partnership",
-      solidarity_company: "Solidarity Company",
+      individual_trader: t("individualTrader"),
+      sole_partner: t("solePartner"),
+      limited_liability: t("limitedLiability"),
+      public_company: t("publicCompany"),
+      closed_company: t("closedCompany"),
+      limited_partnership: t("limitedPartnership"),
+      solidarity_company: t("solidarityCompany"),
     };
     return legalForms[value] || value;
   };
@@ -268,31 +266,31 @@ const RequestDetailsPage = () => {
   // Helper function to get label for business activity
   const getBusinessActivityLabel = (value) => {
     const activities = {
-      financial_sector: "Financial Sector",
-      industrial_sector: "Industrial Sector",
-      oil_gas_sector: "Oil & Gas Sector",
-      tourism_sector: "Tourism Sector",
-      service_sector: "Service Sector",
-      construction_sector: "Construction Sector",
-      retail_sector: "Retail Sector",
-      telecommunications_it: "Telecommunications & IT",
-      education_sector: "Education Sector",
-      public_sector: "Public Sector",
+      financial_sector: t("financialSector"),
+      industrial_sector: t("industrialSector"),
+      oil_gas_sector: t("oilGasSector"),
+      tourism_sector: t("tourismSector"),
+      service_sector: t("serviceSector"),
+      construction_sector: t("constructionSector"),
+      retail_sector: t("retailSector"),
+      telecommunications_it: t("telecommunicationsIT"),
+      education_sector: t("educationSector"),
+      public_sector: t("publicSector"),
     };
     return activities[value] || value;
   };
 
   // Format currency in Riyal
   const formatRiyal = (amount) => {
-    if (!amount || amount === 0) return "Not specified";
-    return `${parseFloat(amount).toLocaleString()} Riyal`;
+    if (!amount || amount === 0) return t("notSpecified");
+    return `${parseFloat(amount).toLocaleString()} ${t("omr")}`;
   };
 
   if (loading) {
     return (
       <div className="text-center py-12">
         <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-gray-600 dark:text-gray-400">Loading request...</p>
+        <p className="mt-4 text-gray-600 dark:text-gray-400">{t("loadingRequest")}</p>
       </div>
     );
   }
@@ -301,13 +299,13 @@ const RequestDetailsPage = () => {
     return (
       <div className="text-center py-12">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-          <p className="text-red-800 dark:text-red-200">{error || "Request not found"}</p>
+          <p className="text-red-800 dark:text-red-200">{error || t("requestNotFound")}</p>
         </div>
         <button
           onClick={() => navigate("/firm/browse")}
           className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
         >
-          Back to Browse
+          {t("backToBrowse")}
         </button>
       </div>
     );
@@ -326,10 +324,10 @@ const RequestDetailsPage = () => {
         </button>
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Request Details
+            {t("requestDetails")}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            View request information and submit a proposal
+            {t("viewRequestInfo")}
           </p>
         </div>
       </div>
@@ -352,7 +350,7 @@ const RequestDetailsPage = () => {
               <div className="flex items-center space-x-2">
                 <DollarSign className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Budget</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("requestBudget")}</p>
                   <p className="font-medium text-gray-900 dark:text-white">
                     {formatCurrency(request.budget)}
                   </p>
@@ -361,7 +359,7 @@ const RequestDetailsPage = () => {
               <div className="flex items-center space-x-2">
                 <CalendarIcon className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Deadline</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("deadline")}</p>
                   <p className="font-medium text-gray-900 dark:text-white">
                     {formatDate(request.deadline)}
                   </p>
@@ -370,18 +368,18 @@ const RequestDetailsPage = () => {
               <div className="flex items-center space-x-2">
                 <Clock className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("status")}</p>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    {request.status || "pending"}
+                    {request.status || t("pending")}
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
                 <FileText className="w-5 h-5 text-gray-400" />
                 <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Attachments</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{t("attachments")}</p>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    {request.attachments?.length || 0} files
+                    {request.attachments?.length || 0} {t("files")}
                   </p>
                 </div>
               </div>
@@ -392,7 +390,7 @@ const RequestDetailsPage = () => {
                   <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-                      Legal Form
+                      {t("legalForm")}
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {getLegalFormLabel(request.legalForm)}
@@ -407,7 +405,7 @@ const RequestDetailsPage = () => {
                   <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-                      Business Activity
+                      {t("businessActivity")}
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {getBusinessActivityLabel(request.businessActivity)}
@@ -422,7 +420,7 @@ const RequestDetailsPage = () => {
                   <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-                      Capital as per the commercial register (Riyal)
+                      {t("capitalAsPerRegister")}
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {formatRiyal(request.registeredCapital)}
@@ -437,7 +435,7 @@ const RequestDetailsPage = () => {
                   <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-                      Estimated Revenue (Riyal)
+                      {t("estimatedRevenue")}
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {formatRiyal(request.estimatedRevenue)}
@@ -452,7 +450,7 @@ const RequestDetailsPage = () => {
                   <DollarSign className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block">
-                      Estimated Expenses (Riyal)
+                      {t("estimatedExpenses")}
                     </label>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {formatRiyal(request.estimatedExpenses)}
@@ -466,7 +464,7 @@ const RequestDetailsPage = () => {
             {request.attachments && request.attachments.length > 0 && (
               <div className="mt-6">
                 <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-3">
-                  Attachments
+                  {t("attachments")}
                 </h3>
                 <div className="space-y-2">
                   {request.attachments.map((att, index) => (
@@ -492,19 +490,19 @@ const RequestDetailsPage = () => {
           {showProposalForm && !request.hasProposal && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Submit Proposal
+                {t("submitProposal")}
               </h2>
               <form onSubmit={handleSubmitProposal} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      Price (OMR) *
+                      {t("priceOMR")}
                       {request.budget && (() => {
                         const budgetRange = parseBudgetRange(request.budget);
                         if (budgetRange) {
                           return (
                             <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                              (Minimum: {budgetRange.min.toLocaleString()} OMR, Budget range: {budgetRange.min.toLocaleString()} - {budgetRange.max.toLocaleString()} OMR)
+                              ({t("minimum")} {budgetRange.min.toLocaleString()} {t("omr")}, {t("budgetRange")} {budgetRange.min.toLocaleString()} - {budgetRange.max.toLocaleString()} {t("omr")})
                             </span>
                           );
                         }
@@ -537,13 +535,13 @@ const RequestDetailsPage = () => {
                           if (priceNum <= budgetRange.max) {
                             return (
                               <p className="mt-1 text-sm text-green-600 dark:text-green-400">
-                                ✓ Price is within the client's budget range
+                                {t("priceWithinRange")}
                               </p>
                             );
                           } else {
                             return (
                               <p className="mt-1 text-sm text-blue-600 dark:text-blue-400">
-                                ✓ Price exceeds the client's maximum budget, but is allowed
+                                {t("priceExceedsMax")}
                               </p>
                             );
                           }
@@ -554,7 +552,7 @@ const RequestDetailsPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
-                      End Date *
+                      {t("endDate")}
                     </label>
                     <input
                       type="date"
@@ -565,7 +563,7 @@ const RequestDetailsPage = () => {
                       required
                     />
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      Select the project completion date
+                      {t("selectProjectCompletionDate")}
                     </p>
                   </div>
 
@@ -573,20 +571,20 @@ const RequestDetailsPage = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Notes
+                    {t("notes")}
                   </label>
                   <textarea
                     rows={4}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Add any additional information about your proposal..."
+                    placeholder={t("addAdditionalInfo")}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Attachments (Optional)
+                    {t("attachmentsOptional")}
                   </label>
                   <input
                     type="file"
@@ -627,12 +625,12 @@ const RequestDetailsPage = () => {
                     {proposalLoading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                        Submitting...
+                        {t("submitting")}
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4 mr-2" />
-                        Submit Proposal
+                        {t("submitProposalButton")}
                       </>
                     )}
                   </button>
@@ -641,7 +639,7 @@ const RequestDetailsPage = () => {
                     onClick={() => setShowProposalForm(false)}
                     className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
-                    Cancel
+                    {t("cancel")}
                   </button>
                 </div>
               </form>
@@ -651,14 +649,14 @@ const RequestDetailsPage = () => {
           {request.hasProposal && (
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
               <p className="text-blue-800 dark:text-blue-200">
-                You have already submitted a proposal for this request.
+                {t("alreadySubmittedProposal")}
               </p>
               {request.proposalId && (
                 <button
                   onClick={() => navigate(`/firm/proposals/${request.proposalId}`)}
                   className="mt-2 text-blue-600 dark:text-blue-400 hover:underline"
                 >
-                  View your proposal
+                  {t("viewYourProposal")}
                 </button>
               )}
             </div>
@@ -673,10 +671,10 @@ const RequestDetailsPage = () => {
                 </div>
                 <div className="ml-3 flex-1">
                   <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
-                    Proposal Rejected
+                    {t("proposalRejected")}
                   </h3>
                   <div className="mt-2 text-sm text-red-700 dark:text-red-300">
-                    <p className="font-medium mb-1">Rejection Reason:</p>
+                    <p className="font-medium mb-1">{t("rejectionReason")}</p>
                     <p className="whitespace-pre-wrap">{request.proposal.rejectionReason}</p>
                   </div>
                 </div>
@@ -690,7 +688,7 @@ const RequestDetailsPage = () => {
           {/* Client Info */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Client Information
+              {t("clientInformation")}
             </h3>
             {request.client ? (
               <div className="space-y-3">
@@ -709,7 +707,7 @@ const RequestDetailsPage = () => {
                 </div>
               </div>
             ) : (
-              <p className="text-gray-500 dark:text-gray-400">Client information not available</p>
+              <p className="text-gray-500 dark:text-gray-400">{t("clientInfoNotAvailable")}</p>
             )}
           </div>
         </div>

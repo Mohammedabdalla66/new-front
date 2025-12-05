@@ -1,91 +1,92 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
+import { CheckCircle, TrendingUp, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { TrendingUp, BarChart3, Users } from "lucide-react";
 
 const Hero = () => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const Navigate = useNavigate();
   const GoToLogin = () => {
     Navigate ("/auth/login")
   } 
 
   return (
-    <section className="relative bg-gradient-to-l from-blue-100 to-blue-50 py-20 overflow-hidden">
-    <div className="absolute inset-0 opacity-20">
-      <div className="absolute right-0 top-0 w-96 h-96 bg-[#FF6B35] rounded-full transform translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute right-20 top-10 w-64 h-64 bg-[#1976D2] rounded-full transform rotate-45"></div>
-    </div>
+    <section className="bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Content */}
+          <div className="text-center lg:text-left rtl:lg:text-right">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+              {t("heroTitle")}
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              {t("heroSubtitle")}
+            </p>
 
-    <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 gap-12 items-center relative z-10">
-      <div className="relative">
-        <img
-          src="https://images.pexels.com/photos/7681670/pexels-photo-7681670.jpeg?auto=compress&cs=tinysrgb&w=1200"
-          alt="Business"
-          className="rounded-lg shadow-2xl w-full"
-        />
-        <div className="absolute top-10 -left-10 bg-white rounded-lg shadow-xl p-4 flex items-center gap-3">
-          <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center text-white">
-            <TrendingUp size={24} />
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-[#1976D2]">1000 +</div>
-            <div className="text-sm text-gray-600">عميل راضي</div>
-          </div>
-        </div>
-        <div className="absolute top-32 -left-10 bg-white rounded-lg shadow-xl p-4 flex items-center gap-3">
-          <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center text-white">
-            <BarChart3 size={24} />
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-[#1976D2]">80 +</div>
-            <div className="text-sm text-gray-600">كفاءة الخدمة المقدمة</div>
-          </div>
-        </div>
-        <div className="absolute bottom-10 -left-10 bg-white rounded-lg shadow-xl p-4 flex items-center gap-3">
-          <div className="w-12 h-12 bg-[#FF6B35] rounded-full flex items-center justify-center text-white">
-            <Users size={24} />
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-[#1976D2]">200 +</div>
-            <div className="text-sm text-gray-600">كادر مؤهل</div>
-          </div>
-        </div>
-      </div>
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start rtl:lg:justify-end mb-12">
+              <button 
+              onClick={GoToLogin}
+              className="bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                {t("findService")}
+              </button>
+              <button 
+              onClick={GoToLogin}
+              className="bg-white text-blue-700 px-8 py-4 rounded-lg text-lg font-semibold border-2 border-blue-700 hover:bg-blue-50 transition-colors">
+                {t("joinAsAccountant")}
+              </button>
+            </div>
 
-      <div className="text-right">
-        <div className="flex items-center justify-end gap-3 mb-6">
-          <h1 className="text-4xl font-bold text-[#1976D2]">منصة المحاسب القانوني</h1>
-          <div className="w-16 h-16 bg-white rounded-sm shadow-lg flex items-center justify-center">
-            <div className="relative">
-              <div className="w-10 h-10 bg-[#FF6B35] transform rotate-45"></div>
-              <div className="absolute top-0 left-0 w-10 h-10 bg-[#1976D2] transform rotate-45 translate-x-3"></div>
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center lg:text-left rtl:lg:text-right">
+                <div className="flex items-center justify-center lg:justify-start rtl:lg:justify-end mb-2">
+                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 rtl:mr-0 rtl:ml-2" />
+                  <span className="text-2xl font-bold text-gray-900">500+</span>
+                </div>
+                <p className="text-gray-600">{t("certifiedAccountants")}</p>
+              </div>
+              <div className="text-center lg:text-left rtl:lg:text-right">
+                <div className="flex items-center justify-center lg:justify-start rtl:lg:justify-end mb-2">
+                  <TrendingUp className="h-5 w-5 text-blue-500 mr-2 rtl:mr-0 rtl:ml-2" />
+                  <span className="text-2xl font-bold text-gray-900">
+                    1000+
+                  </span>
+                </div>
+                <p className="text-gray-600">{t("clientsServed")}</p>
+              </div>
+              <div className="text-center lg:text-left rtl:lg:text-right">
+                <div className="flex items-center justify-center lg:justify-start rtl:lg:justify-end mb-2">
+                  <Award className="h-5 w-5 text-purple-500 mr-2 rtl:mr-0 rtl:ml-2" />
+                  <span className="text-2xl font-bold text-gray-900">
+                    2000+
+                  </span>
+                </div>
+                <p className="text-gray-600">{t("completedServices")}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Hero Image */}
+          <div className="relative">
+            <div className="bg-white  rounded-2xl shadow-2xl p-8 relative z-10">
+              <img
+                src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=600"
+                alt="Accounting Professional"
+                className="w-full h-80 object-cover rounded-xl"
+              />
+            </div>
+            {/* Floating Elements */}
+            <div className="absolute -top-6 -right-2 md:-right-6 rtl:-right-auto rtl:-left-6 bg-green-100 rounded-full p-4 shadow-lg">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+            <div className="absolute -bottom-6 -left-6 rtl:-left-auto rtl:-right-6 bg-blue-100 rounded-full p-4 shadow-lg">
+              <TrendingUp className="h-8 w-8 text-blue-600" />
             </div>
           </div>
         </div>
-
-        <h2 className="text-3xl font-bold text-[#1976D2] mb-4">
-          إحصل على أفضل خدمات الإستشارات
-          <br />
-          والتدقيق بأسعار تنافسية وسريعة
-        </h2>
-
-        <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-          تواصل مع مكاتب تدقيق معتمدة ومرخصة
-          <br />
-          واحصل على عرض أسعار مفصلة وقائمة احتياجاتك بنفسك احتياجاتك عملك
-        </p>
-
-        <button className="bg-[#FF6B35] text-white px-8 py-3 rounded-md text-lg font-semibold hover:bg-[#E55A28] transition-colors">
-          ابدأ الآن
-        </button>
-
-        <p className="text-sm text-gray-500 mt-4">
-          أو اطلع على الخدمة التي تناسبك ←
-        </p>
       </div>
-    </div>
-  </section>
+    </section>
   );
 };
 

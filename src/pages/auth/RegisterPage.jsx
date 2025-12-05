@@ -4,9 +4,11 @@ import {  Building2, User } from 'lucide-react';
 import ServiceProviderRegisterForm from '../../components/auth/ServiceProviderRegisterForm';
 import ClientRegisterForm from '../../components/auth/ClientRegisterForm';
 import CaHupLogo from '../../components/CaHupLogo';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const RegisterPage = () => {
   const [registrationType, setRegistrationType] = useState('serviceProvider');
+  const { t } = useLanguage();
 
   return (
     <div className="auth-card">
@@ -15,10 +17,10 @@ const RegisterPage = () => {
           <CaHupLogo className="w-11 h-11 text-blue-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          Create Your Account
+          {t('createYourAccount')}
         </h2>
         <p className="text-gray-600">
-          Join us today and start managing your business
+          {t('joinUsToday')}
         </p>
       </div>
 
@@ -34,7 +36,7 @@ const RegisterPage = () => {
           }`}
         >
           <Building2 className="w-4 h-4 mr-2" />
-          Service Provider
+          {t('serviceProvider')}
         </button>
         <button
           type="button"
@@ -46,7 +48,7 @@ const RegisterPage = () => {
           }`}
         >
           <User className="w-4 h-4 mr-2" />
-          Client
+          {t('client')}
         </button>
       </div>
 
@@ -60,12 +62,12 @@ const RegisterPage = () => {
       {/* Login Link */}
       <div className="text-center mt-6">
         <p className="text-sm text-gray-600">
-          Already have an account?{' '}
+          {t('alreadyHaveAccount')}{' '}
           <Link
             to="/auth/login"
             className="font-medium text-blue-600 hover:text-blue-700"
           >
-            Sign in here
+            {t('signInHere')}
           </Link>
         </p>
       </div>

@@ -128,7 +128,7 @@ const Navbar = ({ onToggleSidebar }) => {
                 <User className="w-4 h-4 text-white" />
               </div>
               <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                Admin
+                {t("admin")}
               </span>
               <ChevronDown className="w-4 h-4 text-neutral-500" />
             </Menu.Button>

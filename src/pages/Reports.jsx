@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   BarChart3,
   ChevronRight,
@@ -160,6 +161,9 @@ const computeNextDelivery = (now, freq, timeHHmm) => {
 };
 
 const Reports = () => {
+  const { t, i18n } = useTranslation();
+  const isArabic = i18n.language === "ar";
+
   // Filters
   const [filters, setFilters] = useState({
     ...defaultRangeLast30(),
@@ -213,10 +217,17 @@ const Reports = () => {
   }, [summary, filters]);
 
   // KPIs - use API data if available, otherwise fallback to filtered mock data
-  const totalRevenue = reportData?.revenue || filtered.reduce((s, r) => s + r.revenue, 0);
-  const totalTransactions = reportData?.counts?.transactions || filtered.reduce((s, r) => s + r.transactions, 0);
-  const activeClients = reportData?.counts?.clients || filtered.filter((r) => r.type === "Client").length;
-  const activeServiceProviders = reportData?.counts?.serviceProviders || filtered.filter((r) => r.type === "Service Provider").length;
+  const totalRevenue =
+    reportData?.revenue || filtered.reduce((s, r) => s + r.revenue, 0);
+  const totalTransactions =
+    reportData?.counts?.transactions ||
+    filtered.reduce((s, r) => s + r.transactions, 0);
+  const activeClients =
+    reportData?.counts?.clients ||
+    filtered.filter((r) => r.type === "Client").length;
+  const activeServiceProviders =
+    reportData?.counts?.serviceProviders ||
+    filtered.filter((r) => r.type === "Service Provider").length;
   const refundRate =
     totalTransactions === 0
       ? 0
@@ -272,9 +283,9 @@ const Reports = () => {
       setError(null);
       try {
         // Use the "to" date from filters, or today
-        const date = filters.to || new Date().toISOString().split('T')[0];
+        const date = filters.to || new Date().toISOString().split("T")[0];
         const response = await adminAPI.dailyReport(date);
-        
+
         if (response.data.success) {
           setReportData(response.data.data);
         } else {
@@ -437,7 +448,10 @@ const Reports = () => {
 
   // Render
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
+    <div
+      className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex"
+      dir={isArabic ? "rtl" : "ltr"}
+    >
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-30 md:hidden"
@@ -453,23 +467,29 @@ const Reports = () => {
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Header */}
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-sm text-neutral-600 dark:text-neutral-400">
-                <span>Dashboard</span>
+              <div
+                className="flex items-center space-x-2 text-sm text-neutral-600 dark:text-neutral-400"
+                style={isArabic ? { flexDirection: "row-reverse" } : {}}
+              >
+                <span>{t("dashboard")}</span>
                 <ChevronRight className="w-4 h-4" />
                 <span className="text-neutral-900 dark:text-white font-medium">
-                  Reports
+                  {t("reports")}
                 </span>
               </div>
-              <div className="flex items-center space-x-3">
+              <div
+                className="flex items-center space-x-3"
+                style={isArabic ? { flexDirection: "row-reverse" } : {}}
+              >
                 <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
                   <BarChart3 className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
-                    Reports
+                    {t("reports")}
                   </h1>
                   <p className="text-neutral-600 dark:text-neutral-400">
-                    Analytics, insights, and automated scheduling
+                    {t("analyticsInsightsScheduling")}
                   </p>
                 </div>
               </div>
@@ -479,9 +499,23 @@ const Reports = () => {
             <Card>
               <CardContent className="p-6 space-y-6">
                 {/* Filters Row */}
-                <div className="w-full flex flex-col lg:flex-row lg:items-center gap-4">
+                <div
+                  className="w-full flex flex-col lg:flex-row lg:items-center gap-4"
+                  style={isArabic ? { flexDirection: "row-reverse" } : {}}
+                >
                   {/* Date Range - left, separated */}
-                  <div className="flex items-center gap-2 lg:mr-6">
+                  <div
+                    className="flex items-center gap-2 lg:mr-6"
+                    style={
+                      isArabic
+                        ? {
+                            flexDirection: "row-reverse",
+                            marginRight: 0,
+                            marginLeft: 24,
+                          }
+                        : {}
+                    }
+                  >
                     <Calendar className="w-4 h-4 text-neutral-400" />
                     <Input
                       type="date"
@@ -490,7 +524,7 @@ const Reports = () => {
                         setFilters((p) => ({ ...p, from: e.target.value }))
                       }
                     />
-                    <span className="text-neutral-500">to</span>
+                    <span className="text-neutral-500">{t("to")}</span>
                     <Input
                       type="date"
                       value={filters.to}
@@ -504,7 +538,10 @@ const Reports = () => {
                   <div className="hidden lg:block w-px h-10 bg-neutral-200 dark:bg-neutral-700" />
 
                   {/* Other filters */}
-                  <div className="flex-1 flex flex-col sm:flex-row gap-4">
+                  <div
+                    className="flex-1 flex flex-col sm:flex-row gap-4"
+                    style={isArabic ? { flexDirection: "row-reverse" } : {}}
+                  >
                     <Select
                       value={filters.groupBy}
                       onValueChange={(v) =>
@@ -512,12 +549,16 @@ const Reports = () => {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Group by" />
+                        <SelectValue placeholder={t("groupBy")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="All">All</SelectItem>
-                        <SelectItem value="By Service Provider">By Service Provider</SelectItem>
-                        <SelectItem value="By Client">By Client</SelectItem>
+                        <SelectItem value="All">{t("all")}</SelectItem>
+                        <SelectItem value="By Service Provider">
+                          {t("byServiceProvider")}
+                        </SelectItem>
+                        <SelectItem value="By Client">
+                          {t("byClient")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -528,41 +569,49 @@ const Reports = () => {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Report type" />
+                        <SelectValue placeholder={t("reportType")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Financial">Financial</SelectItem>
+                        <SelectItem value="Financial">
+                          {t("financial")}
+                        </SelectItem>
                         <SelectItem value="Clients Activity">
-                          Clients Activity
+                          {t("clientsActivity")}
                         </SelectItem>
                         <SelectItem value="Service Providers Performance">
-                          Service Providers Performance
+                          {t("serviceProvidersPerformance")}
                         </SelectItem>
                       </SelectContent>
                     </Select>
 
-                    <Button onClick={onGenerate}>Generate Report</Button>
+                    <Button onClick={onGenerate}>{t("generateReport")}</Button>
                   </div>
                 </div>
 
                 {/* Export Section: Drag & Drop */}
-                <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+                <div
+                  className="w-full grid grid-cols-1 lg:grid-cols-3 gap-4 items-start"
+                  style={isArabic ? { direction: "rtl" } : {}}
+                >
                   {/* Draggable options */}
                   <div className="col-span-1 lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <DraggableExport
                       label="CSV"
                       icon={<FileText className="w-4 h-4" />}
                       onClick={() => triggerExportWithToast("CSV")}
+                      isArabic={isArabic}
                     />
                     <DraggableExport
-                      label="Excel"
+                      label={t("exportAsExcel").split(" ")[2] || "Excel"}
                       icon={<FileSpreadsheet className="w-4 h-4" />}
                       onClick={() => triggerExportWithToast("Excel")}
+                      isArabic={isArabic}
                     />
                     <DraggableExport
-                      label="PDF"
+                      label={t("exportAsPDF").split(" ")[2] || "PDF"}
                       icon={<FileArchive className="w-4 h-4" />}
                       onClick={() => triggerExportWithToast("PDF")}
+                      isArabic={isArabic}
                     />
                   </div>
 
@@ -589,21 +638,24 @@ const Reports = () => {
                     animate={{ opacity: 1 }}
                   >
                     <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                      Drop here to export
+                      {t("dropHereToExport")}
                     </div>
                     <div className="text-xs text-neutral-500 mt-1">
-                      Supports CSV, Excel, PDF
+                      {t("supportsCSVExcelPDF")}
                     </div>
                   </motion.div>
                 </div>
 
                 {/* Scheduled Reports header */}
-                <div className="flex items-center justify-between pt-2">
+                <div
+                  className="flex items-center justify-between pt-2"
+                  style={isArabic ? { flexDirection: "row-reverse" } : {}}
+                >
                   <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                    Scheduled Reports
+                    {t("scheduledReports")}
                   </div>
                   <Button onClick={openCreateSchedule}>
-                    <Plus className="w-4 h-4 mr-2" /> Schedule Report
+                    <Plus className="w-4 h-4 mr-2" /> {t("scheduleReport")}
                   </Button>
                 </div>
 
@@ -612,11 +664,15 @@ const Reports = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Frequency</TableHead>
-                        <TableHead>Next Delivery</TableHead>
-                        <TableHead>Recipient</TableHead>
-                        <TableHead>Report Type</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead>{t("frequency")}</TableHead>
+                        <TableHead>{t("nextDelivery")}</TableHead>
+                        <TableHead>{t("recipient")}</TableHead>
+                        <TableHead>{t("reportType")}</TableHead>
+                        <TableHead
+                          className={isArabic ? "text-left" : "text-right"}
+                        >
+                          {t("actions")}
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -626,7 +682,7 @@ const Reports = () => {
                             colSpan={5}
                             className="text-center text-neutral-500"
                           >
-                            No schedules yet
+                            {t("noSchedulesYet")}
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -634,18 +690,29 @@ const Reports = () => {
                           <TableRow key={s.id} className="border-b">
                             <TableCell>{s.frequency}</TableCell>
                             <TableCell>
-                              {new Date(s.nextDelivery).toLocaleString()}
+                              {new Date(s.nextDelivery).toLocaleString(
+                                isArabic ? "ar-OM" : "en-US"
+                              )}
                             </TableCell>
                             <TableCell>{s.recipient}</TableCell>
                             <TableCell>{s.reportType}</TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex items-center justify-end gap-2">
+                            <TableCell
+                              className={isArabic ? "text-left" : "text-right"}
+                            >
+                              <div
+                                className="flex items-center justify-end gap-2"
+                                style={
+                                  isArabic
+                                    ? { flexDirection: "row-reverse" }
+                                    : {}
+                                }
+                              >
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   className="h-8 w-8 p-0"
                                   onClick={() => openEditSchedule(s)}
-                                  aria-label="Edit schedule"
+                                  aria-label={t("editSchedule")}
                                 >
                                   <Edit className="w-4 h-4" />
                                 </Button>
@@ -654,7 +721,7 @@ const Reports = () => {
                                   size="sm"
                                   className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
                                   onClick={() => requestDeleteSchedule(s)}
-                                  aria-label="Delete schedule"
+                                  aria-label={t("deleteSchedule")}
                                 >
                                   <Trash2 className="w-4 h-4" />
                                 </Button>
@@ -667,9 +734,12 @@ const Reports = () => {
                   </Table>
                 </div>
 
-                <div className="flex items-center justify-end">
+                <div
+                  className="flex items-center justify-end"
+                  style={isArabic ? { flexDirection: "row-reverse" } : {}}
+                >
                   <Button variant="outline" onClick={onShare}>
-                    <Share2 className="w-4 h-4 mr-2" /> Share Report
+                    <Share2 className="w-4 h-4 mr-2" /> {t("shareReport")}
                   </Button>
                 </div>
               </CardContent>
@@ -688,12 +758,18 @@ const Reports = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                   {
-                    title: "Total Revenue",
+                    title: t("totalRevenue"),
                     value: `$${totalRevenue.toFixed(2)}`,
                   },
-                  { title: "Total Transactions", value: `${totalTransactions}` },
-                  { title: "Active Clients", value: `${activeClients}` },
-                  { title: "Service Providers", value: `${activeServiceProviders}` },
+                  {
+                    title: t("totalTransactions"),
+                    value: `${totalTransactions}`,
+                  },
+                  { title: t("activeClients"), value: `${activeClients}` },
+                  {
+                    title: t("totalServiceProviders"),
+                    value: `${activeServiceProviders}`,
+                  },
                 ].map((kpi, idx) => (
                   <Card key={idx}>
                     <CardHeader>
@@ -718,7 +794,7 @@ const Reports = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Revenue Over Time</CardTitle>
+                  <CardTitle>{t("revenueOverTime")}</CardTitle>
                 </CardHeader>
                 <CardContent style={{ height: 280 }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -742,7 +818,7 @@ const Reports = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Transactions Breakdown</CardTitle>
+                  <CardTitle>{t("transactionsBreakdown")}</CardTitle>
                 </CardHeader>
                 <CardContent style={{ height: 280 }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -770,7 +846,7 @@ const Reports = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Top Service Providers / Clients</CardTitle>
+                  <CardTitle>{t("topServiceProvidersClients")}</CardTitle>
                 </CardHeader>
                 <CardContent style={{ height: 280 }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -787,7 +863,7 @@ const Reports = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Refunds Trend</CardTitle>
+                  <CardTitle>{t("refundsTrend")}</CardTitle>
                 </CardHeader>
                 <CardContent style={{ height: 280 }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -832,7 +908,7 @@ const Reports = () => {
             {/* Detailed Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Summary</CardTitle>
+                <CardTitle>{t("summary")}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="rounded-md border">
@@ -840,17 +916,23 @@ const Reports = () => {
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-12"></TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Transactions</TableHead>
-                        <TableHead>Total Revenue</TableHead>
-                        <TableHead>Refunds</TableHead>
-                        <TableHead>Last Activity</TableHead>
+                        <TableHead>{t("name")}</TableHead>
+                        <TableHead>{t("type")}</TableHead>
+                        <TableHead>{t("totalTransactions")}</TableHead>
+                        <TableHead>{t("totalRevenue")}</TableHead>
+                        <TableHead>{t("refundsIssued")}</TableHead>
+                        <TableHead>{t("lastActivity")}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filtered.map((r, idx) => (
-                        <ExpandableRow key={r.id} row={r} index={idx} />
+                        <ExpandableRow
+                          key={r.id}
+                          row={r}
+                          index={idx}
+                          isArabic={isArabic}
+                          t={t}
+                        />
                       ))}
                     </TableBody>
                   </Table>
@@ -860,7 +942,7 @@ const Reports = () => {
 
             {/* Schedule Dialog */}
             <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
-              <DialogContent>
+              <DialogContent dir={isArabic ? "rtl" : "ltr"}>
                 <motion.div
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -869,10 +951,12 @@ const Reports = () => {
                 >
                   <DialogHeader>
                     <DialogTitle>
-                      {editingSchedule ? "Edit Schedule" : "Schedule Report"}
+                      {editingSchedule
+                        ? t("editSchedule")
+                        : t("scheduleReport")}
                     </DialogTitle>
                     <DialogDescription>
-                      Configure automated delivery for a report.
+                      {t("configureAutomatedDelivery")}
                     </DialogDescription>
                   </DialogHeader>
 
@@ -894,6 +978,8 @@ const Reports = () => {
                           : data
                       )
                     }
+                    isArabic={isArabic}
+                    t={t}
                   />
                 </motion.div>
               </DialogContent>
@@ -903,9 +989,9 @@ const Reports = () => {
             <AlertDialog
               open={confirmOpen}
               onOpenChange={setConfirmOpen}
-              title="Delete Schedule"
-              description="Are you sure you want to delete this scheduled report?"
-              confirmText="Delete"
+              title={t("deleteSchedule")}
+              description={t("areYouSureDeleteSchedule")}
+              confirmText={t("delete")}
               variant="destructive"
               onConfirm={confirmDeleteSchedule}
             />
@@ -926,7 +1012,7 @@ const Reports = () => {
 };
 
 // Expandable row component
-const ExpandableRow = ({ row, index }) => {
+const ExpandableRow = ({ row, index, isArabic, t }) => {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -953,14 +1039,20 @@ const ExpandableRow = ({ row, index }) => {
           </div>
         </TableCell>
         <TableCell>
-          <Badge variant={row.type === "Service Provider" ? "secondary" : "success"}>
+          <Badge
+            variant={row.type === "Service Provider" ? "secondary" : "success"}
+          >
             {row.type}
           </Badge>
         </TableCell>
         <TableCell>{row.transactions}</TableCell>
         <TableCell>${row.revenue.toFixed(2)}</TableCell>
         <TableCell>{row.refunds}</TableCell>
-        <TableCell>{new Date(row.lastActivity).toLocaleDateString()}</TableCell>
+        <TableCell>
+          {new Date(row.lastActivity).toLocaleString(
+            isArabic ? "ar-OM" : "en-US"
+          )}
+        </TableCell>
       </motion.tr>
       <AnimatePresence>
         {open && (
@@ -972,12 +1064,15 @@ const ExpandableRow = ({ row, index }) => {
             className="bg-neutral-50 dark:bg-neutral-800/40"
           >
             <TableCell colSpan={7}>
-              <div className="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+              <div
+                className="p-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm"
+                style={isArabic ? { direction: "rtl" } : {}}
+              >
                 <div>
-                  <div className="text-neutral-500">Recent Activity</div>
+                  <div className="text-neutral-500">{t("lastActivity")}</div>
                   <div className="text-neutral-900 dark:text-neutral-100">
-                    {row.name} made {Math.round(row.transactions / 4)}{" "}
-                    transactions last week.
+                    {row.name} {t("recentActivity")}
+                    {Math.round(row.transactions / 4)} transactions last week.
                   </div>
                 </div>
                 <div>
@@ -987,7 +1082,7 @@ const ExpandableRow = ({ row, index }) => {
                   </div>
                 </div>
                 <div>
-                  <div className="text-neutral-500">Notes</div>
+                  <div className="text-neutral-500">{t("notes")}</div>
                   <div className="text-neutral-900 dark:text-neutral-100">
                     Performance is trending{" "}
                     {Math.random() > 0.5 ? "up" : "down"} this period.
@@ -1003,36 +1098,36 @@ const ExpandableRow = ({ row, index }) => {
 };
 
 // Schedule form component
-const ScheduleForm = ({ initial, onSave, onCancel }) => {
+const ScheduleForm = ({ initial, onSave, onCancel, isArabic, t }) => {
   const [form, setForm] = useState(initial);
   useEffect(() => {
     setForm(initial);
   }, [initial]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" dir={isArabic ? "rtl" : "ltr"}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-            Frequency
+            {t("frequency")}
           </label>
           <Select
             value={form.frequency}
             onValueChange={(v) => setForm((p) => ({ ...p, frequency: v }))}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select frequency" />
+              <SelectValue placeholder={t("frequency")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Daily">Daily</SelectItem>
-              <SelectItem value="Weekly">Weekly</SelectItem>
-              <SelectItem value="Monthly">Monthly</SelectItem>
+              <SelectItem value="Daily">{t("daily")}</SelectItem>
+              <SelectItem value="Weekly">{t("weekly")}</SelectItem>
+              <SelectItem value="Monthly">{t("monthly")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-            Time
+            {t("time")}
           </label>
           <Input
             type="time"
@@ -1042,14 +1137,14 @@ const ScheduleForm = ({ initial, onSave, onCancel }) => {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-            Delivery Method
+            {t("deliveryMethod")}
           </label>
           <Select
             value={form.method}
             onValueChange={(v) => setForm((p) => ({ ...p, method: v }))}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select method" />
+              <SelectValue placeholder={t("deliveryMethod")} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Email">Email</SelectItem>
@@ -1058,7 +1153,7 @@ const ScheduleForm = ({ initial, onSave, onCancel }) => {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-            Recipient Email
+            {t("recipientEmail")}
           </label>
           <Input
             type="email"
@@ -1071,32 +1166,37 @@ const ScheduleForm = ({ initial, onSave, onCancel }) => {
         </div>
         <div className="space-y-2 sm:col-span-2">
           <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-            Report Type
+            {t("reportType")}
           </label>
           <Select
             value={form.reportType}
             onValueChange={(v) => setForm((p) => ({ ...p, reportType: v }))}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select report type" />
+              <SelectValue placeholder={t("reportType")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Financial">Financial</SelectItem>
-              <SelectItem value="Clients Activity">Clients Activity</SelectItem>
+              <SelectItem value="Financial">{t("financial")}</SelectItem>
+              <SelectItem value="Clients Activity">
+                {t("clientsActivity")}
+              </SelectItem>
               <SelectItem value="Service Providers Performance">
-                Service Providers Performance
+                {t("serviceProvidersPerformance")}
               </SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-2">
+      <div
+        className="flex items-center justify-end gap-2"
+        style={isArabic ? { flexDirection: "row-reverse" } : {}}
+      >
         <Button variant="outline" onClick={onCancel}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button onClick={() => onSave(form)} disabled={!form.recipient}>
-          Save Schedule
+          {t("saveSchedule")}
         </Button>
       </div>
     </div>
@@ -1106,7 +1206,7 @@ const ScheduleForm = ({ initial, onSave, onCancel }) => {
 export default Reports;
 
 // Draggable export option component
-const DraggableExport = ({ label, icon, onClick }) => {
+const DraggableExport = ({ label, icon, onClick, isArabic }) => {
   const handleDragStart = (e) => {
     e.dataTransfer.setData("text/plain", label);
     e.dataTransfer.effectAllowed = "copy";
@@ -1120,7 +1220,10 @@ const DraggableExport = ({ label, icon, onClick }) => {
       className="cursor-grab active:cursor-grabbing select-none"
     >
       <Card onClick={onClick}>
-        <CardContent className="p-4 flex items-center gap-2">
+        <CardContent
+          className="p-4 flex items-center gap-2"
+          style={isArabic ? { flexDirection: "row-reverse" } : {}}
+        >
           {icon}
           <span className="font-medium">Export as {label}</span>
         </CardContent>

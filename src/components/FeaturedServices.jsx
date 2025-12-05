@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 const FeaturedServices = () => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
   const services = [
     {
@@ -62,7 +62,7 @@ const FeaturedServices = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {t("featuredServices") || "الخدمات المميزة"}
+            {t("featuredServices")}
           </h2>
         </div>
 
@@ -72,21 +72,21 @@ const FeaturedServices = () => {
             return (
               <div
                 key={index}
-                className={`bg-white ${service.borderColor} border-2 rounded-xl p-8 hover:shadow-lg transition-all duration-300 cursor-pointer group hover:scale-105 text-center`}
+                className={`${service.bgColor} ${service.borderColor} border-2 rounded-xl p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group hover:scale-105`}
               >
-                <div className="flex flex-col items-center">
+                <div className="flex items-center mb-4">
                   <div
-                    className={`p-4 ${service.bgColor} rounded-lg mb-4 group-hover:shadow-md transition-shadow`}
+                    className={`p-3 bg-white rounded-lg shadow-sm group-hover:shadow-md transition-shadow`}
                   >
-                    <IconComponent className={`h-10 w-10 ${service.iconColor}`} />
+                    <IconComponent className={`h-6 w-6 ${service.iconColor}`} />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                  <h3 className="text-lg font-semibold text-gray-900 mr-4 rtl:mr-0 rtl:ml-4">
                     {t(service.titleKey)}
                   </h3>
-                  <a href="#" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                    {language === "ar" ? "ابحث عن الخدمة" : "Search for service"}
-                  </a>
                 </div>
+                <p className="text-gray-600 text-sm">
+                  {t("findService")} {t(service.titleKey).toLowerCase()}
+                </p>
               </div>
             );
           })}

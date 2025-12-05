@@ -4,13 +4,10 @@ import { messagesAPI } from "../services/api";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
 import { useAuth } from "../hooks/useAuth";
 import { getServiceTitleLabel } from "../utils/titleUtils";
-import { useDispatch } from "react-redux";
-import { markNotificationsByType } from "../features/socket/socketSlice";
 
 export const Messages = () => {
   const { t, language } = useLanguage();
   const { user } = useAuth();
-  const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,27 +34,6 @@ export const Messages = () => {
   const [conversationsLoading, setConversationsLoading] = useState(true);
   const [error, setError] = useState("");
   const endRef = useRef(null);
-
-  // Clear messages notification badge when page opens
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent('clearMessagesBadge'));
-    // Clear all message-related notifications from Redux store
-    dispatch(markNotificationsByType({ type: 'message' }));
-    // Refresh sidebar badges to update counts from backend
-    window.dispatchEvent(new CustomEvent('refreshSidebarBadges'));
-  }, [dispatch]);
-
-  // Clear chat-specific notifications when a conversation is opened
-  useEffect(() => {
-    if (activeId) {
-      // Clear notifications for this specific chat thread
-      dispatch(markNotificationsByType({ type: 'chat', id: activeId }));
-      // Refresh sidebar badges after a delay to allow backend to update
-      setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('refreshSidebarBadges'));
-      }, 500);
-    }
-  }, [activeId, dispatch]);
 
   // Load conversations on mount
   useEffect(() => {
@@ -450,7 +426,7 @@ export const Messages = () => {
           <div className="flex-1 overflow-y-auto">
             {conversationsLoading ? (
               <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-                Loading conversations...
+                {t("loading")}
               </div>
             ) : conversations.length === 0 ? (
               <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
@@ -512,7 +488,7 @@ export const Messages = () => {
             >
               <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Conversations
+                  {t("conversations")}
                 </h2>
                 <button
                   onClick={() => setShowSidebar(false)}
@@ -536,11 +512,11 @@ export const Messages = () => {
               <div className="overflow-y-auto h-full">
                 {conversationsLoading ? (
                   <div className="p-4 text-center text-gray-500 text-sm">
-                    Loading conversations...
+                    {t("loading")}
                   </div>
                 ) : conversations.length === 0 ? (
                   <div className="p-4 text-center text-gray-500 text-sm">
-                    No conversations yet.
+                    {t("noConversationsYet")}
                   </div>
                 ) : (
                   conversations.map((c) => (

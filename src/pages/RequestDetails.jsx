@@ -276,7 +276,7 @@ export const RequestDetails = () => {
         <div className="text-center py-8">
           <div className="inline-block w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400">
-            Loading request details...
+            {t("loadingRequests")}
           </p>
         </div>
       </div>
@@ -288,13 +288,13 @@ export const RequestDetails = () => {
       <div className="p-4 sm:p-6">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
           <p className="text-red-800 dark:text-red-200">
-            {error || "Request not found"}
+            {error || t("noRequestsFound")}
           </p>
           <button
             onClick={() => navigate("/client/requests")}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Back to Requests
+            {t("backToRequests")}
           </button>
         </div>
       </div>
@@ -384,7 +384,7 @@ export const RequestDetails = () => {
             <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                Budget
+                {t("budget")}
               </label>
               <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                 {formatBudget(request.budget)}
@@ -398,7 +398,7 @@ export const RequestDetails = () => {
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  Deadline
+                  {t("deadline")}
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                   {formatDate(request.deadline)}
@@ -413,7 +413,7 @@ export const RequestDetails = () => {
               <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  Legal Form
+                  {t("legalForm")}
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                   {getLegalFormLabel(request.legalForm)}
@@ -428,7 +428,7 @@ export const RequestDetails = () => {
               <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  Business Activity
+                  {t("businessActivity")}
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                   {getBusinessActivityLabel(request.businessActivity)}
@@ -443,11 +443,10 @@ export const RequestDetails = () => {
               <Wallet className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  Registered Capital
+                  {t("registeredCapital")}
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
-                  {parseFloat(request.registeredCapital).toLocaleString()} OMR
-                  (OMR)
+                  {parseFloat(request.registeredCapital).toLocaleString()} {language === "ar" ? "ريال عماني" : "OMR"}
                 </p>
               </div>
             </div>
@@ -459,11 +458,10 @@ export const RequestDetails = () => {
               <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  Estimated Revenue
+                  {t("estimatedRevenue")}
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
-                  {parseFloat(request.estimatedRevenue).toLocaleString()} OMR
-                  (OMR)
+                  {parseFloat(request.estimatedRevenue).toLocaleString()} {language === "ar" ? "ريال عماني" : "OMR"}
                 </p>
               </div>
             </div>
@@ -475,11 +473,10 @@ export const RequestDetails = () => {
               <DollarSign className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  Estimated Expenses
+                  {t("estimatedExpenses")}
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
-                  {parseFloat(request.estimatedExpenses).toLocaleString()} OMR
-                  (OMR)
+                  {parseFloat(request.estimatedExpenses).toLocaleString()} {language === "ar" ? "ريال عماني" : "OMR"}
                 </p>
               </div>
             </div>
@@ -490,10 +487,10 @@ export const RequestDetails = () => {
             <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                Status
+                {t("status")}
               </label>
               <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1 capitalize">
-                {request.status || "pending"}
+                {request.status || t("pending")}
               </p>
             </div>
           </div>
@@ -504,7 +501,7 @@ export const RequestDetails = () => {
               <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 block">
-                  Created At
+                  {t("createdAt")}
                 </label>
                 <p className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mt-1">
                   {formatDate(request.createdAt)}
@@ -518,7 +515,7 @@ export const RequestDetails = () => {
         {request.attachments && request.attachments.length > 0 && (
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <label className="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 mb-3 block">
-              Attachments
+              {t("attachmentsLabel")}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {request.attachments.map((attachment, index) => (
@@ -576,10 +573,10 @@ export const RequestDetails = () => {
             </div>
             <div className="ml-3 flex-1">
               <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
-                Request Rejected
+                {t("requestRejected")}
               </h3>
               <div className="mt-2 text-sm text-red-700 dark:text-red-300">
-                <p className="font-medium mb-1">Reason:</p>
+                <p className="font-medium mb-1">{t("reason")}</p>
                 <p className="whitespace-pre-wrap">{request.rejectionReason}</p>
               </div>
               <div className="mt-4">
@@ -587,7 +584,7 @@ export const RequestDetails = () => {
                   onClick={() => navigate("/client/request/new", { state: { editRequest: request } })}
                   className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
                 >
-                  Update Request
+                  {t("updateRequest")}
                 </button>
               </div>
             </div>
@@ -606,10 +603,10 @@ export const RequestDetails = () => {
             </div>
             <div className="ml-3 flex-1">
               <h3 className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                Under Review
+                {t("underReview")}
               </h3>
               <div className="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
-                <p>Your request is currently under admin review. It will become visible to service providers once approved.</p>
+                <p>{t("requestUnderReview")}</p>
               </div>
             </div>
           </div>
@@ -648,7 +645,7 @@ export const RequestDetails = () => {
               <div className="text-center py-8">
                 <div className="inline-block w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                  Loading proposals...
+                  {t("loadingProposals")}
                 </p>
               </div>
             ) : proposals.length === 0 ? (
@@ -818,7 +815,7 @@ export const RequestDetails = () => {
               <div className="text-center py-8">
                 <div className="inline-block w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                 <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                  Loading messages...
+                  {t("loadingMessages")}
                 </p>
               </div>
             ) : messages.length === 0 ? (

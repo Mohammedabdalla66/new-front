@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CreditCard, Search, ChevronRight, Eye, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import Navbar from "../components/Layout/Navbar";
 import AdminSidebar from "../components/sidebar/AdminSidebar";
 import {
@@ -49,6 +50,9 @@ const getInitials = (name) =>
     .slice(0, 2);
 
 const Transactions = () => {
+  const { t, i18n } = useTranslation();
+  const isArabic = i18n.language === "ar";
+
   const [txns, setTxns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -121,7 +125,15 @@ const Transactions = () => {
     };
 
     fetchTransactions();
-  }, [page, limit, filters.type, filters.status, filters.fromDate, filters.toDate, debouncedQuery]);
+  }, [
+    page,
+    limit,
+    filters.type,
+    filters.status,
+    filters.fromDate,
+    filters.toDate,
+    debouncedQuery,
+  ]);
 
   const openView = (t) => {
     setSelected(t);
@@ -142,11 +154,12 @@ const Transactions = () => {
     totalTransactions === 0
       ? 0
       : Math.round(
-          (txns.filter((t) => t.status === "completed").length /
-            txns.length) *
+          (txns.filter((t) => t.status === "completed").length / txns.length) *
             100
         );
-  const refundsIssued = txns.filter((t) => t.status === "completed" && t.type === "refund").length;
+  const refundsIssued = txns.filter(
+    (t) => t.status === "completed" && t.type === "refund"
+  ).length;
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -168,23 +181,29 @@ const Transactions = () => {
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Header */}
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 text-sm text-neutral-600 dark:text-neutral-400">
-                <span>Dashboard</span>
+              <div
+                className="flex items-center space-x-2 text-sm text-neutral-600 dark:text-neutral-400"
+                // style={isArabic ? { flexDirection: "row-reverse" } : {}}
+              >
+                <span>{t("dashboard")}</span>
                 <ChevronRight className="w-4 h-4" />
                 <span className="text-neutral-900 dark:text-white font-medium">
-                  Transactions
+                  {t("transactions")}
                 </span>
               </div>
-              <div className="flex items-center space-x-3">
+              <div
+                className="flex items-center space-x-3"
+                // style={isArabic ? { flexDirection: "row-reverse" } : {}}
+              >
                 <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
                   <CreditCard className="w-6 h-6 text-white" />
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
-                    Transactions
+                    {t("transactions")}
                   </h1>
                   <p className="text-neutral-600 dark:text-neutral-400">
-                    Track and manage all transactions
+                    {t("trackAndManageTransactions")}
                   </p>
                 </div>
               </div>
@@ -194,15 +213,15 @@ const Transactions = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 {
-                  title: "Total Revenue",
+                  title: t("totalRevenue"),
                   value: `${totalRevenue.toFixed(2)} OMR`,
                 },
                 {
-                  title: "Total Transactions",
+                  title: t("totalTransactions"),
                   value: String(totalTransactions),
                 },
-                { title: "Success Rate", value: `${successRate}%` },
-                { title: "Refunds Issued", value: String(refundsIssued) },
+                { title: t("successRate"), value: `${successRate}%` },
+                { title: t("refundsIssued"), value: String(refundsIssued) },
               ].map((c, idx) => (
                 <Card key={idx}>
                   <CardHeader>
@@ -218,14 +237,21 @@ const Transactions = () => {
             {/* Filters */}
             <Card>
               <CardContent className="p-6">
-                <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                <div
+                  className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between"
+                  style={isArabic ? { flexDirection: "row-reverse" } : {}}
+                >
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 w-full">
                     {/* Search */}
                     <div className="relative col-span-1 md:col-span-2">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4" />
+                      <Search
+                        className={`absolute top-1/2 -translate-y-1/2 text-neutral-400 w-4 h-4 ${
+                          isArabic ? "right-3" : "left-3"
+                        }`}
+                      />
                       <Input
-                        placeholder="Search by ID, name, or email..."
-                        className="pl-10"
+                        placeholder={t("searchByIdNameEmail")}
+                        className={isArabic ? "pr-10" : "pl-10"}
                         value={filters.query}
                         onChange={(e) =>
                           setFilters((prev) => ({
@@ -244,13 +270,15 @@ const Transactions = () => {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Status" />
+                        <SelectValue placeholder={t("status")} />
                       </SelectTrigger>
-                        <SelectContent>
-                        <SelectItem value="All">All</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="failed">Failed</SelectItem>
+                      <SelectContent>
+                        <SelectItem value="All">{t("all")}</SelectItem>
+                        <SelectItem value="completed">
+                          {t("completed")}
+                        </SelectItem>
+                        <SelectItem value="pending">{t("pending")}</SelectItem>
+                        <SelectItem value="failed">{t("error")}</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -262,15 +290,17 @@ const Transactions = () => {
                       }
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Type" />
+                        <SelectValue placeholder={t("type")} />
                       </SelectTrigger>
-                        <SelectContent>
-                        <SelectItem value="All">All Types</SelectItem>
-                        <SelectItem value="deposit">Deposit</SelectItem>
-                        <SelectItem value="payment">Payment</SelectItem>
-                        <SelectItem value="hold">Hold</SelectItem>
-                        <SelectItem value="release">Release</SelectItem>
-                        <SelectItem value="refund">Refund</SelectItem>
+                      <SelectContent>
+                        <SelectItem value="All">
+                          {t("all")} {t("type")}
+                        </SelectItem>
+                        <SelectItem value="deposit">{t("deposit")}</SelectItem>
+                        <SelectItem value="payment">{t("payment")}</SelectItem>
+                        <SelectItem value="hold">{t("hold")}</SelectItem>
+                        <SelectItem value="release">{t("release")}</SelectItem>
+                        <SelectItem value="refund">{t("refund")}</SelectItem>
                       </SelectContent>
                     </Select>
 
@@ -290,18 +320,24 @@ const Transactions = () => {
                       type="date"
                       value={filters.toDate}
                       onChange={(e) =>
-                        setFilters((prev) => ({ ...prev, toDate: e.target.value }))
+                        setFilters((prev) => ({
+                          ...prev,
+                          toDate: e.target.value,
+                        }))
                       }
                     />
                   </div>
 
-                  <div className="flex items-center gap-2 w-full lg:w-auto">
+                  <div
+                    className="flex items-center gap-2 w-full lg:w-auto"
+                    style={isArabic ? { flexDirection: "row-reverse" } : {}}
+                  >
                     <Button
                       variant="outline"
                       className="w-full lg:w-auto"
                       onClick={resetFilters}
                     >
-                      Reset Filters
+                      {t("resetFilters")}
                     </Button>
                   </div>
                 </div>
@@ -311,7 +347,9 @@ const Transactions = () => {
             {/* Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Transactions List ({meta.total} total)</CardTitle>
+                <CardTitle>
+                  {t("transactionsList")} ({meta.total} {t("total")})
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -324,21 +362,25 @@ const Transactions = () => {
                   </div>
                 ) : txns.length === 0 ? (
                   <div className="text-center py-12 text-neutral-600 dark:text-neutral-400">
-                    No transactions found
+                    {t("noTransactionsFound")}
                   </div>
                 ) : (
                   <>
-                    <div className="rounded-md border">
+                    <div className="rounded-md border overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Transaction ID</TableHead>
-                            <TableHead>Client/Service Provider</TableHead>
-                            <TableHead>Amount</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Date & Time</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t("transactionId")}</TableHead>
+                            <TableHead>{t("clientServiceProvider")}</TableHead>
+                            <TableHead>{t("amount")}</TableHead>
+                            <TableHead>{t("type")}</TableHead>
+                            <TableHead>{t("status")}</TableHead>
+                            <TableHead>{t("dateTime")}</TableHead>
+                            <TableHead
+                              className={isArabic ? "text-left" : "text-right"}
+                            >
+                              {t("actions")}
+                            </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -347,92 +389,118 @@ const Transactions = () => {
                               key={t._id || t.transactionId}
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.3, delay: index * 0.05 }}
+                              transition={{
+                                duration: 0.3,
+                                delay: index * 0.05,
+                              }}
                               className="border-b hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
                             >
-                          <TableCell className="font-medium">
-                            {t.transactionId || t._id?.toString().slice(-8)}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
-                                <span className="text-primary-600 dark:text-primary-400 text-xs font-semibold">
-                                  {getInitials(t.partyName || "Unknown")}
-                                </span>
-                              </div>
-                              <div>
-                                <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                                  {t.partyName || "Unknown"}
+                              <TableCell className="font-medium">
+                                {t.transactionId || t._id?.toString().slice(-8)}
+                              </TableCell>
+                              <TableCell>
+                                <div
+                                  className="flex items-center gap-2"
+                                  style={
+                                    isArabic
+                                      ? { flexDirection: "row-reverse" }
+                                      : {}
+                                  }
+                                >
+                                  <div className="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
+                                    <span className="text-primary-600 dark:text-primary-400 text-xs font-semibold">
+                                      {getInitials(t.partyName || "Unknown")}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <div className="text-sm text-neutral-900 dark:text-neutral-100">
+                                      {t.partyName || "Unknown"}
+                                    </div>
+                                    <div className="text-xs text-neutral-500">
+                                      {t.partyEmail || "—"}
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className="text-xs text-neutral-500">
-                                  {t.partyEmail || "—"}
-                                </div>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {t.amount?.toFixed(2) || "0.00"} OMR
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={
-                                t.type === "payment" || t.type === "deposit" || t.type === "release"
-                                  ? "success"
-                                  : t.type === "refund"
-                                  ? "secondary"
-                                  : "warning"
-                              }
-                            >
-                              {t.type || "—"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Badge
-                              variant={
-                                t.status === "completed"
-                                  ? "success"
-                                  : t.status === "pending"
-                                  ? "warning"
-                                  : "destructive"
-                              }
-                            >
-                              {t.status || "—"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {new Date(t.datetime || t.createdAt).toLocaleString()}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0"
-                              onClick={() => openView(t)}
-                              aria-label="View details"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                          </TableCell>
-                        </motion.tr>
-                      ))}
+                              </TableCell>
+                              <TableCell>
+                                {t.amount?.toFixed(2) || "0.00"} OMR
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={
+                                    t.type === "payment" ||
+                                    t.type === "deposit" ||
+                                    t.type === "release"
+                                      ? "success"
+                                      : t.type === "refund"
+                                      ? "secondary"
+                                      : "warning"
+                                  }
+                                >
+                                  {t.type || "—"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant={
+                                    t.status === "completed"
+                                      ? "success"
+                                      : t.status === "pending"
+                                      ? "warning"
+                                      : "destructive"
+                                  }
+                                >
+                                  {t.status || "—"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                {new Date(
+                                  t.datetime || t.createdAt
+                                ).toLocaleString(isArabic ? "ar-OM" : "en-US")}
+                              </TableCell>
+                              <TableCell
+                                className={
+                                  isArabic ? "text-left" : "text-right"
+                                }
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                  onClick={() => openView(t)}
+                                  aria-label={t("view")}
+                                >
+                                  <Eye className="w-4 h-4" />
+                                </Button>
+                              </TableCell>
+                            </motion.tr>
+                          ))}
                         </TableBody>
                       </Table>
                     </div>
 
                     {/* Pagination */}
                     {meta.pages > 1 && (
-                      <div className="flex items-center justify-between mt-4">
+                      <div
+                        className="flex flex-col md:flex-row items-center justify-between mt-4 gap-4"
+                        style={isArabic ? { flexDirection: "row-reverse" } : {}}
+                      >
                         <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                          Page {page} of {meta.pages}
+                          {t("page")} {page} {t("of")} {meta.pages}
                         </div>
-                        <div className="flex gap-2">
+                        <div
+                          className="flex gap-2"
+                          style={
+                            isArabic ? { flexDirection: "row-reverse" } : {}
+                          }
+                        >
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => setPage((p) => Math.max(1, p - 1))}
                             disabled={page === 1}
                           >
-                            Previous
+                            {t("previous")}
                           </Button>
                           <Button
                             variant="outline"
@@ -442,7 +510,7 @@ const Transactions = () => {
                             }
                             disabled={page === meta.pages}
                           >
-                            Next
+                            {t("next")}
                           </Button>
                         </div>
                       </div>
@@ -461,18 +529,19 @@ const Transactions = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.2 }}
                     className="space-y-4"
+                    dir={isArabic ? "rtl" : "ltr"}
                   >
                     <DialogHeader>
-                      <DialogTitle>Transaction Details</DialogTitle>
+                      <DialogTitle>{t("transactionDetails")}</DialogTitle>
                       <DialogDescription>
-                        Review transaction information.
+                        {t("reviewProposalBeforeApproval")}
                       </DialogDescription>
                     </DialogHeader>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">
-                          Transaction ID
+                          {t("transactionId")}
                         </div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
                           {selected.transactionId || selected._id}
@@ -480,59 +549,72 @@ const Transactions = () => {
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">
-                          Client/Service Provider
+                          {t("clientServiceProvider")}
                         </div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          {selected.partyName || "Unknown"} • {selected.partyEmail || "—"}
+                          {selected.partyName || "Unknown"} •{" "}
+                          {selected.partyEmail || "—"}
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <div className="text-xs text-neutral-500">Amount</div>
+                        <div className="text-xs text-neutral-500">
+                          {t("amount")}
+                        </div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
                           {selected.amount?.toFixed(2) || "0.00"} OMR
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <div className="text-xs text-neutral-500">Type</div>
+                        <div className="text-xs text-neutral-500">
+                          {t("type")}
+                        </div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
                           {selected.type || "—"}
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <div className="text-xs text-neutral-500">Status</div>
+                        <div className="text-xs text-neutral-500">
+                          {t("status")}
+                        </div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
                           {selected.status || "—"}
                         </div>
                       </div>
                       <div className="space-y-1">
                         <div className="text-xs text-neutral-500">
-                          Date & Time
+                          {t("dateTime")}
                         </div>
                         <div className="text-sm text-neutral-900 dark:text-neutral-100">
-                          {new Date(selected.datetime || selected.createdAt).toLocaleString()}
+                          {new Date(
+                            selected.datetime || selected.createdAt
+                          ).toLocaleString(isArabic ? "ar-OM" : "en-US")}
                         </div>
                       </div>
                       <div className="space-y-1 sm:col-span-2">
-                        <div className="text-xs text-neutral-500">Description</div>
+                        <div className="text-xs text-neutral-500">
+                          {t("description")}
+                        </div>
                         <div className="text-sm text-neutral-700 dark:text-neutral-300">
                           {selected.description || "—"}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 pt-2">
+                    <div
+                      className="flex items-center justify-end gap-2 pt-2"
+                      style={isArabic ? { flexDirection: "row-reverse" } : {}}
+                    >
                       <Button
                         variant="outline"
                         onClick={() => setViewOpen(false)}
                       >
-                        Close
+                        {t("close")}
                       </Button>
                     </div>
                   </motion.div>
                 )}
               </DialogContent>
             </Dialog>
-
           </div>
         </main>
       </div>

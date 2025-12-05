@@ -1,46 +1,55 @@
 import React from "react";
 import { Clock, User, FileText, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const RecentActivity = ({ data = [], loading }) => {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 animate-pulse">
         <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/3 mb-4"></div>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div
+              key={i}
+              className="h-16 bg-gray-200 dark:bg-gray-700 rounded"
+            ></div>
           ))}
         </div>
       </div>
     );
   }
 
-  const activities = data.length > 0 ? data : [
-    {
-      id: 1,
-      type: "request",
-      title: "New service request created",
-      user: "John Doe",
-      time: "2 hours ago",
-      status: "pending",
-    },
-    {
-      id: 2,
-      type: "proposal",
-      title: "Proposal submitted",
-      user: "Jane Smith",
-      time: "5 hours ago",
-      status: "active",
-    },
-    {
-      id: 3,
-      type: "booking",
-      title: "Booking confirmed",
-      user: "Mike Johnson",
-      time: "1 day ago",
-      status: "completed",
-    },
-  ];
+  const activities =
+    data.length > 0
+      ? data
+      : [
+          {
+            id: 1,
+            type: "request",
+            title: t("newServiceRequestCreated"),
+            user: "John Doe",
+            time: `2 ${t("hoursAgo")}`,
+            status: "pending",
+          },
+          {
+            id: 2,
+            type: "proposal",
+            title: t("proposalSubmitted"),
+            user: "Jane Smith",
+            time: `5 ${t("hoursAgo")}`,
+            status: "active",
+          },
+          {
+            id: 3,
+            type: "booking",
+            title: t("bookingConfirmed"),
+            user: "Mike Johnson",
+            time: `1 ${t("daysAgo")}`,
+            status: "completed",
+          },
+        ];
 
   const getIcon = (type) => {
     switch (type) {
@@ -71,7 +80,7 @@ const RecentActivity = ({ data = [], loading }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Recent Activity
+        {t("recentActivity")}
       </h3>
       <div className="space-y-4">
         {activities.map((activity) => {
@@ -92,7 +101,9 @@ const RecentActivity = ({ data = [], loading }) => {
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     {activity.user}
                   </p>
-                  <span className="text-xs text-gray-400 dark:text-gray-500">•</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">
+                    •
+                  </span>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     {activity.time}
                   </p>
@@ -104,7 +115,7 @@ const RecentActivity = ({ data = [], loading }) => {
                     activity.status
                   )}`}
                 >
-                  {activity.status}
+                  {t(activity.status)}
                 </span>
               )}
             </div>
@@ -116,4 +127,3 @@ const RecentActivity = ({ data = [], loading }) => {
 };
 
 export default RecentActivity;
-

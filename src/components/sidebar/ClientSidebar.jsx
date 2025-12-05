@@ -25,17 +25,17 @@ export default function ClientSidebar({
   
   const menuItems = [
     { id: "dashboard", label: t("dashboard"), icon: LayoutDashboard },
-    { id: "requests", label: t("myRequestsSidebar"), icon: Calendar },
-    { id: "messages", label: t("messagesSidebar"), icon: MessageSquare, badge: 3 },
-    { id: "wallet", label: t("walletSidebar"), icon: Wallet },
-    { id: "documents", label: t("documentsSidebar"), icon: FileText },
-    { id: "profile", label: t("myProfileSidebar"), icon: User },
+    { id: "requests", label: t("myRequests"), icon: Calendar },
+    { id: "messages", label: t("messages"), icon: MessageSquare, badge: unreadMessagesCount },
+    { id: "wallet", label: t("wallet"), icon: Wallet },
+    { id: "documents", label: t("documents"), icon: FileText },
+    { id: "profile", label: t("myProfile"), icon: User },
   ];
 
   const bottomItems = [
-    { id: "settings", label: t("Settings"), icon: Settings },
-    { id: "help", label: t("Help & Support"), icon: HelpCircle },
-    { id: "logout", label: t("Logout"), icon: LogOut },
+    { id: "settings", label: t("settings"), icon: Settings },
+    { id: "help", label: t("helpSupport"), icon: HelpCircle },
+    { id: "logout", label: t("logout"), icon: LogOut },
   ];
 
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -66,14 +66,14 @@ export default function ClientSidebar({
           <button
             onClick={onMobileClose}
             className="inline-flex md:hidden items-center justify-center w-9 h-9 rounded-lg border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500"
-            aria-label="Close menu"
+            aria-label={t("closeMenu") || "Close menu"}
           >
             <X className="w-5 h-5" />
           </button>
           <button
             onClick={() => setIsCollapsed((v) => !v)}
             className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500"
-            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={isCollapsed ? (t("expandSidebar") || "Expand sidebar") : (t("collapseSidebar") || "Collapse sidebar")}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

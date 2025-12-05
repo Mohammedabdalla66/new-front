@@ -134,19 +134,19 @@ const Topbar = ({ onMenuClick, currentPath }) => {
               {userData?.avatar ? (
                 <img
                   src={userData.avatar}
-                  alt={userData.name || "User"}
+                  alt={userData.name || t("user")}
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                   <span className="text-white font-medium text-sm">
-                    {(userData?.name || "U").charAt(0).toUpperCase()}
+                    {(userData?.name || t("user")).charAt(0).toUpperCase()}
                   </span>
                 </div>
               )}
               <div className="hidden md:block text-left">
                 <p className="text-sm font-medium text-gray-800 dark:text-white">
-                  {userData?.name || "User"}
+                  {userData?.name || t("user")}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   {userData?.role === "serviceProvider" ? t("serviceProvider") || "Service Provider" :

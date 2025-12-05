@@ -132,8 +132,8 @@ const AddPortfolioModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.title.trim()) {
-      toast.error("Title is required");
+      if (!formData.title.trim()) {
+      toast.error(t("title") + " " + (language === "ar" ? "مطلوب" : "is required"));
       return;
     }
     
@@ -180,7 +180,7 @@ const AddPortfolioModal = ({
       }
       
       if (response.data.success) {
-        toast.success(isEditMode ? "Portfolio item updated successfully" : "Portfolio item created successfully");
+        toast.success(isEditMode ? t("portfolioItemUpdated") : t("portfolioItemCreated"));
         onAddItem(activeTab, response.data.data);
         
         // Reset form
@@ -266,30 +266,24 @@ const AddPortfolioModal = ({
     if (isEditMode) {
       switch (activeTab) {
         case "samples":
-          return language === "ar" ? "تعديل عينة العمل" : "Edit Work Sample";
+          return t("editWorkSample");
         case "cases":
-          return language === "ar" ? "تعديل دراسة الحالة" : "Edit Case Study";
+          return t("editCaseStudy");
         case "certifications":
-          return language === "ar" ? "تعديل الشهادة" : "Edit Certification";
+          return t("editCertification");
         default:
-          return language === "ar" ? "تعديل العنصر" : "Edit Item";
+          return t("editItem");
       }
     } else {
       switch (activeTab) {
         case "samples":
-          return language === "ar"
-            ? "إضافة عينة عمل جديدة"
-            : "Add New Work Sample";
+          return t("addNewWorkSample");
         case "cases":
-          return language === "ar"
-            ? "إضافة دراسة حالة جديدة"
-            : "Add New Case Study";
+          return t("addNewCaseStudy");
         case "certifications":
-          return language === "ar"
-            ? "إضافة شهادة جديدة"
-            : "Add New Certification";
+          return t("addNewCertification");
         default:
-          return language === "ar" ? "إضافة عنصر جديد" : "Add New Item";
+          return t("addNewItem");
       }
     }
   };
@@ -316,7 +310,7 @@ const AddPortfolioModal = ({
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {language === "ar" ? "العنوان" : "Title"}
+              {t("title")}
             </label>
             <input
               type="text"
@@ -324,14 +318,14 @@ const AddPortfolioModal = ({
               value={formData.title}
               onChange={(e) => handleInputChange("title", e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              placeholder={language === "ar" ? "أدخل العنوان" : "Enter title"}
+              placeholder={t("enterTitle")}
             />
           </div>
 
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {language === "ar" ? "الوصف" : "Description"}
+              {t("description")}
             </label>
             <textarea
               required
@@ -339,9 +333,7 @@ const AddPortfolioModal = ({
               value={formData.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              placeholder={
-                language === "ar" ? "أدخل الوصف" : "Enter description"
-              }
+              placeholder={t("enterDescription")}
             />
           </div>
 
@@ -350,7 +342,7 @@ const AddPortfolioModal = ({
             <>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {language === "ar" ? "العلامات (مفصولة بفواصل)" : "Tags (comma-separated)"}
+                  {t("tagsCommaSeparated")}
                 </label>
                 <input
                   type="text"
@@ -363,7 +355,7 @@ const AddPortfolioModal = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {language === "ar" ? "تاريخ الإنجاز" : "Completion Date"}
+                  {t("completionDate")}
                 </label>
                 <div className="relative">
                   <input
@@ -378,7 +370,7 @@ const AddPortfolioModal = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {language === "ar" ? "رفع الملف" : "Upload File"}
+                  {t("uploadFile")}
                 </label>
 
                 {/* Image Preview */}
@@ -407,9 +399,7 @@ const AddPortfolioModal = ({
                   >
                     <Upload className="h-8 w-8 text-gray-400 mb-2" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {language === "ar"
-                        ? "انقر لرفع الملفات"
-                        : "Click to upload files"}
+                      {t("clickToUploadFiles")}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       PDF, DOC, XLS, JPG (Max 10MB each)
@@ -421,7 +411,7 @@ const AddPortfolioModal = ({
                 {formData.files && formData.files.length > 0 && (
                   <div className="mt-4 space-y-2">
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {language === "ar" ? "الملفات المحددة:" : "Selected files:"}
+                      {t("selectedFiles")}
                     </p>
                     {formData.files.map((file, index) => (
                       <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -449,7 +439,7 @@ const AddPortfolioModal = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {language === "ar" ? "العميل" : "Client"}
+                    {t("client")}
                   </label>
                   <input
                     type="text"
@@ -466,7 +456,7 @@ const AddPortfolioModal = ({
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {language === "ar" ? "الصناعة" : "Industry"}
+                    {t("industry")}
                   </label>
                   <select
                     required
@@ -477,7 +467,7 @@ const AddPortfolioModal = ({
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
                     <option value="">
-                      {language === "ar" ? "اختر الصناعة" : "Select industry"}
+                      {t("selectIndustry")}
                     </option>
                     {industries[language].map((industry, index) => (
                       <option key={index} value={industry}>
@@ -490,7 +480,7 @@ const AddPortfolioModal = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {language === "ar" ? "المدة" : "Duration"}
+                  {t("duration")}
                 </label>
                 <input
                   type="text"
@@ -500,26 +490,20 @@ const AddPortfolioModal = ({
                     handleInputChange("duration", e.target.value)
                   }
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder={
-                    language === "ar" ? "مثال: 3 أشهر" : "e.g., 3 months"
-                  }
+                  placeholder={t("durationPlaceholder")}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {language === "ar" ? "النتائج الرئيسية" : "Key Results"}
+                  {t("keyResults")}
                 </label>
                 <textarea
                   rows={3}
                   value={formData.results}
                   onChange={(e) => handleInputChange("results", e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder={
-                    language === "ar"
-                      ? "أدخل النتائج مفصولة بفواصل"
-                      : "Enter results separated by commas"
-                  }
+                  placeholder={t("keyResultsPlaceholder")}
                 />
               </div>
             </>
@@ -530,7 +514,7 @@ const AddPortfolioModal = ({
             <>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {language === "ar" ? "الجهة المانحة" : "Issuer"}
+                  {t("issuer")}
                 </label>
                 <input
                   type="text"
@@ -538,18 +522,14 @@ const AddPortfolioModal = ({
                   value={formData.issuer}
                   onChange={(e) => handleInputChange("issuer", e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder={
-                    language === "ar"
-                      ? "اسم الجهة المانحة"
-                      : "Issuing organization"
-                  }
+                  placeholder={t("issuerPlaceholder")}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {language === "ar" ? "تاريخ الإصدار" : "Issue Date"}
+                    {t("issueDate")}
                   </label>
                   <div className="relative">
                     <input
@@ -566,7 +546,7 @@ const AddPortfolioModal = ({
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    {language === "ar" ? "تاريخ الانتهاء" : "Expiry Date"}
+                    {t("expiryDate")}
                   </label>
                   <div className="relative">
                     <input
@@ -584,7 +564,7 @@ const AddPortfolioModal = ({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {language === "ar" ? "رقم الشهادة" : "Credential ID"}
+                  {t("credentialId")}
                 </label>
                 <input
                   type="text"
@@ -593,9 +573,7 @@ const AddPortfolioModal = ({
                     handleInputChange("credentialId", e.target.value)
                   }
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono"
-                  placeholder={
-                    language === "ar" ? "رقم الشهادة" : "Credential ID"
-                  }
+                  placeholder={t("credentialIdPlaceholder")}
                 />
               </div>
             </>
@@ -605,7 +583,7 @@ const AddPortfolioModal = ({
           {(activeTab === "cases" || activeTab === "certifications") && (
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {language === "ar" ? "رفع الملفات" : "Upload Files"}
+                {t("uploadFile")}
               </label>
               
               {/* Image Preview */}
@@ -634,9 +612,7 @@ const AddPortfolioModal = ({
                 >
                   <Upload className="h-8 w-8 text-gray-400 mb-2" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {language === "ar"
-                      ? "انقر لرفع الملفات"
-                      : "Click to upload files"}
+                    {t("clickToUploadFiles")}
                   </span>
                   <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     PDF, DOC, XLS, JPG (Max 10MB each)
@@ -648,7 +624,7 @@ const AddPortfolioModal = ({
               {formData.files && formData.files.length > 0 && (
                 <div className="mt-4 space-y-2">
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {language === "ar" ? "الملفات المحددة:" : "Selected files:"}
+                    {t("selectedFiles")}
                   </p>
                   {formData.files.map((file, index) => (
                     <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -679,16 +655,12 @@ const AddPortfolioModal = ({
               {saving ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  {language === "ar" ? "جاري الحفظ..." : "Saving..."}
+                  {t("saving")}
                 </>
               ) : (
                 isEditMode
-                  ? language === "ar"
-                    ? "تحديث"
-                    : "Update"
-                  : language === "ar"
-                  ? "إضافة"
-                  : "Add"
+                  ? t("update")
+                  : t("add")
               )}
             </button>
             <button
@@ -696,7 +668,7 @@ const AddPortfolioModal = ({
               onClick={onClose}
               className="flex-1 bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors"
             >
-              {language === "ar" ? "إلغاء" : "Cancel"}
+              {t("cancel")}
             </button>
           </div>
         </form>

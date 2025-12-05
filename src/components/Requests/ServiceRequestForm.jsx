@@ -445,10 +445,10 @@ export const ServiceRequestForm = () => {
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Business Activity
-              </label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              {t("businessActivityLabel")}
+            </label>
               <select
                 value={businessActivity}
                 onChange={(e) => setBusinessActivity(e.target.value)}
@@ -467,37 +467,37 @@ export const ServiceRequestForm = () => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Capital as per the commercial register (Riyal)
+                {t("registeredCapitalLabel")}
               </label>
               <input
                 type="number"
                 value={registeredCapital}
                 onChange={(e) => setRegisteredCapital(e.target.value)}
-                placeholder="Enter the capital"
+                placeholder={t("enterCapital")}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
-                Estimated Revenue (Riyal)
+                {t("estimatedRevenueLabel")}
               </label>
               <input
                 type="number"
                 value={estimatedRevenue}
                 onChange={(e) => setEstimatedRevenue(e.target.value)}
-                placeholder="Enter the revenue"
+                placeholder={t("enterRevenue")}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
-                Estimated Expenses (Riyal)
+                {t("estimatedExpensesLabel")}
               </label>
               <input
                 type="number"
                 value={estimatedExpenses}
                 onChange={(e) => setEstimatedExpenses(e.target.value)}
-                placeholder="Enter the expenses"
+                placeholder={t("enterExpenses")}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
@@ -507,31 +507,31 @@ export const ServiceRequestForm = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Budget Range (Riyal)
+                {t("budgetRangeLabel")}
               </label>
               <select
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="">Select a budget range</option>
-                  <option value="10-50">0 - 50 Riyal</option>
-                <option value="50-100">50 - 100 Riyal</option>
-                <option value="100-250">200 - 250 Riyal</option>
-                <option value="250-500">250 - 500 Riyal</option>
-                <option value="500-1000">500 - 2000 Riyal</option>
-                <option value="1000-2500">2000 - 2500 Riyal</option>
-                <option value="2500-5000">2500 - 5000 Riyal</option>
-                <option value="5000-10000">5000 - 20000 Riyal</option>
-                <option value="10000+">20000 - More than 20000 Riyal</option>
+                <option value="">{t("selectBudgetRange")}</option>
+                  <option value="10-50">0 - 50 {language === "ar" ? "ريال" : "Riyal"}</option>
+                <option value="50-100">50 - 100 {language === "ar" ? "ريال" : "Riyal"}</option>
+                <option value="100-250">200 - 250 {language === "ar" ? "ريال" : "Riyal"}</option>
+                <option value="250-500">250 - 500 {language === "ar" ? "ريال" : "Riyal"}</option>
+                <option value="500-1000">500 - 2000 {language === "ar" ? "ريال" : "Riyal"}</option>
+                <option value="1000-2500">2000 - 2500 {language === "ar" ? "ريال" : "Riyal"}</option>
+                <option value="2500-5000">2500 - 5000 {language === "ar" ? "ريال" : "Riyal"}</option>
+                <option value="5000-10000">5000 - 20000 {language === "ar" ? "ریال" : "Riyal"}</option>
+                <option value="10000+">20000 - {language === "ar" ? "أكثر من" : "More than"} 20000 {language === "ar" ? "ریال" : "Riyal"}</option>
               </select>
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Select an estimated budget range.
+                {t("selectEstimatedBudget")}
               </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Deadline
+                {t("deadlineLabel")}
               </label>
               <input
                 type="date"
@@ -540,7 +540,7 @@ export const ServiceRequestForm = () => {
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Select a target due date.
+                {t("selectTargetDate")}
               </p>
             </div>
           </div>
@@ -555,10 +555,10 @@ export const ServiceRequestForm = () => {
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Submitting...
+                  {t("submitting")}
                 </>
               ) : (
-                "Submit Request"
+                t("submitRequest")
               )}
             </button>
           </div>

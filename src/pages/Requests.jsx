@@ -48,7 +48,7 @@ export const Requests = () => {
       setRequests(mapped);
     } catch (e) {
       console.error(e);
-      setError(e?.response?.data?.message || "Failed to load requests");
+      setError(e?.response?.data?.message || t("failedToLoadRequests") || t("failedToLoad"));
     } finally {
       setLoading(false);
     }

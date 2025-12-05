@@ -38,6 +38,7 @@ import {
 } from "../components/ui/table";
 import { adminAPI } from "../services/adminApi";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 const getInitials = (name) =>
   name
@@ -50,6 +51,7 @@ const getInitials = (name) =>
 
 const ServiceProviders = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [serviceProviders, setServiceProviders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -92,14 +94,14 @@ const ServiceProviders = () => {
           setServiceProviders(response.data.data);
           setMeta(response.data.meta);
         } else {
-          setError("Failed to load service providers");
+          setError(t("error"));
         }
       } catch (err) {
         console.error("Error fetching service providers:", err);
         setError(
-          err.response?.data?.message || "Failed to load service providers"
+          err.response?.data?.message || t("error")
         );
-        toast.error("Failed to load service providers");
+        toast.error(t("error"));
       } finally {
         setLoading(false);
       }
@@ -116,8 +118,8 @@ const ServiceProviders = () => {
   };
 
   const getStatusBadge = (verified) => {
-    if (verified) return { label: "Active", variant: "success" };
-    return { label: "Pending", variant: "warning" };
+    if (verified) return { label: t("active"), variant: "success" };
+    return { label: t("pending"), variant: "warning" };
   };
 
   return (
@@ -139,10 +141,10 @@ const ServiceProviders = () => {
             {/* Page Header */}
             <div className="space-y-2">
               <div className="flex items-center space-x-2 text-sm text-neutral-600 dark:text-neutral-400">
-                <span>Dashboard</span>
+                <span>{t("dashboard")}</span>
                 <ChevronRight className="w-4 h-4" />
                 <span className="text-neutral-900 dark:text-white font-medium">
-                  Service Providers
+                  {t("serviceProviders")}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
@@ -151,10 +153,10 @@ const ServiceProviders = () => {
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
-                    Service Providers
+                    {t("serviceProviders")}
                   </h1>
                   <p className="text-neutral-600 dark:text-neutral-400">
-                    Manage service providers and their information
+                    {t("manageServiceProvidersInfo")}
                   </p>
                 </div>
               </div>
@@ -168,7 +170,7 @@ const ServiceProviders = () => {
                     <div className="relative flex-1 max-w-md">
                       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-4 h-4" />
                       <Input
-                        placeholder="Search by name, email, tax ID..."
+                        placeholder={t("searchByNameEmailTaxId")}
                         className="pl-10"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -183,13 +185,13 @@ const ServiceProviders = () => {
                       }}
                     >
                       <SelectTrigger className="w-40">
-                        <SelectValue placeholder="Filter by status" />
+                        <SelectValue placeholder={t("filterByStatus")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="All">All Status</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
+                        <SelectItem value="All">{t("allStatus")}</SelectItem>
+                        <SelectItem value="active">{t("active")}</SelectItem>
+                        <SelectItem value="pending">{t("pending")}</SelectItem>
+                        <SelectItem value="inactive">{t("inactive")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -201,7 +203,7 @@ const ServiceProviders = () => {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  Service Providers List ({meta.total} total)
+                  {t("serviceProvidersList")} ({meta.total} {t("total")})
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -215,7 +217,7 @@ const ServiceProviders = () => {
                   </div>
                 ) : serviceProviders.length === 0 ? (
                   <div className="text-center py-12 text-neutral-600 dark:text-neutral-400">
-                    No service providers found
+                    {t("noServiceProvidersFound")}
                   </div>
                 ) : (
                   <>
@@ -224,13 +226,13 @@ const ServiceProviders = () => {
                         <TableHeader>
                           <TableRow>
                             <TableHead className="w-12"></TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Phone</TableHead>
-                            <TableHead>Documents</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Created</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>{t("name")}</TableHead>
+                            <TableHead>{t("email")}</TableHead>
+                            <TableHead>{t("phone")}</TableHead>
+                            <TableHead>{t("documents")}</TableHead>
+                            <TableHead>{t("status")}</TableHead>
+                            <TableHead>{t("created")}</TableHead>
+                            <TableHead className="text-right">{t("actions")}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -310,7 +312,7 @@ const ServiceProviders = () => {
                     {meta.pages > 1 && (
                       <div className="flex items-center justify-between mt-4">
                         <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                          Page {page} of {meta.pages}
+                          {t("page")} {page} {t("of")} {meta.pages}
                         </div>
                         <div className="flex gap-2">
                           <Button
@@ -319,7 +321,7 @@ const ServiceProviders = () => {
                             onClick={() => setPage((p) => Math.max(1, p - 1))}
                             disabled={page === 1}
                           >
-                            Previous
+                            {t("previous")}
                           </Button>
                           <Button
                             variant="outline"
@@ -329,7 +331,7 @@ const ServiceProviders = () => {
                             }
                             disabled={page === meta.pages}
                           >
-                            Next
+                            {t("next")}
                           </Button>
                         </div>
                       </div>

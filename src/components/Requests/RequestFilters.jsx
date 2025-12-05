@@ -39,7 +39,7 @@ export const RequestFilters = ({ filters, onFiltersChange }) => {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Service Type
+            {t("serviceType")}
           </label>
           <select
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -47,11 +47,11 @@ export const RequestFilters = ({ filters, onFiltersChange }) => {
             onChange={(e) => handleChange("serviceType", e.target.value)}
           >
             <option value="">{t("all")}</option>
-            <option value="tax-filing">Tax Filing</option>
-            <option value="bookkeeping">Bookkeeping</option>
-            <option value="auditing">Auditing</option>
-            <option value="payroll">Payroll</option>
-            <option value="consultation">Consultation</option>
+            <option value="tax-filing">{t("taxFiling")}</option>
+            <option value="bookkeeping">{t("bookkeeping")}</option>
+            <option value="auditing">{t("auditing")}</option>
+            <option value="payroll">{t("payroll")}</option>
+            <option value="consultation">{t("consultation")}</option>
           </select>
         </div>
       </div>

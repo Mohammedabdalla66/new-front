@@ -1,7 +1,9 @@
 import React from "react";
 import { Clock, CheckCircle, XCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const PendingList = ({ data = [], loading }) => {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 animate-pulse">
@@ -19,7 +21,7 @@ const PendingList = ({ data = [], loading }) => {
     {
       id: 1,
       type: "request",
-      title: "Q4 Tax Filing Request",
+      title: t("q4TaxFilingRequest"),
       user: "John Doe",
       date: "2024-01-15",
       status: "pending",
@@ -27,7 +29,7 @@ const PendingList = ({ data = [], loading }) => {
     {
       id: 2,
       type: "proposal",
-      title: "Bookkeeping Service Proposal",
+      title: t("bookkeepingServiceProposal"),
       user: "Jane Smith",
       date: "2024-01-14",
       status: "pending",
@@ -35,7 +37,7 @@ const PendingList = ({ data = [], loading }) => {
     {
       id: 3,
       type: "transaction",
-      title: "Payment Dispute",
+      title: t("paymentDispute"),
       user: "Mike Johnson",
       date: "2024-01-13",
       status: "pending",
@@ -58,7 +60,7 @@ const PendingList = ({ data = [], loading }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        Pending Approvals
+        {t("pendingApprovals")}
       </h3>
       <div className="space-y-3">
         {pendingItems.map((item) => {
@@ -80,7 +82,7 @@ const PendingList = ({ data = [], loading }) => {
                 </p>
               </div>
               <button className="px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors">
-                Review
+                {t("review")}
               </button>
             </div>
           );

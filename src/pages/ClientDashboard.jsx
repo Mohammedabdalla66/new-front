@@ -14,7 +14,7 @@ import {
 
 export const ClientDashboard = () => {
   const { t } = useLanguage();
-  
+
   const stats = [
     {
       title: t("totalBookings"),
@@ -86,7 +86,7 @@ export const ClientDashboard = () => {
             <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
               <div className="min-w-0 flex-1">
                 <p className="font-medium text-gray-900 dark:text-white truncate">
-                  Q4 Tax Filing
+                  {t("q4TaxFiling")}
                 </p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t("dueIn")} 3 {t("days")}
@@ -99,7 +99,7 @@ export const ClientDashboard = () => {
             <div className="flex items-center justify-between p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
               <div className="min-w-0 flex-1">
                 <p className="font-medium text-gray-900 dark:text-white truncate">
-                  Monthly Bookkeeping
+                  {t("monthlyBookkeeping")}
                 </p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t("dueIn")} 1 {t("week")}
@@ -112,7 +112,7 @@ export const ClientDashboard = () => {
             <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
               <div className="min-w-0 flex-1">
                 <p className="font-medium text-gray-900 dark:text-white truncate">
-                  Payroll Processing
+                  {t("payrollProcessing")}
                 </p>
                 <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   {t("dueIn")} 2 {t("weeks")}

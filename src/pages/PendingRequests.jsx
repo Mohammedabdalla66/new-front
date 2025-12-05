@@ -29,11 +29,12 @@ import Toast from '../components/ui/toast';
 import AlertDialog from '../components/ui/alert-dialog';
 import { adminAPI } from '../services/api';
 import { getServiceTitleLabel } from '../utils/titleUtils';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
 const PendingRequests = () => {
-  const { language } = useLanguage();
+  const { t, i18n } = useTranslation();
+  const language = i18n.language || 'en';
   // Data
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,17 +74,11 @@ const PendingRequests = () => {
             status: request.status || 'pending',
             rejectionReason: request.rejectionReason || '',
             createdAt: request.createdAt,
-            // Additional fields
-            legalForm: request.legalForm || '',
-            businessActivity: request.businessActivity || '',
-            registeredCapital: request.registeredCapital || '',
-            estimatedRevenue: request.estimatedRevenue || '',
-            estimatedExpenses: request.estimatedExpenses || '',
           };
         }));
       } catch (error) {
         console.error('Error loading requests:', error);
-        toast.error(error?.response?.data?.message || 'Failed to load pending requests');
+        toast.error(error?.response?.data?.message || t("failedToLoadRequests"));
       } finally {
         setLoading(false);
       }
@@ -121,13 +116,13 @@ const PendingRequests = () => {
     if (!selectedRequest) return;
     try {
       await adminAPI.approveRequest(selectedRequest.id);
-      toast.success('Request approved successfully');
+      toast.success(t("requestApprovedSuccessfully"));
       setRequests(requests.filter(r => r.id !== selectedRequest.id));
       setConfirmDialogOpen(false);
       setSelectedRequest(null);
     } catch (error) {
       console.error('Error approving request:', error);
-      toast.error(error?.response?.data?.message || 'Failed to approve request');
+      toast.error(error?.response?.data?.message || t("failedToApproveRequest"));
     }
   };
 
@@ -140,7 +135,7 @@ const PendingRequests = () => {
 
   const confirmReject = async () => {
     if (!selectedRequest || !rejectionReason.trim()) {
-      toast.error('Please provide a rejection reason');
+      toast.error(t("pleaseProvideRejectionReason"));
       return;
     }
     try {
@@ -150,7 +145,7 @@ const PendingRequests = () => {
         reason: rejectionReason.trim()
       });
       await adminAPI.rejectRequest(selectedRequest.id, rejectionReason);
-      toast.success('Request rejected successfully');
+      toast.success(t("requestRejectedSuccessfully"));
       setRequests(requests.filter(r => r.id !== selectedRequest.id));
       setRejectDialogOpen(false);
       setSelectedRequest(null);
@@ -160,13 +155,13 @@ const PendingRequests = () => {
       console.error('Error response:', error?.response?.data);
       const errorMessage = error?.response?.data?.message || 
                           error?.message || 
-                          'Failed to reject request';
+                          t("failedToRejectRequest");
       toast.error(errorMessage);
       
       // If the request status is not pending, show a helpful message
       if (errorMessage.includes('Only pending requests can be rejected') || 
           errorMessage.includes('pending')) {
-        toast.warning('This request may have already been processed. Refreshing the list...');
+        toast.warning(t("thisRequestMayHaveBeenProcessed"));
         // Reload requests to get updated status
         const loadRequests = async () => {
           try {
@@ -187,12 +182,6 @@ const PendingRequests = () => {
                 status: request.status || 'pending',
                 rejectionReason: request.rejectionReason || '',
                 createdAt: request.createdAt,
-                // Additional fields
-                legalForm: request.legalForm || '',
-                businessActivity: request.businessActivity || '',
-                registeredCapital: request.registeredCapital || '',
-                estimatedRevenue: request.estimatedRevenue || '',
-                estimatedExpenses: request.estimatedExpenses || '',
               };
             }));
           } catch (e) {
@@ -205,8 +194,9 @@ const PendingRequests = () => {
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-US', {
+    if (!dateString) return t("notAvailable");
+    const locale = language === 'ar' ? 'ar-SA' : 'en-US';
+    return new Date(dateString).toLocaleDateString(locale, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -214,48 +204,8 @@ const PendingRequests = () => {
   };
 
   const formatCurrency = (amount) => {
-    if (!amount || amount === 0) return 'Not specified';
+    if (!amount || amount === 0) return t("notSpecified");
     return `${amount.toLocaleString()} OMR`;
-  };
-
-  // Helper function to get label for legal form
-  const getLegalFormLabel = (value) => {
-    if (!value) return 'N/A';
-    const legalForms = {
-      individual_trader: 'Individual Trader',
-      sole_partner: 'Sole Partner',
-      limited_liability: 'Limited Liability',
-      public_company: 'Public Company',
-      closed_company: 'Closed Company',
-      limited_partnership: 'Limited Partnership',
-      solidarity_company: 'Solidarity Company',
-    };
-    return legalForms[value] || value;
-  };
-
-  // Helper function to get label for business activity
-  const getBusinessActivityLabel = (value) => {
-    if (!value) return 'N/A';
-    const activities = {
-      financial_sector: 'Financial Sector',
-      industrial_sector: 'Industrial Sector',
-      oil_gas_sector: 'Oil & Gas Sector',
-      tourism_sector: 'Tourism Sector',
-      service_sector: 'Service Sector',
-      construction_sector: 'Construction Sector',
-      retail_sector: 'Retail Sector',
-      telecommunications_it: 'Telecommunications & IT',
-      education_sector: 'Education Sector',
-      public_sector: 'Public Sector',
-    };
-    return activities[value] || value;
-  };
-
-  const formatRiyal = (amount) => {
-    if (!amount) return 'Not specified';
-    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    if (isNaN(numAmount)) return amount;
-    return `${numAmount.toLocaleString()} Riyal`;
   };
 
   return (
@@ -268,10 +218,10 @@ const PendingRequests = () => {
             {/* Header */}
             <div className="mb-6">
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Pending Requests
+                {t("pendingRequests")}
               </h1>
               <p className="text-gray-600 dark:text-gray-400">
-                Review and approve or reject client-submitted project requests
+                {t("reviewApproveRejectRequests")}
               </p>
             </div>
 
@@ -282,7 +232,7 @@ const PendingRequests = () => {
                   <div className="flex-1 relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <Input
-                      placeholder="Search by title, description, or client name..."
+                      placeholder={t("searchByTitleDescriptionClient")}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="pl-10"
@@ -295,7 +245,7 @@ const PendingRequests = () => {
             {/* Requests Table */}
             <Card>
               <CardHeader>
-                <CardTitle>Pending Requests ({filteredRequests.length})</CardTitle>
+                <CardTitle>{t("pendingRequests")} ({filteredRequests.length})</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -306,7 +256,7 @@ const PendingRequests = () => {
                   <div className="text-center py-12">
                     <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                     <p className="text-gray-600 dark:text-gray-400">
-                      {searchQuery ? 'No requests match your search' : 'No pending requests'}
+                      {searchQuery ? t("noRequestsMatchSearch") : t("noPendingRequests")}
                     </p>
                   </div>
                 ) : (
@@ -314,13 +264,13 @@ const PendingRequests = () => {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Title</TableHead>
-                          <TableHead>Client</TableHead>
-                          <TableHead>Budget</TableHead>
-                          <TableHead>Deadline</TableHead>
-                          <TableHead>Submitted</TableHead>
-                          <TableHead>Attachments</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
+                          <TableHead>{t("title")}</TableHead>
+                          <TableHead>{t("client")}</TableHead>
+                          <TableHead>{t("budget")}</TableHead>
+                          <TableHead>{t("deadline")}</TableHead>
+                          <TableHead>{t("submitted")}</TableHead>
+                          <TableHead>{t("attachments")}</TableHead>
+                          <TableHead className="text-right">{t("actions")}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -348,10 +298,10 @@ const PendingRequests = () => {
                             <TableCell>
                               {request.attachments.length > 0 ? (
                                 <Badge variant="secondary">
-                                  {request.attachments.length} file(s)
+                                  {request.attachments.length} {t("files")}
                                 </Badge>
                               ) : (
-                                <span className="text-gray-400">None</span>
+                                <span className="text-gray-400">{t("none")}</span>
                               )}
                             </TableCell>
                             <TableCell className="text-right">
@@ -362,7 +312,7 @@ const PendingRequests = () => {
                                   onClick={() => handleView(request)}
                                 >
                                   <Eye className="w-4 h-4 mr-1" />
-                                  View
+                                  {t("view")}
                                 </Button>
                                 <Button
                                   variant="default"
@@ -371,7 +321,7 @@ const PendingRequests = () => {
                                   onClick={() => handleApprove(request)}
                                 >
                                   <CheckCircle className="w-4 h-4 mr-1" />
-                                  Approve
+                                  {t("approve")}
                                 </Button>
                                 <Button
                                   variant="destructive"
@@ -379,7 +329,7 @@ const PendingRequests = () => {
                                   onClick={() => handleReject(request)}
                                 >
                                   <XCircle className="w-4 h-4 mr-1" />
-                                  Reject
+                                  {t("reject")}
                                 </Button>
                               </div>
                             </TableCell>
@@ -401,130 +351,60 @@ const PendingRequests = () => {
           <DialogHeader>
             <DialogTitle>{getServiceTitleLabel(selectedRequest?.title, language || 'en')}</DialogTitle>
             <DialogDescription>
-              Full request details and attachments
+              {t("fullRequestDetailsAttachments")}
             </DialogDescription>
           </DialogHeader>
           {selectedRequest && (
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div>
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Description
+                  {t("description")}
                 </label>
                 <p className="mt-1 text-sm text-gray-900 dark:text-white whitespace-pre-wrap">
-                  {selectedRequest.description || 'N/A'}
+                  {selectedRequest.description}
                 </p>
               </div>
-              
-              {/* Basic Information */}
-              <div>
-                <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
-                  Basic Information
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Client
-                    </label>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                      {selectedRequest.clientName}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {selectedRequest.clientEmail}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Budget
-                    </label>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                      {formatCurrency(selectedRequest.budget)}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Deadline
-                    </label>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                      {formatDate(selectedRequest.deadline)}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Submitted
-                    </label>
-                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                      {formatDate(selectedRequest.createdAt)}
-                    </p>
-                  </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t("client")}
+                  </label>
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    {selectedRequest.clientName}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {selectedRequest.clientEmail}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t("budget")}
+                  </label>
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    {formatCurrency(selectedRequest.budget)}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t("deadline")}
+                  </label>
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    {formatDate(selectedRequest.deadline)}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {t("submitted")}
+                  </label>
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    {formatDate(selectedRequest.createdAt)}
+                  </p>
                 </div>
               </div>
-
-              {/* Business Details */}
-              {(selectedRequest.legalForm || selectedRequest.businessActivity || selectedRequest.registeredCapital || selectedRequest.estimatedRevenue || selectedRequest.estimatedExpenses) && (
-                <div>
-                  <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
-                    Business Details
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {selectedRequest.legalForm && (
-                      <div>
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Legal Form
-                        </label>
-                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                          {getLegalFormLabel(selectedRequest.legalForm)}
-                        </p>
-                      </div>
-                    )}
-                    {selectedRequest.businessActivity && (
-                      <div>
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Business Activity
-                        </label>
-                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                          {getBusinessActivityLabel(selectedRequest.businessActivity)}
-                        </p>
-                      </div>
-                    )}
-                    {selectedRequest.registeredCapital && (
-                      <div>
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Registered Capital (Riyal)
-                        </label>
-                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                          {formatRiyal(selectedRequest.registeredCapital)}
-                        </p>
-                      </div>
-                    )}
-                    {selectedRequest.estimatedRevenue && (
-                      <div>
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Estimated Revenue (Riyal)
-                        </label>
-                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                          {formatRiyal(selectedRequest.estimatedRevenue)}
-                        </p>
-                      </div>
-                    )}
-                    {selectedRequest.estimatedExpenses && (
-                      <div>
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                          Estimated Expenses (Riyal)
-                        </label>
-                        <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                          {formatRiyal(selectedRequest.estimatedExpenses)}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Attachments */}
               {selectedRequest.attachments.length > 0 && (
                 <div>
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                    Attachments ({selectedRequest.attachments.length})
+                    {t("attachments")} ({selectedRequest.attachments.length})
                   </label>
                   <div className="space-y-2">
                     {selectedRequest.attachments.map((att, idx) => (
@@ -537,7 +417,7 @@ const PendingRequests = () => {
                       >
                         <Download className="w-4 h-4 text-gray-500" />
                         <span className="text-sm text-gray-900 dark:text-white truncate">
-                          {att.name || `File ${idx + 1}`}
+                          {att.name || `${t("file")} ${idx + 1}`}
                         </span>
                       </a>
                     ))}
@@ -553,20 +433,20 @@ const PendingRequests = () => {
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reject Request</DialogTitle>
+            <DialogTitle>{t("rejectRequest")}</DialogTitle>
             <DialogDescription>
-              Please provide a reason for rejecting this request. The client will see this reason.
+              {t("provideRejectionReason")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                Rejection Reason *
+                {t("rejectionReason")} *
               </label>
               <Textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Enter the reason for rejection..."
+                placeholder={t("enterReasonForRejection")}
                 rows={4}
                 className="w-full"
               />
@@ -579,14 +459,14 @@ const PendingRequests = () => {
                   setRejectionReason('');
                 }}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 variant="destructive"
                 onClick={confirmReject}
                 disabled={!rejectionReason.trim()}
               >
-                Reject Request
+                {t("rejectRequest")}
               </Button>
             </div>
           </div>
@@ -597,13 +477,13 @@ const PendingRequests = () => {
       <AlertDialog
         open={confirmDialogOpen}
         onOpenChange={setConfirmDialogOpen}
-        title={confirmAction === 'approve' ? 'Approve Request' : 'Confirm Action'}
+        title={confirmAction === 'approve' ? t("approveRequest") : t("confirmAction")}
         description={
           confirmAction === 'approve'
-            ? `Are you sure you want to approve "${getServiceTitleLabel(selectedRequest?.title, language || 'en')}"? This will make it visible to service providers.`
-            : 'Are you sure you want to proceed?'
+            ? `${t("areYouSureApproveRequest").replace("{title}", getServiceTitleLabel(selectedRequest?.title, language || 'en'))}`
+            : t("areYouSureWantToProceed")
         }
-        confirmText={confirmAction === 'approve' ? 'Approve' : 'Confirm'}
+        confirmText={confirmAction === 'approve' ? t("approve") : t("confirm")}
         onConfirm={confirmApprove}
         variant={confirmAction === 'approve' ? 'default' : 'destructive'}
       />

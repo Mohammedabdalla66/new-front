@@ -13,11 +13,15 @@ import {
 } from "lucide-react";
 import { usersAPI } from "../../services/api";
 import { useAuth } from "../../hooks/useAuth";
+import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import "./ProfileForm.css";
+import { DarkModeToggle } from "./DarkModeToggle";
 
 export const ProfileForm = ({ onSave }) => {
   const { user: authUser, login } = useAuth();
+  const { t, i18n } = useTranslation();
+  const isArabic = i18n.language === "ar";
   const [localUser, setLocalUser] = useState(null);
   const [activeTab, setActiveTab] = useState("account");
   const [isEditing, setIsEditing] = useState(false);
@@ -74,7 +78,9 @@ export const ProfileForm = ({ onSave }) => {
           });
           setPreview(storedUser.avatar || "/assets/default-avatar.png");
         }
-        toast.error("Failed to load profile data");
+        toast.error(
+          t("failedToLoadProfileData") || "Failed to load profile data"
+        );
       } finally {
         setLoading(false);
       }
@@ -102,13 +108,17 @@ export const ProfileForm = ({ onSave }) => {
     const file = e.target.files[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        toast.error("Please select an image file");
+      if (!file.type.startsWith("image/")) {
+        toast.error(
+          t("pleaseSelectImageFile") || "Please select an image file"
+        );
         return;
       }
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image size must be less than 5MB");
+        toast.error(
+          t("imageSizeTooLarge") || "Image size must be less than 5MB"
+        );
         return;
       }
       const imageUrl = URL.createObjectURL(file);
@@ -122,50 +132,54 @@ export const ProfileForm = ({ onSave }) => {
   const handleSave = async () => {
     try {
       setSaving(true);
-      
+
       // First, upload avatar if changed
       if (avatarFile) {
         try {
           const formData = new FormData();
-          formData.append('avatar', avatarFile);
-          
-          toast.info("Uploading avatar...");
+          formData.append("avatar", avatarFile);
+
+          toast.info(t("uploadingAvatar") || "Uploading avatar...");
           const avatarResponse = await usersAPI.uploadAvatar(formData);
-          
+
           if (avatarResponse.data.success) {
-            const newAvatar = avatarResponse.data.data.avatar;
-            const updatedUserWithAvatar = { ...localUser, avatar: newAvatar };
-            setLocalUser(updatedUserWithAvatar);
-            setPreview(newAvatar);
+            setLocalUser({
+              ...localUser,
+              avatar: avatarResponse.data.data.avatar,
+            });
+            setPreview(avatarResponse.data.data.avatar);
             setAvatarFile(null);
-            
-            // Immediately update auth context with new avatar so header updates
-            const userToStore = {
-              ...updatedUserWithAvatar,
-              id: updatedUserWithAvatar._id || updatedUserWithAvatar.id || authUser?.id,
-              email: updatedUserWithAvatar.email || authUser?.email,
-              name: updatedUserWithAvatar.name || authUser?.name,
-            };
-            login(userToStore);
-            
-            toast.success("Avatar uploaded successfully");
+            toast.success(
+              t("avatarUploadedSuccess") || "Avatar uploaded successfully"
+            );
           } else {
-            toast.error(avatarResponse.data.message || "Failed to upload avatar");
+            toast.error(
+              avatarResponse.data.message ||
+                t("failedToUploadAvatar") ||
+                "Failed to upload avatar"
+            );
             setSaving(false);
             return;
           }
         } catch (avatarError) {
           console.error("Error uploading avatar:", avatarError);
-          if (avatarError.code === 'ECONNABORTED') {
-            toast.error("Avatar upload timed out. Please try again or use a smaller image.");
+          if (avatarError.code === "ECONNABORTED") {
+            toast.error(
+              t("avatarUploadTimeout") ||
+                "Avatar upload timed out. Please try again or use a smaller image."
+            );
           } else {
-            toast.error(avatarError?.response?.data?.message || "Failed to upload avatar. Please try again.");
+            toast.error(
+              avatarError?.response?.data?.message ||
+                t("failedToUploadAvatarRetry") ||
+                "Failed to upload avatar. Please try again."
+            );
           }
           setSaving(false);
           return;
         }
       }
-      
+
       // Then update profile
       const updateData = {
         name: localUser.name,
@@ -173,46 +187,54 @@ export const ProfileForm = ({ onSave }) => {
         address: localUser.address || "",
         nationality: localUser.nationality || "",
       };
-      
+
       // Add service provider specific fields
-      if (localUser.role === 'serviceProvider') {
+      if (localUser.role === "serviceProvider") {
         if (localUser.taxId) updateData.taxId = localUser.taxId;
-        if (localUser.licenseNumber) updateData.licenseNumber = localUser.licenseNumber;
+        if (localUser.licenseNumber)
+          updateData.licenseNumber = localUser.licenseNumber;
       }
-      
-      toast.info("Updating profile...");
+
+      toast.info(t("updatingProfile") || "Updating profile...");
       const response = await usersAPI.updateProfile(updateData);
-      
+
       if (response.data.success) {
         const updatedUser = response.data.data;
-        // Preserve avatar if it exists in localUser (in case profile update doesn't return it)
-        const finalUser = {
-          ...updatedUser,
-          avatar: updatedUser.avatar || localUser.avatar,
-        };
-        setLocalUser(finalUser);
-        setPreview(finalUser.avatar || "/assets/default-avatar.png");
-        
+        setLocalUser(updatedUser);
+
         // Update auth context and localStorage
         const userToStore = {
-          ...finalUser,
-          id: finalUser._id || finalUser.id,
+          ...updatedUser,
+          id: updatedUser._id || updatedUser.id,
         };
         login(userToStore);
-        
+
         setIsEditing(false);
         setHasChanges(false);
-        toast.success("Profile updated successfully");
+        toast.success(
+          t("profileUpdatedSuccess") || "Profile updated successfully"
+        );
         if (onSave) onSave(updatedUser);
       } else {
-        toast.error(response.data.message || "Failed to update profile");
+        toast.error(
+          response.data.message ||
+            t("failedToUpdateProfile") ||
+            "Failed to update profile"
+        );
       }
     } catch (error) {
       console.error("Error saving profile:", error);
-      if (error.code === 'ECONNABORTED') {
-        toast.error("Request timed out. Please check your connection and try again.");
+      if (error.code === "ECONNABORTED") {
+        toast.error(
+          t("requestTimeout") ||
+            "Request timed out. Please check your connection and try again."
+        );
       } else {
-        toast.error(error?.response?.data?.message || "Failed to save profile");
+        toast.error(
+          error?.response?.data?.message ||
+            t("failedToSaveProfile") ||
+            "Failed to save profile"
+        );
       }
     } finally {
       setSaving(false);
@@ -221,10 +243,16 @@ export const ProfileForm = ({ onSave }) => {
 
   // Tab configuration
   const tabs = [
-    { id: "account", label: "Account Info", icon: User },
-    { id: "security", label: "Security", icon: Shield },
+    { id: "account", label: t("accountInfo") || "Account Info", icon: User },
+    { id: "security", label: t("security"), icon: Shield },
     ...(localUser.role === "accountant"
-      ? [{ id: "company", label: "Company Info", icon: Building2 }]
+      ? [
+          {
+            id: "company",
+            label: t("companyInfo") || "Company Info",
+            icon: Building2,
+          },
+        ]
       : []),
   ];
 
@@ -235,7 +263,10 @@ export const ProfileForm = ({ onSave }) => {
         return (
           <div className="space-y-6">
             {/* Profile Photo Section */}
-            <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
+            <div
+              className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6"
+              style={isArabic ? { flexDirection: "row-reverse" } : {}}
+            >
               <div className="relative">
                 <img
                   src={preview}
@@ -268,7 +299,11 @@ export const ProfileForm = ({ onSave }) => {
                   className="text-xs sm:text-sm capitalize"
                   style={{ color: "var(--profile-text-secondary)" }}
                 >
-                  {localUser.accountType} Account
+                  {localUser.accountType
+                    ? t(localUser.accountType.toLowerCase()) ||
+                      localUser.accountType
+                    : t("account")}{" "}
+                  {t("account")}
                 </p>
                 {isEditing && (
                   <button
@@ -279,7 +314,7 @@ export const ProfileForm = ({ onSave }) => {
                     className="text-sm mt-1 profile-transition"
                     style={{ color: "var(--profile-accent)" }}
                   >
-                    Change Photo
+                    {t("changePhoto")}
                   </button>
                 )}
               </div>
@@ -292,7 +327,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Full Name
+                  {t("fullName")}
                 </label>
                 <input
                   type="text"
@@ -308,7 +343,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Email Address
+                  {t("emailAddress")}
                 </label>
                 <input
                   type="email"
@@ -324,7 +359,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Phone Number
+                  {t("phoneNumber")}
                 </label>
                 <input
                   type="tel"
@@ -340,7 +375,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Country
+                  {t("country")}
                 </label>
                 <input
                   type="text"
@@ -356,7 +391,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Account Type
+                  {t("accountType")}
                 </label>
                 <select
                   value={localUser.accountType || "individual"}
@@ -364,9 +399,9 @@ export const ProfileForm = ({ onSave }) => {
                   onChange={(e) => handleChange("accountType", e.target.value)}
                   className="profile-input w-full px-4 py-3 border rounded-lg profile-transition"
                 >
-                  <option value="individual">Individual</option>
-                  <option value="business">Business</option>
-                  <option value="enterprise">Enterprise</option>
+                  <option value="individual">{t("individual")}</option>
+                  <option value="business">{t("business")}</option>
+                  <option value="enterprise">{t("enterprise")}</option>
                 </select>
               </div>
             </div>
@@ -377,17 +412,20 @@ export const ProfileForm = ({ onSave }) => {
         return (
           <div className="space-y-6">
             <div className="profile-info-box rounded-lg p-4">
-              <div className="flex items-center">
+              <div
+                className="flex items-center"
+                style={isArabic ? { flexDirection: "row-reverse" } : {}}
+              >
                 <Shield
                   className="h-5 w-5 mr-2"
                   style={{ color: "var(--profile-warning-text)" }}
                 />
                 <h4 className="text-sm font-medium profile-info-box-text">
-                  Security Settings
+                  {t("securitySettings")}
                 </h4>
               </div>
               <p className="text-sm profile-info-box-text-light mt-1">
-                Manage your password and security preferences
+                {t("managePasswordSecurity")}
               </p>
             </div>
 
@@ -397,7 +435,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Current Password
+                  {t("currentPassword")}
                 </label>
                 <input
                   type="password"
@@ -411,7 +449,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  New Password
+                  {t("newPassword")}
                 </label>
                 <input
                   type="password"
@@ -425,7 +463,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Confirm New Password
+                  {t("confirmNewPassword")}
                 </label>
                 <input
                   type="password"
@@ -441,17 +479,20 @@ export const ProfileForm = ({ onSave }) => {
         return (
           <div className="space-y-6">
             <div className="profile-info-box rounded-lg p-4">
-              <div className="flex items-center">
+              <div
+                className="flex items-center"
+                style={isArabic ? { flexDirection: "row-reverse" } : {}}
+              >
                 <Building2
                   className="h-5 w-5 mr-2"
                   style={{ color: "var(--profile-warning-text)" }}
                 />
                 <h4 className="text-sm font-medium profile-info-box-text">
-                  Company Information
+                  {t("companyInformation")}
                 </h4>
               </div>
               <p className="text-sm profile-info-box-text-light mt-1">
-                Professional details for accounting services
+                {t("professionalDetailsAccounting")}
               </p>
             </div>
 
@@ -461,7 +502,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Company Name
+                  {t("companyName")}
                 </label>
                 <input
                   type="text"
@@ -477,7 +518,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Company Email
+                  {t("companyEmail")}
                 </label>
                 <input
                   type="email"
@@ -493,7 +534,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Company Phone
+                  {t("companyPhone")}
                 </label>
                 <input
                   type="tel"
@@ -509,7 +550,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  License Number
+                  {t("licenseNumber")}
                 </label>
                 <input
                   type="text"
@@ -527,7 +568,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Company Address
+                  {t("companyAddress")}
                 </label>
                 <textarea
                   value={localUser.companyAddress || ""}
@@ -545,7 +586,7 @@ export const ProfileForm = ({ onSave }) => {
                   className="block text-sm font-medium mb-2"
                   style={{ color: "var(--profile-text-tertiary)" }}
                 >
-                  Tax ID
+                  {t("taxId")}
                 </label>
                 <input
                   type="text"
@@ -565,7 +606,11 @@ export const ProfileForm = ({ onSave }) => {
   };
 
   return (
-    <div className="min-h-screen profile-form-container py-4 sm:py-8">
+    <div
+      className="min-h-screen profile-form-container py-4 sm:py-8"
+      dir={isArabic ? "rtl" : "ltr"}
+    >
+      <DarkModeToggle />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-4 sm:mb-8">
@@ -573,13 +618,13 @@ export const ProfileForm = ({ onSave }) => {
             className="text-xl sm:text-2xl lg:text-3xl font-bold"
             style={{ color: "var(--profile-text-primary)" }}
           >
-            Profile Settings
+            {t("profileSettings")}
           </h1>
           <p
             className="mt-1 sm:mt-2 text-sm sm:text-base"
             style={{ color: "var(--profile-text-secondary)" }}
           >
-            Manage your account information and preferences
+            {t("manageAccountInfoPreferences")}
           </p>
         </div>
 
@@ -590,7 +635,10 @@ export const ProfileForm = ({ onSave }) => {
             className="border-b"
             style={{ borderColor: "var(--profile-border-primary)" }}
           >
-            <nav className="flex space-x-2 sm:space-x-4 lg:space-x-8 px-3 sm:px-6 overflow-x-auto">
+            <nav
+              className="flex space-x-2 sm:space-x-4 lg:space-x-8 px-3 sm:px-6 overflow-x-auto"
+              style={isArabic ? { flexDirection: "row-reverse" } : {}}
+            >
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -600,6 +648,7 @@ export const ProfileForm = ({ onSave }) => {
                     className={`profile-tab flex items-center py-3 sm:py-4 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm profile-transition whitespace-nowrap ${
                       activeTab === tab.id ? "active" : ""
                     }`}
+                    style={isArabic ? { flexDirection: "row-reverse" } : {}}
                   >
                     <Icon className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
                     <span className="hidden sm:inline">{tab.label}</span>
@@ -614,14 +663,20 @@ export const ProfileForm = ({ onSave }) => {
           <div className="p-4 sm:p-6">{renderTabContent()}</div>
 
           {/* Action Buttons */}
-          <div className="profile-action-bar px-4 sm:px-6 py-3 sm:py-4 border-t flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+          <div
+            className="profile-action-bar px-4 sm:px-6 py-3 sm:py-4 border-t flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
+            style={isArabic ? { flexDirection: "row-reverse" } : {}}
+          >
             <div
               className="text-xs sm:text-sm"
               style={{ color: "var(--profile-text-secondary)" }}
             >
-              {hasChanges && "You have unsaved changes"}
+              {hasChanges && t("unsavedChanges")}
             </div>
-            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+            <div
+              className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto"
+              style={isArabic ? { flexDirection: "row-reverse" } : {}}
+            >
               {isEditing ? (
                 <>
                   <button
@@ -632,23 +687,24 @@ export const ProfileForm = ({ onSave }) => {
                     }}
                     className="profile-btn-secondary px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg profile-transition w-full sm:w-auto"
                   >
-                    Cancel
+                    {t("cancel")}
                   </button>
                   <button
                     type="button"
                     onClick={handleSave}
                     disabled={!hasChanges || saving}
                     className="profile-btn-primary px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg profile-transition flex items-center justify-center w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={isArabic ? { flexDirection: "row-reverse" } : {}}
                   >
                     {saving ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Saving...
+                        {t("saving")}
                       </>
                     ) : (
                       <>
                         <Save className="h-4 w-4 mr-2" />
-                        Save Changes
+                        {t("saveChanges")}
                       </>
                     )}
                   </button>
@@ -658,9 +714,10 @@ export const ProfileForm = ({ onSave }) => {
                   type="button"
                   onClick={() => setIsEditing(true)}
                   className="profile-btn-primary px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-lg profile-transition flex items-center justify-center w-full sm:w-auto"
+                  style={isArabic ? { flexDirection: "row-reverse" } : {}}
                 >
                   <Edit3 className="h-4 w-4 mr-2" />
-                  Edit Profile
+                  {t("editProfile")}
                 </button>
               )}
             </div>

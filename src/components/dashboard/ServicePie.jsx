@@ -1,7 +1,9 @@
 import React from "react";
 import { PieChart } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const ServicePie = ({ data = [], loading }) => {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 animate-pulse">
@@ -13,10 +15,10 @@ const ServicePie = ({ data = [], loading }) => {
 
   // Default mock data if no data provided
   const pieData = data.length > 0 ? data : [
-    { name: "Tax Preparation", value: 35, color: "#3B82F6" },
-    { name: "Bookkeeping", value: 25, color: "#10B981" },
-    { name: "Auditing", value: 20, color: "#F59E0B" },
-    { name: "Consulting", value: 20, color: "#8B5CF6" },
+    { name: t("taxPreparation"), value: 35, color: "#3B82F6" },
+    { name: t("bookkeeping"), value: 25, color: "#10B981" },
+    { name: t("auditing"), value: 20, color: "#F59E0B" },
+    { name: t("consultation"), value: 20, color: "#8B5CF6" },
   ];
 
   const total = pieData.reduce((sum, item) => sum + (item.value || 0), 0);
@@ -25,7 +27,7 @@ const ServicePie = ({ data = [], loading }) => {
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Service Distribution
+          {t("serviceDistribution")}
         </h3>
         <PieChart className="w-5 h-5 text-gray-600 dark:text-gray-400" />
       </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Navbar from "../components/Layout/Navbar";
 import AdminSidebar from "../components/sidebar/AdminSidebar";
 import { ProfileForm } from "../components/Profile/ProfileForm.jsx";
@@ -17,6 +18,9 @@ const mockAdmin = {
 };
 
 export default function AdminProfile() {
+  const { t, i18n } = useTranslation();
+  const isArabic = i18n.language === "ar";
+
   const [user, setUser] = useState(mockAdmin);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -29,7 +33,10 @@ export default function AdminProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
+    <div
+      className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex"
+      dir={isArabic ? "rtl" : "ltr"}
+    >
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-30 md:hidden"
@@ -43,14 +50,19 @@ export default function AdminProfile() {
         <main className="flex-1 overflow-y-auto p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Admin Profile
+              {t("adminProfile")}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Manage your administrator information and preferences.
+              {t("manageAdministratorInfo")}
             </p>
           </div>
 
-          <ProfileForm user={user} onSave={handleSave} />
+          <ProfileForm
+            user={user}
+            onSave={handleSave}
+            isArabic={isArabic}
+            t={t}
+          />
 
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-700 p-6 text-center">
@@ -58,7 +70,7 @@ export default function AdminProfile() {
                 12
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                Active Firms Managed
+                {t("activeFirmsManaged")}
               </div>
             </div>
             <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-700 p-6 text-center">
@@ -66,7 +78,7 @@ export default function AdminProfile() {
                 1,240
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                Clients Across Firms
+                {t("clientsAcrossFirms")}
               </div>
             </div>
             <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm border border-gray-100 dark:border-neutral-700 p-6 text-center">
@@ -74,7 +86,7 @@ export default function AdminProfile() {
                 98%
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                System Health
+                {t("systemHealth")}
               </div>
             </div>
           </div>

@@ -1,22 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Bell, Search, Menu, User } from "lucide-react";
+import { Bell, Search, Menu } from "lucide-react";
 import CaHupLogo from "../CaHupLogo";
-import { useAuth } from "../../hooks/useAuth";
+import UserDropdown from "../ui/UserDropdown";
 
 
-export const Header = ({ user: userProp, onToggleSidebar }) => {
-  const { user: authUser } = useAuth();
-  
-  // Use auth user directly, fallback to prop if provided
-  const user = authUser || userProp;
-  
-  // Get profile route - always go to client profile
-  const getProfileRoute = () => {
-    return "/client/profile";
-  };
-  
-
+export const Header = ({ user, onToggleSidebar }) => {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -58,36 +46,8 @@ export const Header = ({ user: userProp, onToggleSidebar }) => {
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
-          {/* User Profile Link */}
-          {user && (
-            <Link
-              to={getProfileRoute()}
-              className="flex items-center space-x-2 text-gray-700 hover:text-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-lg px-2 py-1"
-            >
-              {/* Avatar */}
-              <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center overflow-hidden">
-                {user?.avatar ? (
-                  <img
-                    key={user.avatar} // Force re-render when avatar changes
-                    src={user.avatar}
-                    alt={user.name || user.email || "User"}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      // Fallback to default if image fails to load
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                ) : (
-                  <User className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                )}
-              </div>
-
-              {/* User Name - hidden on mobile */}
-              <span className="hidden md:block text-sm font-medium dark:text-white">
-                {user.name || user.email || "User"}
-              </span>
-            </Link>
-          )}
+          {/* User Dropdown */}
+          <UserDropdown user={user} />
         </div>
       </div>
     </header>

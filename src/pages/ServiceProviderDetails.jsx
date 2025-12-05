@@ -37,9 +37,11 @@ import { adminAPI } from "../services/adminApi";
 import { toast } from "react-toastify";
 import { getServiceTitleLabel } from "../utils/titleUtils";
 import { useLanguage } from "../contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 
 const ServiceProviderDetails = () => {
   const { language } = useLanguage();
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
@@ -57,12 +59,12 @@ const ServiceProviderDetails = () => {
         if (response.data.success) {
           setData(response.data.data);
         } else {
-          setError("Failed to load service provider details");
+          setError(t("error"));
         }
       } catch (err) {
         console.error("Error fetching service provider:", err);
-        setError(err.response?.data?.message || "Failed to load service provider");
-        toast.error("Failed to load service provider details");
+        setError(err.response?.data?.message || t("error"));
+        toast.error(t("error"));
       } finally {
         setLoading(false);
       }
@@ -95,7 +97,7 @@ const ServiceProviderDetails = () => {
   };
 
   const formatCurrency = (amount) => {
-    if (!amount || amount === 0) return "Not specified";
+    if (!amount || amount === 0) return t("notSpecifiedAmount");
     return `${amount.toLocaleString()} OMR`;
   };
 
@@ -121,7 +123,7 @@ const ServiceProviderDetails = () => {
           <Navbar onToggleSidebar={toggleSidebar} />
           <main className="flex-1 overflow-y-auto p-6">
             <div className="text-center py-12 text-red-600 dark:text-red-400">
-              {error || "Service provider not found"}
+              {error || t("error")}
             </div>
           </main>
         </div>
@@ -130,10 +132,10 @@ const ServiceProviderDetails = () => {
   }
 
   const tabs = [
-    { id: "profile", label: "Profile", icon: User },
-    { id: "proposals", label: "Proposals", icon: FileText },
-    { id: "transactions", label: "Transactions", icon: CreditCard },
-    { id: "messages", label: "Messages", icon: MessageSquare },
+    { id: "profile", label: t("profile"), icon: User },
+    { id: "proposals", label: t("proposals"), icon: FileText },
+    { id: "transactions", label: t("transactions"), icon: CreditCard },
+    { id: "messages", label: t("messages"), icon: MessageSquare },
   ];
 
   return (
@@ -160,7 +162,7 @@ const ServiceProviderDetails = () => {
                 onClick={() => navigate("/admin/service-providers")}
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />
-                Back
+                {t("back")}
               </Button>
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-primary-500 rounded-lg flex items-center justify-center">
@@ -173,7 +175,7 @@ const ServiceProviderDetails = () => {
                     {data.name}
                   </h1>
                   <p className="text-neutral-600 dark:text-neutral-400">
-                    Service Provider Details
+                    {t("serviceProviderDetails")}
                   </p>
                 </div>
               </div>
@@ -215,18 +217,18 @@ const ServiceProviderDetails = () => {
                 >
                   <Card>
                     <CardHeader>
-                      <CardTitle>Basic Information</CardTitle>
+                      <CardTitle>{t("basicInformation")}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="text-sm text-neutral-500">Name</label>
+                          <label className="text-sm text-neutral-500">{t("name")}</label>
                           <p className="text-sm font-medium text-neutral-900 dark:text-white">
                             {data.name}
                           </p>
                         </div>
                         <div>
-                          <label className="text-sm text-neutral-500">Email</label>
+                          <label className="text-sm text-neutral-500">{t("email")}</label>
                           <div className="flex items-center space-x-2">
                             <Mail className="w-4 h-4 text-neutral-400" />
                             <p className="text-sm font-medium text-neutral-900 dark:text-white">
@@ -235,7 +237,7 @@ const ServiceProviderDetails = () => {
                           </div>
                         </div>
                         <div>
-                          <label className="text-sm text-neutral-500">Phone</label>
+                          <label className="text-sm text-neutral-500">{t("phone")}</label>
                           <div className="flex items-center space-x-2">
                             <Phone className="w-4 h-4 text-neutral-400" />
                             <p className="text-sm font-medium text-neutral-900 dark:text-white">
@@ -244,27 +246,27 @@ const ServiceProviderDetails = () => {
                           </div>
                         </div>
                         <div>
-                          <label className="text-sm text-neutral-500">Status</label>
+                          <label className="text-sm text-neutral-500">{t("status")}</label>
                           <div>
                             <Badge variant={data.verified ? "success" : "warning"}>
-                              {data.verified ? "Active" : "Pending"}
+                              {data.verified ? t("active") : t("pending")}
                             </Badge>
                           </div>
                         </div>
                         <div>
-                          <label className="text-sm text-neutral-500">Tax ID</label>
+                          <label className="text-sm text-neutral-500">{t("taxId")}</label>
                           <p className="text-sm font-medium text-neutral-900 dark:text-white">
                             {data.taxId || "—"}
                           </p>
                         </div>
                         <div>
-                          <label className="text-sm text-neutral-500">License Number</label>
+                          <label className="text-sm text-neutral-500">{t("licenseNumber")}</label>
                           <p className="text-sm font-medium text-neutral-900 dark:text-white">
                             {data.licenseNumber || "—"}
                           </p>
                         </div>
                         <div>
-                          <label className="text-sm text-neutral-500">Created At</label>
+                          <label className="text-sm text-neutral-500">{t("createdAt")}</label>
                           <div className="flex items-center space-x-2">
                             <Calendar className="w-4 h-4 text-neutral-400" />
                             <p className="text-sm font-medium text-neutral-900 dark:text-white">
@@ -279,7 +281,7 @@ const ServiceProviderDetails = () => {
                   {/* Documents */}
                   <Card>
                     <CardHeader>
-                      <CardTitle>Documents ({data.documents?.length || 0})</CardTitle>
+                      <CardTitle>{t("documents")} ({data.documents?.length || 0})</CardTitle>
                     </CardHeader>
                     <CardContent>
                       {data.documents && data.documents.length > 0 ? (
@@ -296,7 +298,7 @@ const ServiceProviderDetails = () => {
                                     {doc.name || `Document ${index + 1}`}
                                   </p>
                                   <p className="text-xs text-neutral-500">
-                                    {doc.type || "Document"}
+                                    {doc.type || t("documents")}
                                   </p>
                                 </div>
                               </div>
@@ -306,13 +308,13 @@ const ServiceProviderDetails = () => {
                                 rel="noopener noreferrer"
                                 className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
                               >
-                                View
+                                {t("view")}
                               </a>
                             </div>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-neutral-500">No documents uploaded</p>
+                        <p className="text-sm text-neutral-500">{t("noDocumentsUploaded")}</p>
                       )}
                     </CardContent>
                   </Card>
@@ -328,7 +330,7 @@ const ServiceProviderDetails = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle>
-                        Proposals ({data.proposals?.length || 0})
+                        {t("proposals")} ({data.proposals?.length || 0})
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -337,11 +339,11 @@ const ServiceProviderDetails = () => {
                           <Table>
                             <TableHeader>
                               <TableRow>
-                                <TableHead>Request</TableHead>
-                                <TableHead>Price</TableHead>
-                                <TableHead>Duration</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Date</TableHead>
+                                <TableHead>{t("request")}</TableHead>
+                                <TableHead>{t("price")}</TableHead>
+                                <TableHead>{t("duration")}</TableHead>
+                                <TableHead>{t("status")}</TableHead>
+                                <TableHead>{t("date")}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -351,7 +353,7 @@ const ServiceProviderDetails = () => {
                                     {proposal.requestTitle ? getServiceTitleLabel(proposal.requestTitle, language || 'en') : "—"}
                                   </TableCell>
                                   <TableCell>{formatCurrency(proposal.price)}</TableCell>
-                                  <TableCell>{proposal.durationDays || "—"} days</TableCell>
+                                  <TableCell>{proposal.durationDays || "—"} {t("days")}</TableCell>
                                   <TableCell>
                                     <Badge
                                       variant={
@@ -372,7 +374,7 @@ const ServiceProviderDetails = () => {
                           </Table>
                         </div>
                       ) : (
-                        <p className="text-sm text-neutral-500">No proposals found</p>
+                        <p className="text-sm text-neutral-500">{t("noProposalsFound")}</p>
                       )}
                     </CardContent>
                   </Card>
@@ -388,7 +390,7 @@ const ServiceProviderDetails = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle>
-                        Transactions ({data.transactions?.length || 0})
+                        {t("transactions")} ({data.transactions?.length || 0})
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -397,11 +399,11 @@ const ServiceProviderDetails = () => {
                           <Table>
                             <TableHeader>
                               <TableRow>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Amount</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Description</TableHead>
-                                <TableHead>Date</TableHead>
+                                <TableHead>{t("type")}</TableHead>
+                                <TableHead>{t("amount")}</TableHead>
+                                <TableHead>{t("status")}</TableHead>
+                                <TableHead>{t("description")}</TableHead>
+                                <TableHead>{t("date")}</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -436,7 +438,7 @@ const ServiceProviderDetails = () => {
                           </Table>
                         </div>
                       ) : (
-                        <p className="text-sm text-neutral-500">No transactions found</p>
+                        <p className="text-sm text-neutral-500">{t("noTransactionsFound")}</p>
                       )}
                     </CardContent>
                   </Card>
@@ -452,7 +454,7 @@ const ServiceProviderDetails = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle>
-                        Conversations ({data.messagesSummary?.length || 0})
+                        {t("conversations")} ({data.messagesSummary?.length || 0})
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -470,14 +472,14 @@ const ServiceProviderDetails = () => {
                                       {msg.clientName}
                                     </p>
                                     {msg.unread > 0 && (
-                                      <Badge variant="secondary">{msg.unread} unread</Badge>
+                                      <Badge variant="secondary">{msg.unread} {t("unread")}</Badge>
                                     )}
                                   </div>
                                   <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">
                                     {msg.clientEmail}
                                   </p>
                                   <p className="text-sm text-neutral-700 dark:text-neutral-300">
-                                    {msg.lastMessage || "No messages"}
+                                    {msg.lastMessage || t("noMessages")}
                                   </p>
                                 </div>
                                 <div className="text-xs text-neutral-500">
@@ -488,7 +490,7 @@ const ServiceProviderDetails = () => {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-sm text-neutral-500">No conversations found</p>
+                        <p className="text-sm text-neutral-500">{t("noConversationsFound")}</p>
                       )}
                     </CardContent>
                   </Card>

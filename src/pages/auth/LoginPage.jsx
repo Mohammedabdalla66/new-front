@@ -8,6 +8,7 @@ import { loginSchema } from '../../utils/validationSchemas';
 import { useAuth } from '../../hooks/useAuth';
 import { authAPI } from '../../services/api.js';
 import CaHupLogo from "../../components/CaHupLogo";
+import { useLanguage } from '../../contexts/LanguageContext';
 
 
 const LoginPage = () => {
@@ -17,6 +18,7 @@ const LoginPage = () => {
   const [cooldownTimer, setCooldownTimer] = useState(null);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useLanguage();
 
   const {
     register,
@@ -75,7 +77,7 @@ const LoginPage = () => {
         } catch {}
       }
 
-      toast.success('Logged in successfully');
+      toast.success(t('loggedInSuccessfully'));
 
       const role = (userFromApi?.type || userFromApi?.role || 'client').toLowerCase();
       let redirectPath = '/';
@@ -97,9 +99,9 @@ const LoginPage = () => {
       
       // Check if it's a 403 (pending account), 401 (invalid credentials), or 429 (rate limit)
       if (error?.response?.status === 403) {
-        toast.error(errorMessage || 'Your account is under review. Please wait for admin approval.');
+        toast.error(errorMessage || t('accountUnderReview'));
       } else if (error?.response?.status === 401) {
-        toast.error(errorMessage || 'Invalid email or password.');
+        toast.error(errorMessage || t('invalidEmailOrPassword'));
       } else if (error?.response?.status === 429) {
         // Extract retry-after from response
         const retryAfterSeconds = error?.response?.data?.retryAfter || 
@@ -108,7 +110,7 @@ const LoginPage = () => {
                                   900; // Default to 15 minutes (900 seconds)
         
         const retryAfterMinutes = Math.ceil(retryAfterSeconds / 60);
-        const message = `Too many login attempts. Please wait ${retryAfterMinutes} minute${retryAfterMinutes !== 1 ? 's' : ''} before trying again.`;
+        const message = `${t('tooManyLoginAttempts')} ${retryAfterMinutes} ${t('minutesBeforeTrying')}`;
         
         toast.error(message, { autoClose: 8000 });
         
@@ -121,7 +123,7 @@ const LoginPage = () => {
             if (prev <= 1) {
               clearInterval(timer);
               setCooldownTimer(null);
-              toast.info('You can now try logging in again.');
+              toast.info(t('youCanTryAgain'));
               return null;
             }
             return prev - 1;
@@ -144,19 +146,19 @@ const LoginPage = () => {
       <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
           <CaHupLogo className="w-11 h-11 text-blue-600" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-        <p className="text-gray-600">Sign in to your account to continue</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t('welcomeBack')}</h2>
+        <p className="text-gray-600">{t('signInToAccount')}</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Email Field */}
         <div>
-          <label className="form-label">Email Address</label>
+          <label className="form-label">{t('emailAddress')}</label>
           <input
             type="email"
             {...register('email')}
             className="form-input"
-            placeholder="Enter your email address"
+            placeholder={t('enterEmailAddress')}
           />
           {errors.email && (
             <p className="form-error">{errors.email.message}</p>
@@ -165,13 +167,13 @@ const LoginPage = () => {
 
         {/* Password Field */}
         <div>
-          <label className="form-label">Password</label>
+          <label className="form-label">{t('password')}</label>
           <div className="relative">
             <input
               type={showPassword ? 'text' : 'password'}
               {...register('password')}
               className="form-input pr-10"
-              placeholder="Enter your password"
+              placeholder={t('enterPassword')}
             />
             <button
               type="button"
@@ -196,7 +198,7 @@ const LoginPage = () => {
             to="/auth/forgot-password"
             className="text-sm text-green-600 hover:text-green-700 font-medium"
           >
-            Forgot your password?
+            {t('forgotPassword')}
           </Link>
         </div>
 
@@ -210,12 +212,12 @@ const LoginPage = () => {
           {loading ? (
             <div className="flex items-center justify-center">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-              Signing in...
+              {t('signingIn')}
             </div>
           ) : retryAfter && retryAfter > 0 ? (
             `Wait ${Math.ceil(retryAfter / 60)}m ${retryAfter % 60}s`
           ) : (
-            'Sign In'
+            t('signIn')
           )}
         </button>
 
@@ -224,8 +226,8 @@ const LoginPage = () => {
           <p 
           onClick={GotoRegister}
           className="text-sm text-gray-600">
-            Don't have an account?{' '}
-            <button  className="font-medium text-green-600 hover:text-green-700" >Create an account</button>
+            {t('dontHaveAccount')}{' '}
+            <button  className="font-medium text-green-600 hover:text-green-700" >{t('createAccount')}</button>
           </p>
         </div>
       </form>
