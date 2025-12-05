@@ -64,7 +64,7 @@ const Footer = () => {
           {/* Quick Links */}
           <div>
             <h3 className="font-semibold text-lg mb-4">
-              {language === "ar" ? "روابط سريعة" : "Quick Links"}
+              {t("quickLinks")}
             </h3>
             <ul className="space-y-2">
               {footerLinks.map((link) => (
@@ -83,7 +83,7 @@ const Footer = () => {
           {/* Contact Info */}
           <div>
             <h3 className="font-semibold text-lg mb-4">
-              {language === "ar" ? "تواصل معنا" : "Contact Us"}
+              {t("contactUs")}
             </h3>
             <div className="space-y-2">
               <div className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400">
@@ -105,7 +105,7 @@ const Footer = () => {
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>
-            &copy; 2025 CaHup {language === "ar" ? "جميع الحقوق محفوظة." : "All rights reserved."}
+            &copy; 2025 CaHup {t("allRightsReserved")}
           </p>
         </div>
       </div>

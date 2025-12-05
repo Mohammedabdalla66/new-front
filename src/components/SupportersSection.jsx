@@ -65,7 +65,7 @@ const SupportersSection = () => {
 
       <div className="bg-white py-8 border-t">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h3 className="text-2xl font-bold text-[#1976D2] mb-6">الشركاء</h3>
+          <h3 className="text-2xl font-bold text-[#1976D2] mb-6">{t("partners")}</h3>
           <div className="flex justify-center items-center gap-12">
             <img src="https://fintechgate.net/wp-content/uploads/2025/03/WhatsApp-Image-2025-03-13-at-10.43.12-AM.jpeg" alt="Partner Logo" className="h-12 object-contain opacity-70" />
             <img src="https://muscataudit.com/wp-content/uploads/2025/03/cropped-cropped-MAAS-Logo-jpeg.jpg" alt="Partner Logo" className="h-12 object-contain opacity-70" />

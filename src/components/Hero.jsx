@@ -33,9 +33,7 @@ const Hero = () => {
               {t("heroSubtitle")}
             </p>
             <p className="text-lg text-white/80 mb-8 leading-relaxed">
-              {language === "ar" 
-                ? "تواصل مع مكاتب تدقيق معتمدة ومرخصة وإحصل على عروض أسعار متعددة وإختر أفضل عرض يناسب إحتياجات عملك"
-                : "Connect with accredited and licensed auditing offices and get multiple price offers and choose the best offer that suits your business needs"}
+              {t("heroDescription")}
             </p>
 
             {/* CTA Button */}
@@ -43,12 +41,12 @@ const Hero = () => {
               <button 
                 onClick={GoToLogin}
                 className="bg-[#F97316] text-white px-10 py-4 rounded-lg text-lg font-semibold hover:bg-[#EA580C] transition-colors shadow-lg hover:shadow-xl">
-                {language === "ar" ? "ابدء الخدمة" : "Start Service"}
+                {t("startService")}
               </button>
             </div>
 
             <p className="text-white/90 text-lg mb-4">
-              {language === "ar" ? "ما هي الخدمة التي تحتاجها ؟" : "What service do you need?"}
+              {t("whatServiceNeed")}
             </p>
           </div>
 
@@ -66,21 +64,21 @@ const Hero = () => {
             <div className="absolute top-8 left-8 rtl:left-auto rtl:right-8 bg-[#1E40AF] rounded-full p-6 shadow-xl">
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-1">1000 +</div>
-                <div className="text-sm text-white/90">{language === "ar" ? "عميل" : "Client"}</div>
+                <div className="text-sm text-white/90">{t("client")}</div>
               </div>
             </div>
             
             <div className="absolute top-32 right-12 rtl:right-auto rtl:left-12 bg-[#F97316] rounded-full p-6 shadow-xl">
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-1">500 +</div>
-                <div className="text-sm text-white/90">{language === "ar" ? "مكاتب مرخصة ومعتمدة" : "Licensed Offices"}</div>
+                <div className="text-sm text-white/90">{t("licensedOffices")}</div>
               </div>
             </div>
             
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 rtl:translate-x-1/2 bg-[#1E40AF] rounded-full p-6 shadow-xl">
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-1">200 +</div>
-                <div className="text-sm text-white/90">{language === "ar" ? "خدمة منفذة" : "Services Executed"}</div>
+                <div className="text-sm text-white/90">{t("servicesExecuted")}</div>
               </div>
             </div>
           </div>

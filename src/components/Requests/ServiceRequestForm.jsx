@@ -515,7 +515,7 @@ export const ServiceRequestForm = () => {
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">{t("selectBudgetRange")}</option>
-                  <option value="10-50">0 - 50 {language === "ar" ? "ريال" : "Riyal"}</option>
+                  <option value="10-50">25 - 50 {language === "ar" ? "ريال" : "Riyal"}</option>
                 <option value="50-100">50 - 100 {language === "ar" ? "ريال" : "Riyal"}</option>
                 <option value="100-250">200 - 250 {language === "ar" ? "ريال" : "Riyal"}</option>
                 <option value="250-500">250 - 500 {language === "ar" ? "ريال" : "Riyal"}</option>

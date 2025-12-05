@@ -21,10 +21,16 @@ const translations = {
     heroTitle: "خدمات محاسبية موثوقة بين يديك",
     heroSubtitle:
       "منصتنا تربطك بمحترفين في جميع مجالات المحاسبة والتدقيق والضرائب.",
+    heroDescription: "تواصل مع مكاتب تدقيق معتمدة ومرخصة وإحصل على عروض أسعار متعددة وإختر أفضل عرض يناسب إحتياجات عملك",
     findService: "ابحث عن خدمة",
+    startService: "ابدء الخدمة",
+    whatServiceNeed: "ما هي الخدمة التي تحتاجها ؟",
     joinAsAccountant: "انضم كمحاسب",
     certifiedAccountants: "500+ محاسب معتمد",
     clientsServed: "1000+ عميل",
+    client: "عميل",
+    licensedOffices: "مكاتب مرخصة ومعتمدة",
+    servicesExecuted: "خدمة منفذة",
     completedServices: "2000+ خدمة منفذة",
 
     // How it Works
@@ -33,6 +39,10 @@ const translations = {
     step2: "استقبل عروض من المحاسبين",
     step3: "تواصل وادفع بأمان",
     step4: "استلم الخدمة بجودة عالية",
+    step1New: "اعدد متطلباتك او اكثر خدمة",
+    step2New: "استقبال العروض من المكاتب",
+    step3New: "تواصل وادفع الأجر",
+    step4New: "استلام الخدمة بطريقة رقمية",
 
     // Services
     featuredServices: "الخدمات المميزة",
@@ -42,6 +52,11 @@ const translations = {
     auditing: "المراجعة والتدقيق",
     financialConsulting: "الاستشارات المالية",
     payroll: "الرواتب والتأمينات",
+    economicFeasibility: "دراسات الجدوى الاقتصادية",
+    companyFormation: "تأسيس الشركات ودراسة قياس",
+    realEstateValuation: "التقييم العقاري وقياس",
+    learnMore: "تعرّف على المزيد",
+    searchForService: "ابحث عن الخدمة",
 
     // Top Accountants
     topAccountants: "أفضل المحاسبين",
@@ -50,10 +65,23 @@ const translations = {
 
     // Why Choose Us
     whyChooseUs: "لماذا تختارنا",
+    whyChooseUsTitle: "لماذا تختار منصة المحاسب القانوني؟",
     certifiedProfessionals: "محاسبون معتمدون",
     securePayment: "دفع آمن",
     verifiedContracts: "عقود موثقة",
     support24: "دعم متواصل",
+    competitivePrices: "أسعار تنافسية",
+    competitivePricesDesc: "نساعد في شبدا علية محاسبة اعتماداً شامل زمن الخدمات نسعون تساعدنا محافظ تبدم",
+    specializedAccountants: "محاسبون متخصصون ومدققون",
+    specializedAccountantsDesc: "مراجعين اعلانك تحت أصداء جهاز محاسب متخصص دعدارة جراءة",
+    speedFlexibility: "سرعة ومرونة",
+    speedFlexibilityDesc: "مرونة عبر كل ترخيص للعلم سرعة قرية نيا وجه موضاع استفسارات",
+    accuracyVerification: "دقة الإعادة والتحقق",
+    accuracyVerificationDesc: "صادق فرح سور سرور تحت مير كولج وزارة حديثة جول نية شخدة عمل",
+    fastCommunication: "تواصل سريع",
+    fastCommunicationDesc: "صلات قلدم مع المغامعت خلال تواصل مفيشلي حملاء محدداً",
+    competitiveOffers: "عروض تنافسية",
+    competitiveOffersDesc: "متاحة فرائض جوق بأفضل الأوضاع معاجناً عامة منصة اجتمعت",
 
     // Testimonials
     testimonials: "آراء العملاء",
@@ -67,11 +95,43 @@ const translations = {
       "ابدأ الآن — سواء كنت تبحث عن خدمة محاسبية أو تريد تقديم خدماتك كمحاسب محترف.",
     signUpAccountant: "سجّل كمحاسب",
 
+    // Quality & Rights
+    qualityRightsTitle: "كيف نضمن حقوقك وجودة أعمالك",
+    continuousCommunication: "تواصل مستمر",
+    continuousCommunicationDesc: "تواصل مع عدة مكاتب معتمدة، أسرع رد على عدة استفسارات، حصل على عروض تنافسية سعر",
+    transactionGuarantee: "ضمان معاملتك",
+    transactionGuaranteeDesc: "سنضمن لك سلامة تواصلك، سندعم قراراتك ونحفظ أموالك من أي خلل",
+    differentChannels: "منفذات مختلفة",
+    differentChannelsDesc: "عدة قنوات متاحة، أصدر عروض أسعار وقائمة احتياجات متوافقة معك لمعرفة احتياجاتك",
+    qualityGuarantee: "ضمان الجودة",
+    qualityGuaranteeDesc: "نضمن لك تلقي عمل مطابق للمعايير المحلية والدولية، تحمل أي فروق من نقع",
+    verifiedAccountants: "مدقق خدمات محاسبين ومدققين",
+    verifiedAccountantsDesc: "قائمة من محاسبين متخصصين من بدعدارة اعتمادات من اعلام يدعم المعرفة المؤسسات البنائية جهة",
+    intellectualRights: "حفظ حقوقكم الفكرية",
+    intellectualRightsDesc: "تمتع بمنصة دمج بيانات المصلحة ترفع تلقائية تجارية عروض الخدمات الثانوية عائلية",
+    
+    // FAQ
+    faqTitle: "هل لديك أسئلة ؟ اليك إجابات لأكثر الأسئلة شيوعا",
+    faqQ1: "كم يستغرق الوقت للحصول على العروض؟",
+    faqA1: "عادة ما تستغرق العروض من 24 إلى 48 ساعة بعد نشر مشروعك.",
+    faqQ2: "ما هي تكلفة الخدمة للعميل؟",
+    faqA2: "الخدمة مجانية حالياً للعملاء.",
+    faqQ3: "كيف نضمن جودة مكاتب التدقيق؟",
+    faqA3: "نعمل فقط مع مكاتب مسجلة ومعتمدة في هيئة الخدمات المالية.",
+    faqQ4: "كيف نضمن أمان الدفع؟",
+    faqA4: "نستخدم نظام ضمان حيث تبقى الأموال في الحساب حتى اكتمال المشروع.",
+    faqQ5: "ماذا يحدث بعد قبول عرض السعر؟",
+    faqA5: "يتم إنشاء عقد وتبدأ عملية التواصل والدفع الآمن.",
+    
     // Footer
     aboutUs: "عن الموقع",
     privacyPolicy: "سياسة الخصوصية",
     terms: "الشروط",
     support: "الدعم",
+    partners: "الشركاء",
+    quickLinks: "روابط سريعة",
+    contactUs: "تواصل معنا",
+    allRightsReserved: "جميع الحقوق محفوظة.",
 
     // Modal
     addProjectTitle: "إضافة مشروع جديد",
@@ -1061,10 +1121,16 @@ const translations = {
     heroTitle: "Trusted Accounting Services at Your Fingertips",
     heroSubtitle:
       "Our platform connects you with certified professionals for all accounting, auditing, and tax needs.",
+    heroDescription: "Connect with accredited and licensed auditing offices and get multiple price offers and choose the best offer that suits your business needs",
     findService: "Find a Service",
+    startService: "Start Service",
+    whatServiceNeed: "What service do you need?",
     joinAsAccountant: "Join as Accountant",
     certifiedAccountants: "500+ Certified Accountants",
     clientsServed: "1000+ Clients",
+    client: "Client",
+    licensedOffices: "Licensed Offices",
+    servicesExecuted: "Services Executed",
     completedServices: "2000+ Completed Services",
 
     // How it Works
@@ -1073,6 +1139,10 @@ const translations = {
     step2: "Receive offers from accountants",
     step3: "Communicate & pay securely",
     step4: "Get your service delivered",
+    step1New: "Prepare your requirements or choose a service",
+    step2New: "Receive offers from offices",
+    step3New: "Communicate and pay the fee",
+    step4New: "Receive service digitally",
 
     // Services
     featuredServices: "Featured Services",
@@ -1082,6 +1152,11 @@ const translations = {
     auditing: "Auditing & Review",
     financialConsulting: "Financial Consulting",
     payroll: "Payroll & Insurance",
+    economicFeasibility: "Economic Feasibility Studies",
+    companyFormation: "Company Formation and Measurement Studies",
+    realEstateValuation: "Real Estate Valuation and Measurement",
+    learnMore: "Learn More",
+    searchForService: "Search for service",
 
     // Top Accountants
     topAccountants: "Top Accountants",
@@ -1090,10 +1165,23 @@ const translations = {
 
     // Why Choose Us
     whyChooseUs: "Why Choose Us",
+    whyChooseUsTitle: "Why Choose The Legal Accountant Platform?",
     certifiedProfessionals: "Certified Professionals",
     securePayment: "Secure Payment",
     verifiedContracts: "Verified Contracts",
     support24: "24/7 Support",
+    competitivePrices: "Competitive Prices",
+    competitivePricesDesc: "We help with comprehensive accounting services based on time and service needs",
+    specializedAccountants: "Specialized Accountants and Auditors",
+    specializedAccountantsDesc: "Professional accountants and auditors with expertise in the field",
+    speedFlexibility: "Speed and Flexibility",
+    speedFlexibilityDesc: "Flexibility across all licensing with fast response to inquiries",
+    accuracyVerification: "Accuracy and Verification",
+    accuracyVerificationDesc: "Accurate work with verification and quality assurance",
+    fastCommunication: "Fast Communication",
+    fastCommunicationDesc: "Quick connections with clients through efficient communication channels",
+    competitiveOffers: "Competitive Offers",
+    competitiveOffersDesc: "Available offers with the best conditions and competitive pricing",
 
     // Testimonials
     testimonials: "What Our Clients Say",
@@ -1107,11 +1195,43 @@ const translations = {
       "Get started today — whether you need accounting services or want to offer your expertise.",
     signUpAccountant: "Sign Up as Accountant",
 
+    // Quality & Rights
+    qualityRightsTitle: "How We Ensure Your Rights & Quality of Your Work",
+    continuousCommunication: "Continuous Communication",
+    continuousCommunicationDesc: "Connect with multiple accredited offices, faster response to inquiries, get competitive price offers",
+    transactionGuarantee: "Transaction Guarantee",
+    transactionGuaranteeDesc: "We guarantee the safety of your communication, support your decisions and protect your money from any issues",
+    differentChannels: "Different Channels",
+    differentChannelsDesc: "Multiple channels available, issue price offers and requirements list compatible with you to know your needs",
+    qualityGuarantee: "Quality Guarantee",
+    qualityGuaranteeDesc: "We guarantee you receive work that matches local and international standards",
+    verifiedAccountants: "Verified Accountant and Auditor Services",
+    verifiedAccountantsDesc: "List of specialized accountants with accreditations and certifications",
+    intellectualRights: "Protect Your Intellectual Rights",
+    intellectualRightsDesc: "Enjoy a platform that integrates data and automatically raises commercial service offers",
+    
+    // FAQ
+    faqTitle: "Do you have questions? Here are answers to the most common questions",
+    faqQ1: "How long does it take to receive offers?",
+    faqA1: "Offers usually take 24 to 48 hours after publishing your project.",
+    faqQ2: "What is the service cost for clients?",
+    faqA2: "The service is currently free for clients.",
+    faqQ3: "How do we ensure the quality of auditing offices?",
+    faqA3: "We only work with offices registered and accredited with the Financial Services Authority.",
+    faqQ4: "How do we ensure payment security?",
+    faqA4: "We use an escrow system where funds remain in the account until project completion.",
+    faqQ5: "What happens after accepting a price offer?",
+    faqA5: "A contract is created and the communication and secure payment process begins.",
+    
     // Footer
     aboutUs: "About Us",
     privacyPolicy: "Privacy Policy",
     terms: "Terms",
     support: "Support",
+    partners: "Partners",
+    quickLinks: "Quick Links",
+    contactUs: "Contact Us",
+    allRightsReserved: "All rights reserved.",
 
     // Modal
     addProjectTitle: "Add New Project",

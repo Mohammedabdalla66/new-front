@@ -74,6 +74,11 @@ const PendingRequests = () => {
             status: request.status || 'pending',
             rejectionReason: request.rejectionReason || '',
             createdAt: request.createdAt,
+            legalForm: request.legalForm || '',
+            businessActivity: request.businessActivity || '',
+            registeredCapital: request.registeredCapital || '',
+            estimatedRevenue: request.estimatedRevenue || '',
+            estimatedExpenses: request.estimatedExpenses || '',
           };
         }));
       } catch (error) {
@@ -182,6 +187,11 @@ const PendingRequests = () => {
                 status: request.status || 'pending',
                 rejectionReason: request.rejectionReason || '',
                 createdAt: request.createdAt,
+                legalForm: request.legalForm || '',
+                businessActivity: request.businessActivity || '',
+                registeredCapital: request.registeredCapital || '',
+                estimatedRevenue: request.estimatedRevenue || '',
+                estimatedExpenses: request.estimatedExpenses || '',
               };
             }));
           } catch (e) {
@@ -206,6 +216,47 @@ const PendingRequests = () => {
   const formatCurrency = (amount) => {
     if (!amount || amount === 0) return t("notSpecified");
     return `${amount.toLocaleString()} OMR`;
+  };
+
+  // Helper function to get legal form label
+  const getLegalFormLabel = (value) => {
+    if (!value) return t("notSpecified");
+    const options = {
+      individual_trader: language === "ar" ? "تاجر فرد" : "Individual Trader",
+      sole_partner: language === "ar" ? "الشريك الواحد" : "Sole Partner",
+      limited_liability: language === "ar" ? "محدودية المسؤولية" : "Limited Liability",
+      public_company: language === "ar" ? "مساهمة عامة" : "Public Company",
+      closed_company: language === "ar" ? "مساهمة مغلقة" : "Closed Company",
+      limited_partnership: language === "ar" ? "توصية" : "Limited Partnership",
+      solidarity_company: language === "ar" ? "تضامنية" : "Solidarity Company",
+    };
+    return options[value] || value;
+  };
+
+  // Helper function to get business activity label
+  const getBusinessActivityLabel = (value) => {
+    if (!value) return t("notSpecified");
+    const options = {
+      financial_sector: language === "ar" ? "القطاع المالي" : "Financial Sector",
+      industrial_sector: language === "ar" ? "القطاع الصناعي" : "Industrial Sector",
+      oil_gas_sector: language === "ar" ? "قطاع النفط والغاز" : "Oil & Gas Sector",
+      tourism_sector: language === "ar" ? "القطاع السياحي" : "Tourism Sector",
+      service_sector: language === "ar" ? "القطاع الخدمي" : "Service Sector",
+      construction_sector: language === "ar" ? "البناء والإنشاءات" : "Construction Sector",
+      retail_sector: language === "ar" ? "قطاع التجزئة" : "Retail Sector",
+      telecommunications_it: language === "ar" ? "الاتصالات وتقنية المعلومات" : "Telecommunications & IT",
+      education_sector: language === "ar" ? "التعليم" : "Education Sector",
+      public_sector: language === "ar" ? "قطاع عام" : "Public Sector",
+    };
+    return options[value] || value;
+  };
+
+  // Helper function to format number with OMR
+  const formatNumber = (value) => {
+    if (!value || value === '') return t("notSpecified");
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return t("notSpecified");
+    return `${numValue.toLocaleString()} OMR`;
   };
 
   return (
@@ -347,7 +398,7 @@ const PendingRequests = () => {
 
       {/* View Dialog */}
       <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{getServiceTitleLabel(selectedRequest?.title, language || 'en')}</DialogTitle>
             <DialogDescription>
@@ -355,57 +406,116 @@ const PendingRequests = () => {
             </DialogDescription>
           </DialogHeader>
           {selectedRequest && (
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Basic Information */}
               <div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t("description")}
-                </label>
-                <p className="mt-1 text-sm text-gray-900 dark:text-white whitespace-pre-wrap">
-                  {selectedRequest.description}
-                </p>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  {t("basicInformation") || "Basic Information"}
+                </h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t("description")}
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white whitespace-pre-wrap bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
+                      {selectedRequest.description}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {t("client")}
+                      </label>
+                      <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                        {selectedRequest.clientName}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {selectedRequest.clientEmail}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {t("budget")}
+                      </label>
+                      <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                        {selectedRequest.budget || t("notSpecified")}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {t("deadline")}
+                      </label>
+                      <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                        {formatDate(selectedRequest.deadline)}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {t("submitted")}
+                      </label>
+                      <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                        {formatDate(selectedRequest.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t("client")}
-                  </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {selectedRequest.clientName}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {selectedRequest.clientEmail}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t("budget")}
-                  </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {formatCurrency(selectedRequest.budget)}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t("deadline")}
-                  </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {formatDate(selectedRequest.deadline)}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t("submitted")}
-                  </label>
-                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
-                    {formatDate(selectedRequest.createdAt)}
-                  </p>
+
+              {/* Company Information */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  {t("companyInformation") || "Company Information"}
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t("legalFormLabel") || "Legal Form"}
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                      {getLegalFormLabel(selectedRequest.legalForm)}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t("businessActivityLabel") || "Business Activity"}
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                      {getBusinessActivityLabel(selectedRequest.businessActivity)}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t("registeredCapitalLabel") || "Registered Capital"}
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                      {formatNumber(selectedRequest.registeredCapital)}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t("estimatedRevenueLabel") || "Estimated Revenue"}
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                      {formatNumber(selectedRequest.estimatedRevenue)}
+                    </p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t("estimatedExpensesLabel") || "Estimated Expenses"}
+                    </label>
+                    <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                      {formatNumber(selectedRequest.estimatedExpenses)}
+                    </p>
+                  </div>
                 </div>
               </div>
+
+              {/* Attachments */}
               {selectedRequest.attachments.length > 0 && (
                 <div>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     {t("attachments")} ({selectedRequest.attachments.length})
-                  </label>
+                  </h3>
                   <div className="space-y-2">
                     {selectedRequest.attachments.map((att, idx) => (
                       <a
@@ -413,9 +523,9 @@ const PendingRequests = () => {
                         href={att.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 p-2 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                        className="flex items-center gap-2 p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                       >
-                        <Download className="w-4 h-4 text-gray-500" />
+                        <Download className="w-4 h-4 text-gray-500 flex-shrink-0" />
                         <span className="text-sm text-gray-900 dark:text-white truncate">
                           {att.name || `${t("file")} ${idx + 1}`}
                         </span>
