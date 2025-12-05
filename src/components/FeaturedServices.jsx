@@ -7,10 +7,15 @@ import {
   Search,
   TrendingUp,
   Users,
+  BarChart3,
+  Network,
+  FileSearch,
+  ClipboardCheck,
+  Award,
 } from "lucide-react";
 
 const FeaturedServices = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const services = [
     {
@@ -58,41 +63,81 @@ const FeaturedServices = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {t("featuredServices")}
-          </h2>
+    <section className="py-16 bg-white">
+    <div className="max-w-7xl mx-auto px-6 text-center">
+      <h2 className="text-4xl font-bold text-[#1976D2] mb-12">الخدمات المميزة</h2>
+
+      <div className="grid grid-cols-3 gap-8 mb-8">
+        <div className="border-b-4 border-[#1976D2] bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <BarChart3 className="text-[#FF6B35]" size={32} />
+          </div>
+          <h3 className="text-xl font-bold text-[#1976D2] mb-3">دراسات الجدوى الاقتصادية</h3>
+          <p className="text-gray-600 text-sm mb-4">تعرّف على المزيد</p>
+          <a href="#" className="text-[#1976D2] text-sm flex items-center justify-center gap-2">
+            <span>←</span>
+          </a>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, index) => {
-            const IconComponent = service.icon;
-            return (
-              <div
-                key={index}
-                className={`${service.bgColor} ${service.borderColor} border-2 rounded-xl p-6 hover:shadow-lg transition-all duration-300 cursor-pointer group hover:scale-105`}
-              >
-                <div className="flex items-center mb-4">
-                  <div
-                    className={`p-3 bg-white rounded-lg shadow-sm group-hover:shadow-md transition-shadow`}
-                  >
-                    <IconComponent className={`h-6 w-6 ${service.iconColor}`} />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mr-4 rtl:mr-0 rtl:ml-4">
-                    {t(service.titleKey)}
-                  </h3>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  {t("findService")} {t(service.titleKey).toLowerCase()}
-                </p>
-              </div>
-            );
-          })}
+        <div className="border-b-4 border-[#1976D2] bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <FileText className="text-[#FF6B35]" size={32} />
+          </div>
+          <h3 className="text-xl font-bold text-[#1976D2] mb-3">إعداد القوائم المالية</h3>
+          <p className="text-gray-600 text-sm mb-4">تعرّف على المزيد</p>
+          <a href="#" className="text-[#1976D2] text-sm flex items-center justify-center gap-2">
+            <span>←</span>
+          </a>
+        </div>
+
+        <div className="border-b-4 border-[#1976D2] bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <Network className="text-[#FF6B35]" size={32} />
+          </div>
+          <h3 className="text-xl font-bold text-[#1976D2] mb-3">تأسيس الشركات ودراسة قياس</h3>
+          <p className="text-gray-600 text-sm mb-4">تعرّف على المزيد</p>
+          <a href="#" className="text-[#1976D2] text-sm flex items-center justify-center gap-2">
+            <span>←</span>
+          </a>
         </div>
       </div>
-    </section>
+
+      <div className="grid grid-cols-3 gap-8">
+        <div className="border-b-4 border-[#1976D2] bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <FileSearch className="text-[#FF6B35]" size={32} />
+          </div>
+          <h3 className="text-xl font-bold text-[#1976D2] mb-3">الاستشارات المالية</h3>
+          <p className="text-gray-600 text-sm mb-4">تعرّف على المزيد</p>
+          <a href="#" className="text-[#1976D2] text-sm flex items-center justify-center gap-2">
+            <span>←</span>
+          </a>
+        </div>
+
+        <div className="border-b-4 border-[#1976D2] bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <ClipboardCheck className="text-[#FF6B35]" size={32} />
+          </div>
+          <h3 className="text-xl font-bold text-[#1976D2] mb-3">المراجعة والتدقيق</h3>
+          <p className="text-gray-600 text-sm mb-4">تعرّف على المزيد</p>
+          <a href="#" className="text-[#1976D2] text-sm flex items-center justify-center gap-2">
+            <span>←</span>
+          </a>
+        </div>
+
+        <div className="border-b-4 border-[#1976D2] bg-gray-50 p-8 rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <Award className="text-[#FF6B35]" size={32} />
+          </div>
+          <h3 className="text-xl font-bold text-[#1976D2] mb-3">التقييم العقاري وقياس</h3>
+          <p className="text-gray-600 text-sm mb-4">تعرّف على المزيد</p>
+          <a href="#" className="text-[#1976D2] text-sm flex items-center justify-center gap-2">
+            <span>←</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
   );
 };
 

@@ -1,52 +1,64 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
-import { Users, Shield, FolderOpen, MessageSquare, CheckCircle, Headphones, Network, Lock } from "lucide-react";
+import { Users, Shield, FolderOpen, MessageCircle, CheckCircle, Headphones, Network, Lock } from "lucide-react";
 
-const QualitySection = () => {
+const QualityRights = () => {
   const { t, language } = useLanguage();
 
   const features = [
     {
       icon: Users,
-      titleKey: "accreditedProviders",
-      descriptionKey: "accreditedProvidersDesc",
-      bgColor: "bg-blue-100",
+      titleKey: language === "ar" ? "مكاتب مرخصة ومعتمدة" : "Accredited and Licensed Service Providers",
+      descriptionKey: language === "ar" 
+        ? "نعمل مع مكاتب مسجلة في هيئة الخدمات المالية في عمان"
+        : "We work with offices registered with the Financial Services Authority in Oman",
+      bgColor: "bg-blue-50",
       iconColor: "text-blue-600",
     },
     {
       icon: Shield,
-      titleKey: "financialRights",
-      descriptionKey: "financialRightsDesc",
-      bgColor: "bg-green-100",
+      titleKey: language === "ar" ? "الحفاظ على حقوقك المالية" : "Preserving Your Financial Rights",
+      descriptionKey: language === "ar"
+        ? "تبقى قيمة الصفقة في الحساب حتى يتم استلام المشروع بالكامل"
+        : "The deal value remains in the account until the project is fully received",
+      bgColor: "bg-green-50",
       iconColor: "text-green-600",
     },
     {
       icon: FolderOpen,
-      titleKey: "integratedFiles",
-      descriptionKey: "integratedFilesDesc",
-      bgColor: "bg-purple-100",
+      titleKey: language === "ar" ? "ملفات متكاملة" : "Integrated Files",
+      descriptionKey: language === "ar"
+        ? "ملفات تعرض تقييمات فريدة وخبرة مقدمي الخدمات"
+        : "Files showing unique evaluations and experience of service providers",
+      bgColor: "bg-purple-50",
       iconColor: "text-purple-600",
     },
     {
-      icon: MessageSquare,
-      titleKey: "priorCommunication",
-      descriptionKey: "priorCommunicationDesc",
-      bgColor: "bg-orange-100",
+      icon: MessageCircle,
+      titleKey: language === "ar" ? "التواصل المسبق" : "Prior Communication",
+      descriptionKey: language === "ar"
+        ? "التواصل داخل المنصة لتوضيح الاتفاقيات قبل بدء المشروع"
+        : "In-platform communication to clarify agreements before starting a project",
+      bgColor: "bg-orange-50",
       iconColor: "text-orange-600",
     },
     {
       icon: CheckCircle,
-      titleKey: "guaranteeRights",
-      descriptionKey: "guaranteeRightsDesc",
-      bgColor: "bg-teal-100",
+      titleKey: language === "ar" ? "ضمان الحقوق" : "Guarantee of Rights",
+      descriptionKey: language === "ar"
+        ? "استرداد كامل إذا لم يتم استلام العمل المتفق عليه"
+        : "Full refund if the agreed work is not received",
+      bgColor: "bg-teal-50",
       iconColor: "text-teal-600",
     },
     {
       icon: Headphones,
-      titleKey: "supportAssistance",
-      descriptionKey: "supportAssistanceDesc",
-      bgColor: "bg-pink-100",
-      iconColor: "text-pink-600",
+      titleKey: language === "ar" ? "الدعم والمساعدة" : "Support and Assistance",
+      descriptionKey: language === "ar"
+        ? "فريق متاح على مدار الساعة للمساعدة"
+        : "24/7 team availability for assistance",
+      bgColor: "bg-red-50",
+      iconColor: "text-red-600",
     },
   ];
 
@@ -139,4 +151,5 @@ const QualitySection = () => {
   );
 };
 
-export default QualitySection;  
+export default QualityRights;
+

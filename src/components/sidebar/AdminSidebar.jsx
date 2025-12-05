@@ -14,6 +14,7 @@ import {
   LogOut,
   ClipboardList,
   FileCheck,
+  Package,
 } from "lucide-react";
 import { selectSidebarCollapsed } from "../../features/theme/themeSlice";
 import { useAuth } from "../../hooks/useAuth";
@@ -50,15 +51,21 @@ export default function AdminSidebar({
     },
     {
       icon: FileCheck,
-      label: t("pendingRequests"),
+      label: "Pending Requests",
       path: "/admin/requests/pending",
       active: location.pathname === "/admin/requests/pending",
     },
     {
       icon: ClipboardList,
-      label: t("proposals"),
+      label: "Proposals",
       path: "/admin/proposals",
       active: location.pathname === "/admin/proposals",
+    },
+    {
+      icon: Package,
+      label: "In-Progress Orders",
+      path: "/admin/orders/in-progress",
+      active: location.pathname === "/admin/orders/in-progress",
     },
     {
       icon: CreditCard,

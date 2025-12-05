@@ -14,12 +14,9 @@ import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { toast } from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
-import { markNotificationsByType } from '../features/socket/socketSlice';
 
 const AdminInProgressOrders = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,18 +31,6 @@ const AdminInProgressOrders = () => {
   const [systemMessage, setSystemMessage] = useState('');
   const [warningData, setWarningData] = useState({ target: 'client', message: '' });
   const [statusAction, setStatusAction] = useState({ orderId: null, newStatus: '' });
-
-  // Clear order notifications when page opens
-  useEffect(() => {
-    dispatch(markNotificationsByType({ type: 'order' }));
-  }, [dispatch]);
-
-  // Clear order-specific notifications when viewing order details
-  useEffect(() => {
-    if (selectedOrder) {
-      dispatch(markNotificationsByType({ type: 'order', id: selectedOrder }));
-    }
-  }, [selectedOrder, dispatch]);
 
   // Fetch in-progress orders
   const fetchOrders = useCallback(async () => {

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../hooks/useAuth";
 import CaHupLogo from "./CaHupLogo";
-import UserDropdown from "./ui/UserDropdown";
+import ExternalUserDropdown from "./ui/ExternalUserDropdown";
 import { Menu, X, Bell, MessageCircle } from "lucide-react";
 
 const Header = ({ onAddProject }) => {
@@ -21,41 +21,20 @@ const Header = ({ onAddProject }) => {
   ];
 
   return (
-    <header className="bg-white shadow-lg sticky top-0 z-50">
-      <div className=" mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="bg-[#1E40AF] sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center ml-2 space-x-2 rtl:space-x-reverse"
-          >
-            <CaHupLogo className="h-8 w-8" />
-            <span className="font-bold text-xl text-gray-900">
-              {language === "ar" ? "CaHup" : "CaHup"}
-            </span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
-            {navItems.map((item) => (
-              <Link
-                key={item.key}
-                to={item.path}
-                className="text-gray-700 hover:text-blue-700 font-medium transition-colors"
-              >
-                {t(item.key)}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Desktop Actions */}
-          <div className="hidden md:flex items-center space-x-4 rtl:space-x-reverse mr-2">
+          {/* Left Side - Language & Auth (RTL) */}
+          <div className="flex items-center space-x-4 rtl:space-x-reverse">
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
-              className="px-3 py-1 text-sm font-medium text-gray-700 hover:text-blue-700 border border-gray-300 rounded-md hover:border-blue-300 transition-colors"
+              className="flex items-center space-x-2 rtl:space-x-reverse text-white hover:text-blue-200 transition-colors"
             >
-              {language === "ar" ? "EN" : "عربي"}
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+              </svg>
+              <span className="text-sm font-medium">{language === "ar" ? "EN" : "عربي"}</span>
             </button>
 
             {/* Not Logged In */}
@@ -63,68 +42,80 @@ const Header = ({ onAddProject }) => {
               <>
                 <Link
                   to="/auth/login"
-                  className="text-gray-700 hover:text-blue-700 font-medium"
+                  className="text-white hover:text-blue-200 font-medium text-sm transition-colors"
                 >
-                  {t('login')}
+                  {language === "ar" ? "تسجيل الدخول" : "Login"}
                 </Link>
                 <Link
                   to="/auth/register"
-                  className="text-gray-700 hover:text-blue-700 font-medium"
+                  className="text-white hover:text-blue-200 font-medium text-sm transition-colors"
                 >
-                  {t('register')}
+                  {language === "ar" ? "إنشاء حساب" : "Register"}
                 </Link>
               </>
             ) : (
               <>   
                 {/* Notifications */}
-                <button className="relative p-2 text-gray-600 hover:text-blue-700 transition-colors">
+                <button className="relative p-2 text-white hover:text-blue-200 transition-colors">
                   <Bell className="h-5 w-5" />
                   
                 </button>
 
                 {/* Messages */}
-                <button className="relative p-2 text-gray-600 hover:text-blue-700 transition-colors">
+                <button className="relative p-2 text-white hover:text-blue-200 transition-colors">
                   <MessageCircle className="h-5 w-5" />
                   
                 </button>
 
-                {/* User Dropdown */}
-                <UserDropdown user={user} />
+                {/* User Dropdown - External/Homepage version */}
+                <ExternalUserDropdown user={user} />
               </>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMobileMenu}
-            className="md:hidden p-2 text-gray-600 hover:text-blue-700"
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
+          {/* Right Side - Logo (RTL) */}
+          <div className="flex items-center">
+            <Link
+              to="/"
+              className="flex items-center space-x-2 rtl:space-x-reverse"
+            >
+              <CaHupLogo className="h-8 w-8 text-white" />
+              <span className="font-bold text-xl text-white">
+                {language === "ar" ? "CaHup" : "CaHup"}
+              </span>
+            </Link>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMobileMenu}
+              className="md:hidden p-2 text-white hover:text-blue-200 mr-2 rtl:mr-0 rtl:ml-2"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200">
+          <div className="md:hidden border-t border-blue-700 bg-[#1E40AF]">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link
                   key={item.key}
                   to={item.path}
-                  className="block px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"
+                  className="block px-3 py-2 text-white hover:text-blue-200 font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {t(item.key)}
                 </Link>
               ))}
-              ;
               <button
                 onClick={toggleLanguage}
-                className="block px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"
+                className="block px-3 py-2 text-white hover:text-blue-200 font-medium"
               >
                 {language === "ar" ? "English" : "عربي"}
               </button>
@@ -134,36 +125,36 @@ const Header = ({ onAddProject }) => {
                 <>
                   <Link
                     to="/auth/login"
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"
+                    className="block px-3 py-2 text-white hover:text-blue-200 font-medium"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {t('login')}
+                    {language === "ar" ? "تسجيل الدخول" : "Login"}
                   </Link>
                   <Link
                     to="/auth/register"
-                    className="block px-3 py-2  text-gray-700 hover:text-blue-700 font-medium"
+                    className="block px-3 py-2 text-white hover:text-blue-200 font-medium"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {t('register')}
+                    {language === "ar" ? "إنشاء حساب" : "Register"}
                   </Link>
                 </>
               ) : (
                 <>
                   <Link
                     to={`/${user.role}`}
-                    className="block px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"
+                    className="block px-3 py-2 text-white hover:text-blue-200 font-medium"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {t('dashboard')}
+                    {language === "ar" ? "لوحة التحكم" : "Dashboard"}
                   </Link>
                   <button
                     onClick={() => {
                       logout();
                       setIsMobileMenuOpen(false);
                     }}
-                    className="block w-full text-left px-3 py-2 text-gray-700 hover:text-blue-700 font-medium"
+                    className="block w-full text-left px-3 py-2 text-white hover:text-blue-200 font-medium"
                   >
-                    {t('logout')}
+                    {language === "ar" ? "تسجيل الخروج" : "Logout"}
                   </button>
                 </>
               )}
@@ -171,6 +162,8 @@ const Header = ({ onAddProject }) => {
           </div>
         )}
       </div>
+      {/* Orange divider line */}
+      <div className="h-0.5 bg-[#F97316]"></div>
     </header>
   );
 };

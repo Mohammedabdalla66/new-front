@@ -4,84 +4,84 @@ import { CheckCircle, TrendingUp, Award } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const Navigate = useNavigate();
   const GoToLogin = () => {
     Navigate ("/auth/login")
   } 
 
   return (
-    <section className="bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-20 overflow-hidden">
+      {/* Background Image with Blur */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          alt="Background"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
-          <div className="text-center lg:text-left rtl:lg:text-right">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+          {/* Content - Left Side (RTL) */}
+          <div className="text-center lg:text-right rtl:lg:text-right">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
               {t("heroTitle")}
             </h1>
-            <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-xl text-white/90 mb-8 leading-relaxed">
               {t("heroSubtitle")}
             </p>
+            <p className="text-lg text-white/80 mb-8 leading-relaxed">
+              {language === "ar" 
+                ? "تواصل مع مكاتب تدقيق معتمدة ومرخصة وإحصل على عروض أسعار متعددة وإختر أفضل عرض يناسب إحتياجات عملك"
+                : "Connect with accredited and licensed auditing offices and get multiple price offers and choose the best offer that suits your business needs"}
+            </p>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start rtl:lg:justify-end mb-12">
+            {/* CTA Button */}
+            <div className="mb-8">
               <button 
-              onClick={GoToLogin}
-              className="bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-800 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                {t("findService")}
-              </button>
-              <button 
-              onClick={GoToLogin}
-              className="bg-white text-blue-700 px-8 py-4 rounded-lg text-lg font-semibold border-2 border-blue-700 hover:bg-blue-50 transition-colors">
-                {t("joinAsAccountant")}
+                onClick={GoToLogin}
+                className="bg-[#F97316] text-white px-10 py-4 rounded-lg text-lg font-semibold hover:bg-[#EA580C] transition-colors shadow-lg hover:shadow-xl">
+                {language === "ar" ? "ابدء الخدمة" : "Start Service"}
               </button>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center lg:text-left rtl:lg:text-right">
-                <div className="flex items-center justify-center lg:justify-start rtl:lg:justify-end mb-2">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2 rtl:mr-0 rtl:ml-2" />
-                  <span className="text-2xl font-bold text-gray-900">500+</span>
-                </div>
-                <p className="text-gray-600">{t("certifiedAccountants")}</p>
-              </div>
-              <div className="text-center lg:text-left rtl:lg:text-right">
-                <div className="flex items-center justify-center lg:justify-start rtl:lg:justify-end mb-2">
-                  <TrendingUp className="h-5 w-5 text-blue-500 mr-2 rtl:mr-0 rtl:ml-2" />
-                  <span className="text-2xl font-bold text-gray-900">
-                    1000+
-                  </span>
-                </div>
-                <p className="text-gray-600">{t("clientsServed")}</p>
-              </div>
-              <div className="text-center lg:text-left rtl:lg:text-right">
-                <div className="flex items-center justify-center lg:justify-start rtl:lg:justify-end mb-2">
-                  <Award className="h-5 w-5 text-purple-500 mr-2 rtl:mr-0 rtl:ml-2" />
-                  <span className="text-2xl font-bold text-gray-900">
-                    2000+
-                  </span>
-                </div>
-                <p className="text-gray-600">{t("completedServices")}</p>
-              </div>
-            </div>
+            <p className="text-white/90 text-lg mb-4">
+              {language === "ar" ? "ما هي الخدمة التي تحتاجها ؟" : "What service do you need?"}
+            </p>
           </div>
 
-          {/* Hero Image */}
+          {/* Right Side - Image with Statistics Overlays */}
           <div className="relative">
-            <div className="bg-white  rounded-2xl shadow-2xl p-8 relative z-10">
+            <div className="relative rounded-2xl overflow-hidden">
               <img
-                src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=600"
+                src="https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=800"
                 alt="Accounting Professional"
-                className="w-full h-80 object-cover rounded-xl"
+                className="w-full h-96 object-cover"
               />
             </div>
-            {/* Floating Elements */}
-            <div className="absolute -top-6 -right-2 md:-right-6 rtl:-right-auto rtl:-left-6 bg-green-100 rounded-full p-4 shadow-lg">
-              <CheckCircle className="h-8 w-8 text-green-600" />
+            
+            {/* Statistics Overlays */}
+            <div className="absolute top-8 left-8 rtl:left-auto rtl:right-8 bg-[#1E40AF] rounded-full p-6 shadow-xl">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-1">1000 +</div>
+                <div className="text-sm text-white/90">{language === "ar" ? "عميل" : "Client"}</div>
+              </div>
             </div>
-            <div className="absolute -bottom-6 -left-6 rtl:-left-auto rtl:-right-6 bg-blue-100 rounded-full p-4 shadow-lg">
-              <TrendingUp className="h-8 w-8 text-blue-600" />
+            
+            <div className="absolute top-32 right-12 rtl:right-auto rtl:left-12 bg-[#F97316] rounded-full p-6 shadow-xl">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-1">500 +</div>
+                <div className="text-sm text-white/90">{language === "ar" ? "مكاتب مرخصة ومعتمدة" : "Licensed Offices"}</div>
+              </div>
+            </div>
+            
+            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 rtl:translate-x-1/2 bg-[#1E40AF] rounded-full p-6 shadow-xl">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-white mb-1">200 +</div>
+                <div className="text-sm text-white/90">{language === "ar" ? "خدمة منفذة" : "Services Executed"}</div>
+              </div>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
-import { FileText, Users, Shield, CheckCircle } from "lucide-react";
+import { FileText, Users, Shield, CheckCircle, FileCheck, CreditCard } from "lucide-react";
 
 const HowItWorks = () => {
   const { t } = useLanguage();
@@ -33,38 +33,41 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section className="py-16 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {t("howItWorks")}
-          </h2>
+    <section className="py-16 bg-gray-50">
+    <div className="max-w-7xl mx-auto px-6 text-center">
+      <h2 className="text-4xl font-bold text-[#1976D2] mb-12">كيف نعمل</h2>
+
+      <div className="grid grid-cols-4 gap-8">
+        <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FileCheck className="text-[#1976D2]" size={40} />
+          </div>
+          <h3 className="text-lg font-bold text-[#1976D2] mb-2">استلام الخدمة بطريقة رقمية</h3>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {steps.map((step, index) => {
-            const IconComponent = step.icon;
-            return (
-              <div key={index} className="text-center group">
-                <div
-                  className={`inline-flex items-center justify-center w-16 h-16 ${step.bgColor} rounded-full mb-4 group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <IconComponent className={`h-8 w-8 ${step.iconColor}`} />
-                </div>
-                <div className="mb-2">
-                  <span className="inline-flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full text-sm font-bold mb-3">
-                    {index + 1}
-                  </span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {t(step.titleKey)}
-                </h3>
-              </div>
-            );
-          })}
+        <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CreditCard className="text-[#1976D2]" size={40} />
+          </div>
+          <h3 className="text-lg font-bold text-[#1976D2] mb-2">تواصل وادفع الأجر</h3>
+        </div>
+
+        <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="text-[#1976D2]" size={40} />
+          </div>
+          <h3 className="text-lg font-bold text-[#1976D2] mb-2">استقبال العروض من المكاتب</h3>
+        </div>
+
+        <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FileText className="text-[#1976D2]" size={40} />
+          </div>
+          <h3 className="text-lg font-bold text-[#1976D2] mb-2">اعدد متطلباتك او اكثر خدمة</h3>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
   );
 };
 
