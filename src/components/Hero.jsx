@@ -24,8 +24,8 @@ const Hero = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content - Left Side (RTL) */}
-          <div className="text-center lg:text-right rtl:lg:text-right">
+          {/* Content - Left Side */}
+          <div className={`text-center ${language === 'en' ? 'lg:text-left' : 'lg:text-right rtl:lg:text-right'}`}>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
               {t("heroTitle")}
             </h1>
