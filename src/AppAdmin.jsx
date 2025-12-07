@@ -46,9 +46,6 @@ function AppAdmin() {
               <Route path="/clients" element={<Clients />} />
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/reports" element={<Reports />} />
-              {/* <Route path="/settings" element={<AdminDashboard />} /> */}
-              <Route path="/settings" element={<Settings />} />
-
             </Routes>
           </div>
         </AppInitializer>

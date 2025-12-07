@@ -47,7 +47,6 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       {/* Partners/Supporters Section */}
-
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-4 gap-8">
@@ -137,7 +136,6 @@ const Footer = () => {
         </div>
 
         {/* Additional Partners at bottom */}
-
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>

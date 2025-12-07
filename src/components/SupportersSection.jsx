@@ -25,35 +25,35 @@ const SupportersSection = () => {
       imageUrl: "../assets/Screenshot 2025-12-05 001556.png",
       alt: "First Choice"
     },
-
-
-
+ 
+   
+   
   ];
 
   return (
     <section className="py-12 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-center justify-items-center">
-          {supporters.slice(0, 5).map((supporter, index) => (
-            <div
-              key={index}
-              className="opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300 cursor-pointer p-4 flex items-center justify-center w-full"
-            >
-              <img
-                src={supporter.imageUrl}
-                alt={supporter.alt || supporter.name}
-                className="h-12 sm:h-16 lg:h-20 object-contain mx-auto max-w-full"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                }}
-              />
-            </div>
-          ))}
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-center justify-items-center">
+        {supporters.slice(0, 5).map((supporter, index) => (
+          <div 
+            key={index} 
+            className="opacity-60 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-300 cursor-pointer p-4 flex items-center justify-center w-full"
+          >
+            <img 
+              src={supporter.imageUrl} 
+              alt={supporter.alt || supporter.name} 
+              className="h-12 sm:h-16 lg:h-20 object-contain mx-auto max-w-full" 
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
+          </div>
+        ))}
       </div>
-      <div className={`fixed bottom-4 sm:bottom-8 ${language === "ar" ? "left-4 sm:left-8" : "right-4 sm:right-8"} z-50`}>
+    </div>
+    <div className={`fixed bottom-4 sm:bottom-8 ${language === "ar" ? "left-4 sm:left-8" : "right-4 sm:right-8"} z-50`}>
         <a
-          href="https://wa.me/96899337448"
+          href="https://wa.me/+201129028280"
           className="w-12 h-12 sm:w-16 sm:h-16 bg-green-500 rounded-full flex items-center justify-center shadow-2xl hover:bg-green-600 transition-colors"
           target="_blank"
           rel="noopener noreferrer"
