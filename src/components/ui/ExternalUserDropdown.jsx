@@ -4,11 +4,11 @@ import { User } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
 
 /**
- * Reusable UserDropdown component for header menus
+ * External UserDropdown component for homepage/public pages
  * @param {Object} user - User object with name, email, avatar, role
  * @param {string} className - Additional CSS classes for the dropdown container
  */
-const UserDropdown = ({ user, className = "" }) => {
+const ExternalUserDropdown = ({ user, className = "" }) => {
   const { language } = useLanguage();
 
   // Get role-based routes
@@ -57,5 +57,4 @@ const UserDropdown = ({ user, className = "" }) => {
   );
 };
 
-export default UserDropdown;
-
+export default ExternalUserDropdown;
