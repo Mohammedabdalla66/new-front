@@ -25,7 +25,7 @@ export const Header = ({ user, onToggleSidebar }) => {
           )}
          <div className="flex items-center space-x-2 rtl:space-x-reverse">
             <CaHupLogo className="h-8 w-8" />
-            <h1 className="text-xl font-bold text-gray-900">CaHup</h1>
+            <h1 className="text-xl font-bold text-gray-900">CAHUB</h1>
           </div>
         </div>
 

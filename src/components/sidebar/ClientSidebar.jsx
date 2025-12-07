@@ -59,7 +59,7 @@ export default function ClientSidebar({
           <span
             className={`${labelClass} text-sm font-semibold text-white bg-slate-700 rounded-full px-3 py-1`}
           >
-            CaHup
+            CAHUB
           </span>
         </div>
         <div className="flex items-center gap-2">

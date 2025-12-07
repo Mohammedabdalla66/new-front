@@ -88,8 +88,8 @@ const TermsPrivacyPage = () => {
           </h1>
           <p className="text-xl text-white/90 text-center leading-relaxed">
             {language === "ar"
-              ? "يرجى قراءة هذه الوثائق بعناية قبل استخدام منصة CaHup. باستخدام خدماتنا، فإنك توافق على الالتزام بهذه الشروط."
-              : "Please read these documents carefully before using the CaHup platform. By using our services, you agree to be bound by these terms."}
+              ? "يرجى قراءة هذه الوثائق بعناية قبل استخدام منصة CAHUB. باستخدام خدماتنا، فإنك توافق على الالتزام بهذه الشروط."
+              : "Please read these documents carefully before using the CAHUB platform. By using our services, you agree to be bound by these terms."}
           </p>
         </div>
       </div>
@@ -260,8 +260,8 @@ NDA إضافية: يُشجع على توقيع NDA خاصة بين العميل 
         <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
           <p className="text-gray-700 leading-relaxed text-lg">
             {language === "ar"
-              ? "نرحب بك في منصة CaHup. توضح هذه الوثيقة الشروط والأحكام التي تحكم استخدامك لمنصتنا، بالإضافة إلى سياسة الخصوصية التي تحدد كيفية جمع واستخدام وحماية معلوماتك الشخصية. نحن ملتزمون بشفافية كاملة فيما يتعلق بحقوقك ومسؤولياتك."
-              : "Welcome to the CaHup platform. This document outlines the terms and conditions that govern your use of our platform, as well as the privacy policy that details how we collect, use, and protect your personal information. We are committed to full transparency regarding your rights and responsibilities."}
+              ? "نرحب بك في منصة CAHUB. توضح هذه الوثيقة الشروط والأحكام التي تحكم استخدامك لمنصتنا، بالإضافة إلى سياسة الخصوصية التي تحدد كيفية جمع واستخدام وحماية معلوماتك الشخصية. نحن ملتزمون بشفافية كاملة فيما يتعلق بحقوقك ومسؤولياتك."
+              : "Welcome to the CAHUB platform. This document outlines the terms and conditions that govern your use of our platform, as well as the privacy policy that details how we collect, use, and protect your personal information. We are committed to full transparency regarding your rights and responsibilities."}
           </p>
         </div>
 
@@ -343,7 +343,7 @@ NDA إضافية: يُشجع على توقيع NDA خاصة بين العميل 
           </p>
           <div className="space-y-2 text-gray-700">
             <p>
-              <strong>{language === "ar" ? "البريد الإلكتروني:" : "Email:"}</strong> info@CaHup.com
+              <strong>{language === "ar" ? "البريد الإلكتروني:" : "Email:"}</strong> info@CAHUB.com
             </p>
             <p>
               <strong>{language === "ar" ? "الهاتف:" : "Phone:"}</strong> +1 (555) 123-4567
@@ -358,8 +358,8 @@ NDA إضافية: يُشجع على توقيع NDA خاصة بين العميل 
           </h3>
           <p className="leading-relaxed text-lg">
             {language === "ar"
-              ? "باستخدام منصة CaHup، فإنك تقر بأنك قد قرأت وفهمت هذه الشروط والأحكام وسياسة الخصوصية. كما توافق على الالتزام بجميع الأحكام الواردة فيها. إذا كنت لا توافق على أي من هذه الشروط، يرجى عدم استخدام خدماتنا."
-              : "By using the CaHup platform, you acknowledge that you have read and understood these Terms & Conditions and Privacy Policy. You also agree to comply with all provisions contained herein. If you do not agree to any of these terms, please do not use our services."}
+              ? "باستخدام منصة CAHUB، فإنك تقر بأنك قد قرأت وفهمت هذه الشروط والأحكام وسياسة الخصوصية. كما توافق على الالتزام بجميع الأحكام الواردة فيها. إذا كنت لا توافق على أي من هذه الشروط، يرجى عدم استخدام خدماتنا."
+              : "By using the CAHUB platform, you acknowledge that you have read and understood these Terms & Conditions and Privacy Policy. You also agree to comply with all provisions contained herein. If you do not agree to any of these terms, please do not use our services."}
           </p>
           <p className="mt-4 text-white/90">
             {language === "ar"

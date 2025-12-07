@@ -57,7 +57,7 @@ const Footer = () => {
             <div className="flex items-center space-x-2 rtl:space-x-reverse mb-4">
               <CaHupLogo className="h-8 w-8 text-blue-400" />
               <span className="font-bold text-xl">
-                {language === "ar" ? "CaHup" : "CaHup"}
+                {language === "ar" ? "CAHUB" : "CAHUB"}
               </span>
             </div>
             <p className="text-gray-400 mb-4 leading-relaxed">
@@ -134,7 +134,7 @@ const Footer = () => {
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>
-            &copy; 2025 CaHup {t("allRightsReserved")}
+            &copy; 2025 CAHUB {t("allRightsReserved")}
           </p>
         </div>
       </div>

@@ -124,7 +124,7 @@ export default function AdminSidebar({
           <CaHupLogo className="h-8 w-8" />
           {(!collapsed || isMobileOpen) && (
             <span className="font-bold text-lg text-neutral-900 dark:text-white">
-              CaHup
+              CAHUB
             </span>
           )}
         </div>

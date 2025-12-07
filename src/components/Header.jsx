@@ -89,7 +89,7 @@ const Header = ({ onAddProject }) => {
             >
               <CaHupLogo className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0" />
               <span className="font-bold text-lg sm:text-xl text-[#2075ba] hidden sm:inline-block">
-                {language === "ar" ? "CaHup" : "CaHup"}
+                {language === "ar" ? "CAHUB" : "CAHUB"}
               </span>
             </Link>
           </div>
