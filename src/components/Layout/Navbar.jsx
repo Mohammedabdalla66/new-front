@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useNavigate, Link } from "react-router-dom";
 import { Menu, Transition } from "@headlessui/react";
 import {
   Sun,
@@ -18,12 +19,15 @@ import {
   selectTheme,
   selectLanguage,
 } from "../../features/theme/themeSlice";
+import { useAuth } from "../../hooks/useAuth";
 
 const Navbar = ({ onToggleSidebar }) => {
   const dispatch = useDispatch();
   const { t, i18n } = useTranslation();
   const theme = useSelector(selectTheme);
   const language = useSelector(selectLanguage);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const handleLanguageChange = (lang) => {
     dispatch(setLanguage(lang));
@@ -32,6 +36,11 @@ const Navbar = ({ onToggleSidebar }) => {
 
   const handleThemeToggle = () => {
     dispatch(toggleTheme());
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth/login");
   };
 
   return (
@@ -143,32 +152,35 @@ const Navbar = ({ onToggleSidebar }) => {
               <Menu.Items className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 py-1 z-50">
                 <Menu.Item>
                   {({ active }) => (
-                    <button
+                    <Link
+                      to="/admin/profile"
                       className={`${
                         active ? "bg-neutral-100 dark:bg-neutral-700" : ""
                       } flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 w-full text-left rtl:text-right`}
                     >
                       <User className="w-4 h-4" />
                       <span>{t("profile")}</span>
-                    </button>
+                    </Link>
                   )}
                 </Menu.Item>
                 <Menu.Item>
                   {({ active }) => (
-                    <button
+                    <Link
+                      to="/admin/settings"
                       className={`${
                         active ? "bg-neutral-100 dark:bg-neutral-700" : ""
                       } flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 w-full text-left rtl:text-right`}
                     >
                       <Settings className="w-4 h-4" />
                       <span>{t("settings")}</span>
-                    </button>
+                    </Link>
                   )}
                 </Menu.Item>
                 <div className="border-t border-neutral-200 dark:border-neutral-700 my-1" />
                 <Menu.Item>
                   {({ active }) => (
                     <button
+                      onClick={handleLogout}
                       className={`${
                         active ? "bg-neutral-100 dark:bg-neutral-700" : ""
                       } flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 text-sm text-red-600 dark:text-red-400 w-full text-left rtl:text-right`}

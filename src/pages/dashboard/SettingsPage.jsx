@@ -3,7 +3,6 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import {
   User,
   Lock,
-  Bell,
   Globe,
   Moon,
   Sun,
@@ -20,14 +19,6 @@ const SettingsPage = () => {
   const { t, language, toggleLanguage } = useLanguage();
   const [activeTab, setActiveTab] = useState("profile");
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState({
-    email: true,
-    push: true,
-    sms: false,
-    projectUpdates: true,
-    messages: true,
-    deadlines: true,
-  });
 
   const [profile, setProfile] = useState({
     firstName: "John",
@@ -45,16 +36,8 @@ const SettingsPage = () => {
   const tabs = [
     { id: "profile", label: t("profileSettings"), icon: User },
     { id: "security", label: t("changePassword"), icon: Lock },
-    { id: "notifications", label: t("notifications"), icon: Bell },
     { id: "preferences", label: t("preferences"), icon: Globe },
   ];
-
-  const handleNotificationChange = (key) => {
-    setNotifications((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
 
   const handleProfileChange = (field, value) => {
     setProfile((prev) => ({
@@ -290,50 +273,6 @@ const SettingsPage = () => {
                     {t("updatePassword")}
                   </button>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "notifications" && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
-                {t("notificationPreferences")}
-              </h2>
-
-              <div className="space-y-4">
-                {Object.entries(notifications).map(([key, value]) => (
-                  <div key={key} className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-                        {key.charAt(0).toUpperCase() +
-                          key.slice(1).replace(/([A-Z])/g, " $1")}
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {key === "email" && t("receiveNotificationsViaEmail")}
-                        {key === "push" && t("receivePushNotifications")}
-                        {key === "sms" && t("receiveSmsNotifications")}
-                        {key === "projectUpdates" &&
-                          t("getNotifiedAboutProjectUpdates")}
-                        {key === "messages" &&
-                          t("getNotifiedAboutNewMessages")}
-                        {key === "deadlines" &&
-                          t("getNotifiedAboutUpcomingDeadlines")}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => handleNotificationChange(key)}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        value ? "bg-blue-600" : "bg-gray-200 dark:bg-gray-700"
-                      }`}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          value ? "translate-x-6" : "translate-x-1"
-                        }`}
-                      />
-                    </button>
-                  </div>
-                ))}
               </div>
             </div>
           )}

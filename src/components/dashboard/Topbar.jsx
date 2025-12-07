@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useAuth } from "../../hooks/useAuth";
 import { usersAPI } from "../../services/api";
@@ -18,10 +19,12 @@ import NotificationsDropdown from "./NotificationsDropdown";
 
 const Topbar = ({ onMenuClick, currentPath }) => {
   const { t, dir, toggleLanguage, language } = useLanguage();
-  const { user: authUser } = useAuth();
+  const { user: authUser, logout } = useAuth();
+  const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [userData, setUserData] = useState(null);
+  const dropdownRef = useRef(null);
 
   // Load user data from API - use authUser as primary source
   useEffect(() => {
@@ -29,11 +32,11 @@ const Topbar = ({ onMenuClick, currentPath }) => {
     if (authUser && !userData) {
       setUserData(authUser);
     }
-    
+
     // Optionally fetch fresh data with a delay to avoid rate limiting
     const loadUserData = async () => {
       if (!authUser) return;
-      
+
       try {
         const response = await usersAPI.getMe();
         if (response.data.success) {
@@ -50,20 +53,74 @@ const Topbar = ({ onMenuClick, currentPath }) => {
         }
       }
     };
-    
+
     // Delay the API call to avoid conflicts with Sidebar
     const timer = setTimeout(() => {
       if (authUser) {
         loadUserData();
       }
     }, 500);
-    
+
     return () => clearTimeout(timer);
   }, [authUser]);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark");
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    if (isProfileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isProfileOpen]);
+
+  // Get role-based routes
+  const getProfileRoute = () => {
+    const role = userData?.role || authUser?.role;
+    switch (role) {
+      case "client":
+        return "/client/profile";
+      case "admin":
+        return "/admin/profile";
+      case "serviceProvider":
+      case "firm":
+        return "/firm/profile";
+      default:
+        return "/";
+    }
+  };
+
+  const getSettingsRoute = () => {
+    const role = userData?.role || authUser?.role;
+    switch (role) {
+      case "client":
+        return "/client/settings";
+      case "admin":
+        return "/admin/settings";
+      case "serviceProvider":
+      case "firm":
+        return "/firm/settings";
+      default:
+        return "/";
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsProfileOpen(false);
+    navigate("/auth/login");
   };
 
   const getPageTitle = () => {
@@ -126,7 +183,7 @@ const Topbar = ({ onMenuClick, currentPath }) => {
           <NotificationsDropdown />
 
           {/* Profile Dropdown */}
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsProfileOpen(!isProfileOpen)}
               className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -134,27 +191,76 @@ const Topbar = ({ onMenuClick, currentPath }) => {
               {userData?.avatar ? (
                 <img
                   src={userData.avatar}
-                  alt={userData.name || t("user")}
+                  alt={userData.name || authUser?.name || t("user")}
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (
                 <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                   <span className="text-white font-medium text-sm">
-                    {(userData?.name || t("user")).charAt(0).toUpperCase()}
+                    {(userData?.name || authUser?.name || t("user"))
+                      .charAt(0)
+                      .toUpperCase()}
                   </span>
                 </div>
               )}
               <div className="hidden md:block text-left">
                 <p className="text-sm font-medium text-gray-800 dark:text-white">
-                  {userData?.name || t("user")}
+                  {userData?.name || authUser?.name || t("user")}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {userData?.role === "serviceProvider" ? t("serviceProvider") || "Service Provider" :
-                   userData?.role === "client" ? t("client") || "Client" :
-                   userData?.role === "admin" ? t("admin") || "Admin" : ""}
+                  {userData?.role === "serviceProvider" ||
+                  authUser?.role === "serviceProvider"
+                    ? t("serviceProvider") || "Service Provider"
+                    : userData?.role === "client" || authUser?.role === "client"
+                    ? t("client") || "Client"
+                    : userData?.role === "admin" || authUser?.role === "admin"
+                    ? t("admin") || "Admin"
+                    : ""}
                 </p>
               </div>
             </button>
+
+            {/* Dropdown Menu */}
+            {isProfileOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-[9999]">
+                <Link
+                  to={getProfileRoute()}
+                  onClick={() => setIsProfileOpen(false)}
+                  className="flex items-center space-x-3 rtl:space-x-reverse px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <User className="h-4 w-4" />
+                  <span>
+                    {t("profile") ||
+                      (language === "ar" ? "الملف الشخصي" : "Profile")}
+                  </span>
+                </Link>
+
+                <Link
+                  to={getSettingsRoute()}
+                  onClick={() => setIsProfileOpen(false)}
+                  className="flex items-center space-x-3 rtl:space-x-reverse px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span>
+                    {t("settings") ||
+                      (language === "ar" ? "الإعدادات" : "Settings")}
+                  </span>
+                </Link>
+
+                <div className="border-t border-gray-200 dark:border-gray-700 my-1" />
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center space-x-3 rtl:space-x-reverse px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-left"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>
+                    {t("logout") ||
+                      (language === "ar" ? "تسجيل الخروج" : "Logout")}
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -163,4 +269,3 @@ const Topbar = ({ onMenuClick, currentPath }) => {
 };
 
 export default Topbar;
-

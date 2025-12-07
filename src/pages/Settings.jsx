@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { NotificationSettings } from '../components/Settings/NotificationSettings.jsx';
 import { SecuritySettings } from '../components/Settings/SecuritySettings.jsx';
-import { Bell, Shield, CreditCard, Database, Moon, Sun, Globe, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Shield, CreditCard, Database, Moon, Sun, Globe, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
 import { useAuth } from '../hooks/useAuth';
 import Navbar from '../components/Layout/Navbar';
@@ -22,8 +21,7 @@ export const Settings = () => {
   const location = useLocation();
   const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('notifications');
-  const [notificationSettings, setNotificationSettings] = useState(mockNotificationSettings);
+  const [activeSection, setActiveSection] = useState('security');
   const [darkMode, setDarkMode] = useState(() => {
     try {
       return localStorage.getItem('darkMode') === 'true';
@@ -67,17 +65,11 @@ export const Settings = () => {
     navigate(getBackPath());
   };
 
-  const handleNotificationSave = (settings) => {
-    setNotificationSettings(settings);
-    console.log('Notification settings saved:', settings);
-  };
-
   const handlePasswordChange = (currentPassword, newPassword) => {
     console.log('Password change requested');
   };
 
   const sections = [
-    { id: 'notifications', label: t('notifications'), icon: Bell },
     { id: 'security', label: t('security'), icon: Shield },
     { id: 'billing', label: t('billing'), icon: CreditCard },
     { id: 'data', label: t('dataPrivacy'), icon: Database },
@@ -172,10 +164,6 @@ export const Settings = () => {
               </div>
             </div>
           </div>
-          {activeSection === 'notifications' && (
-            <NotificationSettings settings={notificationSettings} onSave={handleNotificationSave} />
-          )}
-
           {activeSection === 'security' && (
             <SecuritySettings onPasswordChange={handlePasswordChange} />
           )}
