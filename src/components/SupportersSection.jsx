@@ -34,7 +34,7 @@ const SupportersSection = () => {
   return (
     <section className="py-12 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-center justify-items-center">
+      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-center justify-items-center">
         {supporters.slice(0, 5).map((supporter, index) => (
           <div 
             key={index} 
@@ -70,9 +70,9 @@ const SupportersSection = () => {
         <div className="max-w-2xl mx-auto px-10 sm:px-6 lg:px-10 text-center">
           <h3 className="text-xl sm:text-2xl font-bold text-[#1976D2] mb-4 sm:mb-6">{t("partners")}</h3>
           <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-12">
+          <img src="/oman-data-park-logo.jpg" width={100} height={100} alt="Partner Logo" className="h-10 sm:h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" onError={(e) => { e.target.style.display = 'none'; }} />
             <img src="https://fintechgate.net/wp-content/uploads/2025/03/WhatsApp-Image-2025-03-13-at-10.43.12-AM.jpeg" alt="Partner Logo" className="h-20 sm:h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
             <img src="/download1.png" alt="Partner Logo" className="h-10 sm:h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" onError={(e) => { e.target.style.display = 'none'; }} />
-            <img src="/oman-data-park-logo-1.jpg" width={100} height={100} alt="Partner Logo" className="h-10 sm:h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" onError={(e) => { e.target.style.display = 'none'; }} />
           </div>
         </div>
       </div>
