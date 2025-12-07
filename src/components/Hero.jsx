@@ -14,7 +14,7 @@ const Hero = () => {
 
   const GoToLogin = () => {
     Navigate ("/auth/login")
-  }
+  } 
 
   // Service titles matching the ones in ServiceRequestForm and ServicesPage
   const services = [
@@ -127,11 +127,11 @@ const Hero = () => {
             <div className="mb-8">
               <div className="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
                 {/* CTA Button */}
-                <button 
-                  onClick={GoToLogin}
+              <button 
+                onClick={GoToLogin}
                   className="bg-[#F97316] text-white px-10 py-4 rounded-lg text-lg font-semibold hover:bg-[#EA580C] transition-colors shadow-lg hover:shadow-xl whitespace-nowrap">
-                  {t("startService")}
-                </button>
+                {t("startService")}
+              </button>
 
                 {/* Service Search Box */}
                 <div className="relative flex-1" ref={searchRef}>
@@ -160,8 +160,8 @@ const Hero = () => {
                         <X className="h-5 w-5" />
                       </button>
                     )}
-                  </div>
-                  
+            </div>
+
                   {/* Suggestions Dropdown */}
                   {showSuggestions && filteredServices.length > 0 && (
                     <div
@@ -207,7 +207,7 @@ const Hero = () => {
                     >
                       <p className="text-gray-600 text-center">
                         {language === "ar" ? "لا توجد نتائج" : "No results found"}
-                      </p>
+            </p>
                     </div>
                   )}
                 </div>

@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../hooks/useAuth";
 import CaHupLogo from "./CaHupLogo";
-import UserDropdown from "./ui/UserDropdown";
-import { Menu, X, Bell, MessageCircle } from "lucide-react";
+import ExternalUserDropdown from "./ui/ExternalUserDropdown";
+import { Menu, X, Bell, MessageCircle, LayoutDashboard, User, Settings, LogOut } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Header = ({ onAddProject }) => {
   const { language, toggleLanguage, t } = useLanguage();
@@ -20,124 +21,61 @@ const Header = ({ onAddProject }) => {
     { key: "contact", path: "/contact" },
   ];
 
+  const getDashboardPath = (role) => {
+    if (role === 'serviceProvider' || role === 'firm') return '/firm';
+    return `/${role}`;
+  };
+
+  const getProfilePath = (role) => {
+    if (role === 'serviceProvider' || role === 'firm') return '/firm/profile';
+    return `/${role}/profile`;
+  };
+
+  const getSettingsPath = (role) => {
+    if (role === 'serviceProvider' || role === 'firm') return '/firm/settings';
+    return `/${role}/settings`;
+  };
+
   return (
     <header className="relative bg-[#2075ba] sticky top-0 z-50">
       {/* Decorative Shapes - Position based on language (left for English, right for Arabic) */}
-      {/* Desktop: Full artwork with multiple overlapping shapes (20% width) */}
-      <div 
-        className={`hidden lg:block absolute top-0 h-full w-[20%] overflow-hidden pointer-events-none ${
-          language === "ar" ? "right-0" : "left-0"
-        }`}
-        aria-hidden="true"
-      >
-        {/* Fallback background - ensures header remains readable if shapes fail */}
-        <div className="absolute inset-0 bg-[#2075ba]"></div>
+      {/* Decorative Background Shapes */ }
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Background is already blue via header class */}
         
-        {/* White base block - creates white background behind shapes */}
-        <div className="absolute inset-0 bg-white"></div>
-        
-        {/* Blue slanted shape - back layer (deepest, widest) */}
+        {/* White Logo Backing Area */}
         <div 
-          className={`absolute top-0 w-[180%] h-full bg-[#2075ba] ${
-            language === "ar" ? "right-0" : "left-0"
+          className={`absolute top-0 h-full bg-white z-0 transform transition-transform duration-300 ${
+            language === "ar" 
+              ? "right-0 skew-x-[30deg] origin-top-right translate-x-[20%]" 
+              : "left-0 -skew-x-[30deg] origin-top-left -translate-x-[20%]"
           }`}
-          style={{ 
-            transform: language === "ar" 
-              ? 'rotate(-30deg) translate(20%, -40%)'
-              : 'rotate(30deg) translate(-20%, -40%)',
-            transformOrigin: language === "ar" ? 'top right' : 'top left'
-          }}
+          style={{ width: '28%' }} // Wide enough to cover logo, scales with screen
         />
         
-        {/* Orange slanted shape - middle layer */}
+        {/* Rectangular fix for the corner gap (to ensure corner is fully white) */}
         <div 
-          className={`absolute top-0 w-[180%] h-full bg-[#ef6820] ${
-            language === "ar" ? "right-0" : "left-0"
+          className={`absolute top-0 h-full bg-white z-0 w-[20%] ${
+             language === "ar" ? "right-0" : "left-0"
           }`}
-          style={{ 
-            transform: language === "ar"
-              ? 'rotate(-30deg) translate(40%, -20%)'
-              : 'rotate(30deg) translate(-40%, -20%)',
-            transformOrigin: language === "ar" ? 'top right' : 'top left'
-          }}
         />
         
-        {/* Blue slanted shape - front layer (topmost, narrower) */}
+        {/* Orange Stripe */}
         <div 
-          className={`absolute top-0 w-[130%] h-full bg-[#2075ba] ${
-            language === "ar" ? "right-0" : "left-0"
+          className={`absolute top-0 h-full bg-[#ef6820] z-0 w-8 md:w-12 transform transition-all duration-300 ${
+            language === "ar" 
+              ? "right-[26%] skew-x-[30deg] origin-top-right" // Positioned relative to white
+              : "left-[26%] -skew-x-[30deg] origin-top-left"
           }`}
-          style={{ 
-            transform: language === "ar"
-              ? 'rotate(-30deg) translate(80%, 10%)'
-              : 'rotate(30deg) translate(-80%, 10%)',
-            transformOrigin: language === "ar" ? 'top right' : 'top left'
-          }}
         />
-      </div>
       
-      {/* Tablet: Simplified artwork with fewer shapes (30% width) */}
+        {/* Dark Blue Stripe */}
       <div 
-        className={`hidden md:block lg:hidden absolute top-0 h-full w-[30%] overflow-hidden pointer-events-none ${
-          language === "ar" ? "right-0" : "left-0"
-        }`}
-        aria-hidden="true"
-      >
-        {/* Fallback background */}
-        <div className="absolute inset-0 bg-[#2075ba]"></div>
-        
-        {/* White base */}
-        <div className="absolute inset-0 bg-white"></div>
-        
-        {/* Simplified: Two shapes instead of three */}
-        <div 
-          className={`absolute top-0 w-[160%] h-full bg-[#2075ba] ${
-            language === "ar" ? "right-0" : "left-0"
+          className={`absolute top-0 h-full bg-[#1b629c] z-0 w-8 md:w-12 transform transition-all duration-300 ${
+            language === "ar" 
+              ? "right-[29%] skew-x-[30deg] origin-top-right" 
+              : "left-[29%] -skew-x-[30deg] origin-top-left"
           }`}
-          style={{ 
-            transform: language === "ar"
-              ? 'rotate(-30deg) translate(30%, -30%)'
-              : 'rotate(30deg) translate(-30%, -30%)',
-            transformOrigin: language === "ar" ? 'top right' : 'top left'
-          }}
-        />
-        <div 
-          className={`absolute top-0 w-[140%] h-full bg-[#ef6820] ${
-            language === "ar" ? "right-0" : "left-0"
-          }`}
-          style={{ 
-            transform: language === "ar"
-              ? 'rotate(-30deg) translate(50%, -10%)'
-              : 'rotate(30deg) translate(-50%, -10%)',
-            transformOrigin: language === "ar" ? 'top right' : 'top left'
-          }}
-        />
-      </div>
-      
-      {/* Mobile: Single compact slanted accent (20% width) */}
-      <div 
-        className={`md:hidden absolute top-0 h-full w-[10%] overflow-hidden pointer-events-none ${
-          language === "ar" ? "right-0" : "left-0"
-        }`}
-        aria-hidden="true"
-      >
-        {/* Fallback background */}
-        <div className="absolute inset-0 bg-[#2075ba]"></div>
-        
-        {/* White base */}
-        <div className="absolute inset-0 bg-white"></div>
-        
-        {/* Single blue slanted accent */}
-        <div 
-          className={`absolute top-0 w-[150%] h-full bg-[#2075ba] ${
-            language === "ar" ? "right-0" : "left-0"
-          }`}
-          style={{ 
-            transform: language === "ar"
-              ? 'rotate(-30deg) translate(30%, -20%)'
-              : 'rotate(30deg) translate(-30%, -20%)',
-            transformOrigin: language === "ar" ? 'top right' : 'top left'
-          }}
         />
       </div>
 
@@ -149,8 +87,8 @@ const Header = ({ onAddProject }) => {
               to="/"
               className="flex items-center space-x-2 rtl:space-x-reverse"
             >
-              <CaHupLogo className="h-8 w-8 sm:h-10 sm:w-10 text-white flex-shrink-0" />
-              <span className="font-bold text-lg sm:text-xl text-white hidden sm:inline-block">
+              <CaHupLogo className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0" />
+              <span className="font-bold text-lg sm:text-xl text-[#2075ba] hidden sm:inline-block">
                 {language === "ar" ? "CaHup" : "CaHup"}
               </span>
             </Link>
@@ -213,14 +151,16 @@ const Header = ({ onAddProject }) => {
                 </button>
 
                 {/* User Dropdown - External/Homepage version */}
+                <div className="hidden lg:block">
                 <ExternalUserDropdown user={user} />
+                </div>
               </>
             )}
 
             {/* Mobile Menu Button */}
             <button
               onClick={toggleMobileMenu}
-              className="md:hidden p-2 text-white hover:text-blue-200"
+              className="lg:hidden p-2 text-white hover:text-blue-200 focus:outline-none"
             >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
@@ -232,8 +172,15 @@ const Header = ({ onAddProject }) => {
         </div>
 
         {/* Mobile Menu */}
+        <AnimatePresence>
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-blue-700 bg-[#2075ba]">
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="lg:hidden border-t border-blue-700 bg-[#2075ba] overflow-hidden"
+            >
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navItems.map((item) => (
                 <Link
@@ -245,12 +192,15 @@ const Header = ({ onAddProject }) => {
                   {t(item.key)}
                 </Link>
               ))}
-              <button
-                onClick={toggleLanguage}
-                className="block px-3 py-2 text-white hover:text-blue-200 font-medium"
-              >
-                {language === "ar" ? "English" : "عربي"}
-              </button>
+                
+                {/* Language Toggle in Mobile Menu */}
+                {/* Keep consistency with desktop toggle, maybe not needed if it's already in the top bar? 
+                    Actually, it IS in the top bar (line 175) visible on all screens. 
+                    So removing it from here to reduce clutter is better, or keep it if top bar is crowded?
+                    Top bar has it. Removing duplicate. 
+                    Wait, previous code had it (lines 248-253).
+                    I'll remove it to clean up, as it's definitely in the top bar.
+                */}
 
               {/* Conditional mobile links */}
               {!user ? (
@@ -272,27 +222,62 @@ const Header = ({ onAddProject }) => {
                 </>
               ) : (
                 <>
+                    <div className="border-t border-blue-400 my-2 pt-2">
+                       <div className="px-3 py-2 flex items-center space-x-3 rtl:space-x-reverse text-blue-100 text-sm">
+                          {user.avatar ? (
+                             <img src={user.avatar} alt="User" className="w-8 h-8 rounded-full bg-blue-800 object-cover"/>
+                          ) : (
+                              <div className="w-8 h-8 rounded-full bg-blue-800 flex items-center justify-center">
+                                <User className="h-4 w-4 text-white"/>
+                              </div>
+                          )}
+                          <span className="font-medium">{user.name || user.email}</span>
+                       </div>
+
+                       <Link
+                        to={getDashboardPath(user.role)}
+                        className="flex items-center space-x-3 rtl:space-x-reverse px-3 py-2 text-white hover:text-blue-200 font-medium"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                         <LayoutDashboard className="h-5 w-5" />
+                         <span>{language === "ar" ? "لوحة التحكم" : "Dashboard"}</span>
+                      </Link>
+
+                      <Link
+                        to={getProfilePath(user.role)}
+                        className="flex items-center space-x-3 rtl:space-x-reverse px-3 py-2 text-white hover:text-blue-200 font-medium"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                         <User className="h-5 w-5" />
+                         <span>{language === "ar" ? "الملف الشخصي" : "Profile"}</span>
+                      </Link>
+
                   <Link
-                    to={`/${user.role}`}
-                    className="block px-3 py-2 text-white hover:text-blue-200 font-medium"
+                        to={getSettingsPath(user.role)}
+                        className="flex items-center space-x-3 rtl:space-x-reverse px-3 py-2 text-white hover:text-blue-200 font-medium"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {language === "ar" ? "لوحة التحكم" : "Dashboard"}
+                         <Settings className="h-5 w-5" />
+                         <span>{language === "ar" ? "الإعدادات" : "Settings"}</span>
                   </Link>
+                      
                   <button
                     onClick={() => {
                       logout();
                       setIsMobileMenuOpen(false);
                     }}
-                    className="block w-full text-left px-3 py-2 text-white hover:text-blue-200 font-medium"
+                        className="w-full text-left flex items-center space-x-3 rtl:space-x-reverse px-3 py-2 text-red-200 hover:text-red-100 font-medium"
                   >
-                    {language === "ar" ? "تسجيل الخروج" : "Logout"}
+                         <LogOut className="h-5 w-5" />
+                         <span>{language === "ar" ? "تسجيل الخروج" : "Logout"}</span>
                   </button>
+                    </div>
                 </>
               )}
             </div>
-          </div>
+            </motion.div>
         )}
+        </AnimatePresence>
       </div>
       {/* Orange bottom accent line - 2px height (within 1-4px spec range) */}
       <div className="h-[2px] bg-[#ef6820] w-full" aria-hidden="true"></div>
