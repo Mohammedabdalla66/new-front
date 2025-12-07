@@ -95,11 +95,7 @@ export default function AdminSidebar({
 
   const handleNavigation = (path) => {
     navigate(path);
-    // Never close sidebar for settings route - keep it open like other menu items
-    // Only close mobile sidebar for other routes
-    if (path !== "/admin/settings" && window.innerWidth < 768) {
-      onMobileClose();
-    }
+    onMobileClose();
   };
 
   const handleLogout = () => {

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../hooks/useAuth";
 import CaHupLogo from "./CaHupLogo";
-import ExternalUserDropdown from "./ui/ExternalUserDropdown";
+import UserDropdown from "./ui/UserDropdown";
 import { Menu, X, Bell, MessageCircle } from "lucide-react";
 
 const Header = ({ onAddProject }) => {

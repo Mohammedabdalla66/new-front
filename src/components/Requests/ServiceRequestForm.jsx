@@ -433,7 +433,7 @@ export const ServiceRequestForm = () => {
           {/* Legal Form and Business Activity */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("legalFormLabel")}
               </label>
               <select
@@ -449,7 +449,7 @@ export const ServiceRequestForm = () => {
               </select>
             </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("businessActivityLabel")}
             </label>
               <select
@@ -481,7 +481,7 @@ export const ServiceRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
                 {t("estimatedRevenueLabel")}
               </label>
               <input
@@ -493,7 +493,7 @@ export const ServiceRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
                 {t("estimatedExpensesLabel")}
               </label>
               <input
@@ -518,7 +518,7 @@ export const ServiceRequestForm = () => {
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">{t("selectBudgetRange")}</option>
-                  <option value="10-50">25 - 50 {language === "ar" ? "ريال" : "Riyal"}</option>
+                  <option value="25-50">25 - 50 {language === "ar" ? "ريال" : "Riyal"}</option>
                 <option value="50-100">50 - 100 {language === "ar" ? "ريال" : "Riyal"}</option>
                 <option value="100-250">200 - 250 {language === "ar" ? "ريال" : "Riyal"}</option>
                 <option value="250-500">250 - 500 {language === "ar" ? "ريال" : "Riyal"}</option>
