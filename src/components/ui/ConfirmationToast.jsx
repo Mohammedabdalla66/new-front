@@ -50,28 +50,20 @@ export const ConfirmationToast = ({
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/20 dark:bg-black/40 z-40"
-            onClick={handleCancel}
-          />
           
           {/* Toast */}
           <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -50, scale: 0.95 }}
-            transition={{ duration: 0.2, type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-4 right-5 left-3 sm:left-auto sm:top-6 sm:right-6 z-50 w-auto sm:w-auto"
+            style={{ maxWidth: 'calc(100% - 2rem)' }}
             role="alertdialog"
             aria-live="assertive"
-            aria-modal="true"
+            aria-modal="false"
           >
-            <div className="min-w-[320px] max-w-md rounded-lg shadow-xl border border-yellow-200 dark:border-yellow-900/50 bg-white dark:bg-neutral-800 p-4">
+            <div className="w-full sm:w-auto sm:min-w-[320px] sm:max-w-md rounded-lg shadow-xl border border-yellow-200 dark:border-yellow-900/50 bg-white dark:bg-neutral-800 p-3 sm:p-4">
               {/* Header with icon */}
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0">

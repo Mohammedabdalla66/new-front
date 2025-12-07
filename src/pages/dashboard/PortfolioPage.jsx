@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { portfolioAPI } from "../../services/api";
 import { toast } from "react-toastify";
+import { useConfirmationToast } from "../../components/ui/ConfirmationToast";
 import AddPortfolioModal from "../../components/AddPortfolioModal";
 import ViewPortfolioModal from "../../components/ViewPortfolioModal";
 import {
@@ -18,7 +19,8 @@ import {
 } from "lucide-react";
 
 const PortfolioPage = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const { showConfirmation, ConfirmationToastComponent } = useConfirmationToast();
   const [activeTab, setActiveTab] = useState("samples");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -125,19 +127,26 @@ const PortfolioPage = () => {
   };
 
   const handleDeleteItem = async (tabType, itemId) => {
-    if (window.confirm(t("confirmDelete"))) {
-      try {
-        const response = await portfolioAPI.delete(itemId);
-        if (response.data.success) {
-          toast.success(t("portfolioItemDeleted"));
-          await loadPortfolioItems(activeTab);
-        } else {
-          toast.error(response.data.message || t("failedToDeleteItem"));
-        }
-      } catch (error) {
-        console.error("Error deleting portfolio item:", error);
-        toast.error(error?.response?.data?.message || t("failedToDeleteItem"));
+    const confirmMessage = t("confirmDelete");
+    const confirmText = language === "ar" ? "نعم، حذف" : "Yes, delete";
+    const cancelText = language === "ar" ? "إلغاء" : "Cancel";
+    
+    const confirmed = await showConfirmation(confirmMessage, confirmText, cancelText);
+    if (!confirmed) {
+      return;
+    }
+    
+    try {
+      const response = await portfolioAPI.delete(itemId);
+      if (response.data.success) {
+        toast.success(t("portfolioItemDeleted"));
+        await loadPortfolioItems(activeTab);
+      } else {
+        toast.error(response.data.message || t("failedToDeleteItem"));
       }
+    } catch (error) {
+      console.error("Error deleting portfolio item:", error);
+      toast.error(error?.response?.data?.message || t("failedToDeleteItem"));
     }
   };
 
@@ -537,6 +546,7 @@ const PortfolioPage = () => {
         item={viewingItem}
         activeTab={activeTab}
       />
+      <ConfirmationToastComponent />
     </div>
   );
 };

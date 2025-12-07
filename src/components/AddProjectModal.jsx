@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useLanguage } from "../contexts/LanguageContext";
+import { toast } from "react-toastify";
 import { X, Upload, Calendar } from "lucide-react";
 import { categories, budgetRanges, contactMethods } from "../data/mockData";
 
@@ -22,7 +23,7 @@ const AddProjectModal = ({ isOpen, onClose }) => {
     console.log("Project submitted:", formData);
 
     // Show success message
-    alert(
+    toast.success(
       language === "ar"
         ? "تم إرسال المشروع بنجاح!"
         : "Project submitted successfully!"

@@ -10,12 +10,13 @@ export const Toast = ({ open, title, description, variant = 'default', onOpenCha
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="fixed bottom-6 right-6 z-50"
+          className="fixed bottom-4 right-5 left-3 sm:left-auto sm:bottom-6 sm:right-6 z-50 w-auto sm:w-auto"
+          style={{ maxWidth: 'calc(100% - 2rem)' }}
           role="status"
           aria-live="polite"
         >
           <div
-            className={`min-w-[280px] max-w-sm rounded-lg shadow-lg border p-4 bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 ${
+            className={`w-full sm:w-auto sm:min-w-[280px] sm:max-w-sm rounded-lg shadow-lg border p-3 sm:p-4 bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-700 ${
               variant === 'success'
                 ? 'border-green-200 dark:border-green-900/30'
                 : variant === 'destructive'

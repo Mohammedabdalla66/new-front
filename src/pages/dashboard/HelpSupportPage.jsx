@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 import { useLanguage } from "../../contexts/LanguageContext";
 import {
   HelpCircle,
@@ -159,7 +160,7 @@ const HelpSupportPage = () => {
     e.preventDefault();
     // Handle support form submission
     console.log("Support form submitted:", supportForm);
-    alert(t("supportRequestSubmitted"));
+    toast.success(t("supportRequestSubmitted"));
   };
 
   return (

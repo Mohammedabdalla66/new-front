@@ -17,6 +17,7 @@ import {
   bookingsAPI,
 } from "../services/api.js";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
+import { useConfirmationToast } from "../components/ui/ConfirmationToast";
 import { getServiceTitleLabel } from "../utils/titleUtils";
 
 const StatusTracker = ({ status }) => {
@@ -52,6 +53,7 @@ export const RequestDetails = () => {
   const { t, language } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showConfirmation, ConfirmationToastComponent } = useConfirmationToast();
   const [tab, setTab] = useState("offers");
   const [request, setRequest] = useState(null);
   const [proposals, setProposals] = useState([]);
@@ -224,12 +226,13 @@ export const RequestDetails = () => {
   }, [messages, tab]);
 
   const handleAcceptProposal = async (proposalId) => {
-    if (
-      !confirm(
-        t("acceptProposalConfirm") ||
-          "Are you sure you want to accept this proposal? This will create a booking and place funds in escrow."
-      )
-    ) {
+    const confirmMessage = t("acceptProposalConfirm") ||
+      "Are you sure you want to accept this proposal? This will create a booking and place funds in escrow.";
+    const confirmText = language === "ar" ? "نعم، متابعة" : "Yes, proceed";
+    const cancelText = language === "ar" ? "إلغاء" : "Cancel";
+    
+    const confirmed = await showConfirmation(confirmMessage, confirmText, cancelText);
+    if (!confirmed) {
       return;
     }
 
@@ -881,6 +884,7 @@ export const RequestDetails = () => {
           </div>
         )}
       </div>
+      <ConfirmationToastComponent />
     </div>
   );
 };

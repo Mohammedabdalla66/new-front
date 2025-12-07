@@ -19,6 +19,7 @@ const MyRequestsPage = () => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { showConfirmation, ConfirmationToastComponent } = useConfirmationToast();
   const isServiceProvider =
     user?.role === "serviceProvider" || user?.role === "firm";
 
@@ -399,21 +400,23 @@ const MyRequestsPage = () => {
                       </button>
                       {request.status === "pending" && (
                         <button
-                          onClick={() => {
-                            if (window.confirm(t("confirmCancelProposal"))) {
-                              proposalsAPI
-                                .cancel(request._id || request.id)
-                                .then(() => {
-                                  // Reload data
-                                  window.location.reload();
-                                })
-                                .catch((err) => {
-                                  console.error(
-                                    "Error canceling proposal:",
-                                    err
-                                  );
-                                  alert(t("failedToCancelProposal"));
-                                });
+                          onClick={async () => {
+                            const confirmMessage = t("confirmCancelProposal");
+                            const confirmText = language === "ar" ? "نعم، إلغاء" : "Yes, cancel";
+                            const cancelText = language === "ar" ? "إلغاء" : "Cancel";
+                            
+                            const confirmed = await showConfirmation(confirmMessage, confirmText, cancelText);
+                            if (!confirmed) {
+                              return;
+                            }
+                            
+                            try {
+                              await proposalsAPI.cancel(request._id || request.id);
+                              toast.success(t("proposalCanceled") || "Proposal canceled successfully");
+                              window.location.reload();
+                            } catch (err) {
+                              console.error("Error canceling proposal:", err);
+                              toast.error(t("failedToCancelProposal") || "Failed to cancel proposal");
                             }
                           }}
                           className="flex items-center px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-200 border border-red-300 dark:border-red-600 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
@@ -498,6 +501,7 @@ const MyRequestsPage = () => {
           </button>
         </div>
       )}
+      <ConfirmationToastComponent />
     </div>
   );
 };
