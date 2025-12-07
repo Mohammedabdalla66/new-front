@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import CaHupLogo from "./CaHupLogo";
-import { Facebook, Linkedin, Twitter, Mail, Phone } from "lucide-react";
+import { Facebook, Linkedin, Twitter, Instagram, Mail, Phone } from "lucide-react";
 import { scrollToSection } from "../utils/scrollUtils";
 
 const Footer = () => {
@@ -39,9 +39,10 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, href: "#", color: "hover:text-blue-500" },
-    { icon: Linkedin, href: "#", color: "hover:text-blue-600" },
-    { icon: Twitter, href: "#", color: "hover:text-blue-400" },
+    { icon: Facebook, href: "https://www.facebook.com/share/1ACtkoWCpq/", color: "hover:text-blue-500" },
+    { icon: Linkedin, href: "https://www.linkedin.com/in/ca-hub-7192783a0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", color: "hover:text-blue-600" },
+    { icon: Twitter, href: "https://x.com/cahub7782", color: "hover:text-blue-400" },
+    { icon: Instagram, href: "https://www.instagram.com/cahub.om?igsh=bmdwaDBxZzc3Mjkz&utm_source=qr", color: "hover:text-pink-500" },
   ];
 
   return (

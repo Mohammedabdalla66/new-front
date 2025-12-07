@@ -72,7 +72,7 @@ const SupportersSection = () => {
           <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-12">
             <img src="https://fintechgate.net/wp-content/uploads/2025/03/WhatsApp-Image-2025-03-13-at-10.43.12-AM.jpeg" alt="Partner Logo" className="h-20 sm:h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" />
             <img src="/download1.png" alt="Partner Logo" className="h-10 sm:h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" onError={(e) => { e.target.style.display = 'none'; }} />
-            <img src="/oman_data_park_logo (1).jpg" width={100} height={100} alt="Partner Logo" className="h-10 sm:h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" onError={(e) => { e.target.style.display = 'none'; }} />
+            <img src="/oman-data-park-logo-1.jpg" width={100} height={100} alt="Partner Logo" className="h-10 sm:h-12 object-contain opacity-70 hover:opacity-100 transition-opacity" onError={(e) => { e.target.style.display = 'none'; }} />
           </div>
         </div>
       </div>

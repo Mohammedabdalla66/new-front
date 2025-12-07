@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Calculator,
   FileText,
@@ -18,7 +19,12 @@ import { useLanguage } from "../contexts/LanguageContext";
 
 const ServicesPage = () => {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const handleRequestService = () => {
+    navigate("/auth/login");
+  };
 
   const services = [
     {
@@ -579,7 +585,10 @@ const ServicesPage = () => {
                       </div>
                     </div>
 
-                    <button className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 space-x-reverse">
+                    <button 
+                      onClick={handleRequestService}
+                      className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2 space-x-reverse"
+                    >
                       <span>{t("requestService")}</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>

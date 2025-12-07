@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import {
   BookOpen,
@@ -104,9 +105,9 @@ const FeaturedServices = () => {
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-[#1976D2] mb-3">{t(service.titleKey)}</h3>
               <p className="text-gray-600 text-sm mb-4">{t("learnMore")}</p>
-              <a href="#" className="text-[#1976D2] text-sm flex items-center justify-center gap-2">
+              <Link to="/services" className="text-[#1976D2] text-sm flex items-center justify-center gap-2 hover:text-[#1565C0] transition-colors">
                 <span>{language === "ar" ? "←" : "→"}</span>
-              </a>
+              </Link>
             </div>
           );
         })}
@@ -122,9 +123,9 @@ const FeaturedServices = () => {
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-[#1976D2] mb-3">{t(service.titleKey)}</h3>
               <p className="text-gray-600 text-sm mb-4">{t("learnMore")}</p>
-              <a href="#" className="text-[#1976D2] text-sm flex items-center justify-center gap-2">
+              <Link to="/services" className="text-[#1976D2] text-sm flex items-center justify-center gap-2 hover:text-[#1565C0] transition-colors">
                 <span>{language === "ar" ? "←" : "→"}</span>
-              </a>
+              </Link>
             </div>
           );
         })}
