@@ -11,7 +11,8 @@
     @apply border-border;
   }
   body {
-    @apply bg-gray-50 text-foreground;
+    @apply bg-gray-50 dark:bg-gray-900 text-foreground;
+    transition: background-color 0.2s ease;
   }
 }
 

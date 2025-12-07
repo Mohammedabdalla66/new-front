@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -14,6 +14,40 @@ import './i18n/index.js';
 import { AuthProvider } from '@/context/AuthContext.jsx';
 import { SocketProvider } from '@/context/SocketProvider.jsx';
 
+// Dark Mode Initializer Component
+const DarkModeInitializer = ({ children }) => {
+  useEffect(() => {
+    // Initialize dark mode from localStorage on app load
+    try {
+      const darkMode = localStorage.getItem('darkMode') === 'true';
+      if (darkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (error) {
+      console.error('Error initializing dark mode:', error);
+    }
+
+    // Listen for dark mode toggle events from Settings component
+    const handleDarkModeToggle = (e) => {
+      const enabled = e.detail?.enabled;
+      if (typeof enabled === 'boolean') {
+        if (enabled) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+    };
+
+    window.addEventListener('toggle-dark-mode', handleDarkModeToggle);
+    return () => window.removeEventListener('toggle-dark-mode', handleDarkModeToggle);
+  }, []);
+
+  return children;
+};
+
 const rootElement = document.getElementById('root');
 if (rootElement) {
 createRoot(rootElement).render(
@@ -23,18 +57,20 @@ createRoot(rootElement).render(
         <AuthProvider>
           <SocketProvider>
             <LanguageProvider>
-              <App />
-              <ToastContainer 
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              />
+              <DarkModeInitializer>
+                <App />
+                <ToastContainer 
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                />
+              </DarkModeInitializer>
             </LanguageProvider>
           </SocketProvider>
         </AuthProvider>

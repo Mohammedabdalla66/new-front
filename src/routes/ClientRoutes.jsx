@@ -108,7 +108,7 @@ export default function ClientRoutes() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex bg-gray-50 dark:bg-gray-900">
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/40 z-30 md:hidden"
@@ -125,7 +125,7 @@ export default function ClientRoutes() {
       />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header user={headerUser} onToggleSidebar={toggleSidebar} />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
           <Routes>
             <Route index element={<ClientDashboard />} />
             <Route path="requests" element={<Requests />} />

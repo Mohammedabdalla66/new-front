@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { NotificationSettings } from '../components/Settings/NotificationSettings.jsx';
 import { SecuritySettings } from '../components/Settings/SecuritySettings.jsx';
 import { Bell, Shield, CreditCard, Database, Moon, Sun, Globe, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
+import { useAuth } from '../hooks/useAuth';
 import Navbar from '../components/Layout/Navbar';
 import AdminSidebar from '../components/sidebar/AdminSidebar';
 
@@ -18,6 +19,8 @@ const mockNotificationSettings = {
 export const Settings = () => {
   const { t, language, toggleLanguage } = useLanguage();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('notifications');
   const [notificationSettings, setNotificationSettings] = useState(mockNotificationSettings);
@@ -29,11 +32,39 @@ export const Settings = () => {
     }
   });
 
+  // Sync dark mode state with localStorage and global state
+  useEffect(() => {
+    // Ensure dark mode is applied when component mounts
+    try {
+      const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (savedDarkMode !== darkMode) {
+        setDarkMode(savedDarkMode);
+      }
+    } catch {}
+  }, []);
+
+  // Determine if this is admin or client context
+  const isAdminContext = location.pathname.startsWith('/admin');
+  const isClientContext = location.pathname.startsWith('/client');
+  const isFirmContext = location.pathname.startsWith('/firm');
+  
+  // Determine back navigation path based on context
+  const getBackPath = () => {
+    if (isAdminContext) return '/admin';
+    if (isClientContext) return '/client';
+    if (isFirmContext) return '/firm';
+    // Fallback based on user role
+    if (user?.role === 'admin') return '/admin';
+    if (user?.role === 'client') return '/client';
+    if (user?.role === 'serviceProvider' || user?.role === 'firm') return '/firm';
+    return '/';
+  };
+
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);
 
   const handleBack = () => {
-    navigate('/admin');
+    navigate(getBackPath());
   };
 
   const handleNotificationSave = (settings) => {
@@ -52,34 +83,21 @@ export const Settings = () => {
     { id: 'data', label: t('dataPrivacy'), icon: Database },
   ];
 
-  return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
-      {isSidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 z-30 md:hidden"
-          onClick={closeSidebar}
-          role="presentation"
-        />
-      )}
-      <AdminSidebar isMobileOpen={isSidebarOpen} onMobileClose={closeSidebar} />
-
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar onToggleSidebar={toggleSidebar} />
-
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-7xl mx-auto">
+  // Settings content (shared for all contexts)
+  const settingsContent = (
+    <div className="max-w-7xl mx-auto">
       <div className="mb-6">
-              <button
-                onClick={handleBack}
-                className="flex items-center space-x-2 space-x-reverse mb-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-              >
-                {language === 'ar' ? (
-                  <ArrowRight className="w-5 h-5" />
-                ) : (
-                  <ArrowLeft className="w-5 h-5" />
-                )}
-                <span className="font-medium">{t('back') || 'Back'}</span>
-              </button>
+        <button
+          onClick={handleBack}
+          className="flex items-center space-x-2 space-x-reverse mb-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+        >
+          {language === 'ar' ? (
+            <ArrowRight className="w-5 h-5" />
+          ) : (
+            <ArrowLeft className="w-5 h-5" />
+          )}
+          <span className="font-medium">{t('back') || 'Back'}</span>
+        </button>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('settings')}</h1>
         <p className="text-gray-600 dark:text-gray-400">{t('manageAccountPreferences')}</p>
       </div>
@@ -124,8 +142,10 @@ export const Settings = () => {
                   onClick={() => {
                     const next = !darkMode;
                     setDarkMode(next);
-                    try { localStorage.setItem('darkMode', String(next)); } catch {}
-                    // Inform App to re-render with new mode
+                    try { 
+                      localStorage.setItem('darkMode', String(next));
+                    } catch {}
+                    // Dispatch event to update global dark mode (handled by DarkModeInitializer in main.jsx)
                     window.dispatchEvent(new CustomEvent('toggle-dark-mode', { detail: { enabled: next } }));
                   }}
                   className={`px-4 py-2 rounded-lg border text-sm ${darkMode ? 'bg-gray-900 text-white border-gray-800' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'} hover:opacity-90`}
@@ -174,8 +194,32 @@ export const Settings = () => {
             </div>
           )}
         </div>
-            </div>
-          </div>
+      </div>
+    </div>
+  );
+
+  // For client/firm contexts, just return the content (layout already provided by routes)
+  if (isClientContext || isFirmContext) {
+    return <div className="p-6">{settingsContent}</div>;
+  }
+
+  // For admin context, return full layout with sidebar and navbar
+  return (
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={closeSidebar}
+          role="presentation"
+        />
+      )}
+      <AdminSidebar isMobileOpen={isSidebarOpen} onMobileClose={closeSidebar} />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Navbar onToggleSidebar={toggleSidebar} />
+
+        <main className="flex-1 overflow-y-auto p-6">
+          {settingsContent}
         </main>
       </div>
     </div>
