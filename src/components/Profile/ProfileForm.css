@@ -1,0 +1,142 @@
+/* Profile Form Dark Mode Support */
+:root {
+  /* Light mode colors */
+  --profile-bg-primary: #f9fafb; /* bg-gray-50 */
+  --profile-bg-secondary: #ffffff; /* bg-white */
+  --profile-bg-tertiary: #f9fafb; /* bg-gray-50 */
+  --profile-text-primary: #111827; /* text-gray-900 */
+  --profile-text-secondary: #6b7280; /* text-gray-500 */
+  --profile-text-tertiary: #374151; /* text-gray-700 */
+  --profile-border-primary: #e5e7eb; /* border-gray-200 */
+  --profile-border-secondary: #d1d5db; /* border-gray-300 */
+  --profile-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+  --profile-accent: #2563eb; /* blue-600 */
+  --profile-accent-hover: #1d4ed8; /* blue-700 */
+  --profile-accent-light: #dbeafe; /* blue-50 */
+  --profile-accent-border: #bfdbfe; /* blue-200 */
+  --profile-warning-bg: #fef3c7; /* yellow-50 */
+  --profile-warning-border: #fde68a; /* yellow-200 */
+  --profile-warning-text: #92400e; /* yellow-800 */
+  --profile-warning-text-light: #b45309; /* yellow-700 */
+  --profile-disabled-bg: #f9fafb; /* bg-gray-50 */
+  --profile-disabled-text: #6b7280; /* text-gray-500 */
+}
+
+/* Dark mode colors */
+[data-theme="dark"] {
+  --profile-bg-primary: #111827; /* dark background */
+  --profile-bg-secondary: #1f2937; /* dark card background */
+  --profile-bg-tertiary: #374151; /* dark tertiary background */
+  --profile-text-primary: #f9fafb; /* light text */
+  --profile-text-secondary: #9ca3af; /* light gray text */
+  --profile-text-tertiary: #d1d5db; /* medium gray text */
+  --profile-border-primary: #374151; /* dark border */
+  --profile-border-secondary: #4b5563; /* darker border */
+  --profile-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --profile-accent: #3b82f6; /* lighter blue for dark mode */
+  --profile-accent-hover: #2563eb; /* blue-600 */
+  --profile-accent-light: #1e3a8a; /* dark blue background */
+  --profile-accent-border: #1e40af; /* dark blue border */
+  --profile-warning-bg: #451a03; /* dark yellow background */
+  --profile-warning-border: #92400e; /* dark yellow border */
+  --profile-warning-text: #fbbf24; /* light yellow text */
+  --profile-warning-text-light: #f59e0b; /* lighter yellow text */
+  --profile-disabled-bg: #374151; /* dark disabled background */
+  --profile-disabled-text: #6b7280; /* disabled text */
+}
+
+/* Profile form container */
+.profile-form-container {
+  background-color: var(--profile-bg-primary);
+  color: var(--profile-text-primary);
+}
+
+/* Main card */
+.profile-card {
+  background-color: var(--profile-bg-secondary);
+  border-color: var(--profile-border-primary);
+  box-shadow: var(--profile-shadow);
+}
+
+/* Tab navigation */
+.profile-tab {
+  color: var(--profile-text-secondary);
+  border-color: transparent;
+}
+
+.profile-tab:hover {
+  color: var(--profile-text-tertiary);
+  border-color: var(--profile-border-secondary);
+}
+
+.profile-tab.active {
+  color: var(--profile-accent);
+  border-color: var(--profile-accent);
+}
+
+/* Form inputs */
+.profile-input {
+  background-color: var(--profile-bg-secondary);
+  border-color: var(--profile-border-secondary);
+  color: var(--profile-text-primary);
+}
+
+.profile-input:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--profile-accent);
+}
+
+.profile-input:disabled {
+  background-color: var(--profile-disabled-bg);
+  color: var(--profile-disabled-text);
+}
+
+/* Buttons */
+.profile-btn-primary {
+  background-color: var(--profile-accent);
+  color: white;
+}
+
+.profile-btn-primary:hover {
+  background-color: var(--profile-accent-hover);
+}
+
+.profile-btn-primary:disabled {
+  background-color: var(--profile-border-secondary);
+  cursor: not-allowed;
+}
+
+.profile-btn-secondary {
+  background-color: var(--profile-bg-secondary);
+  border-color: var(--profile-border-secondary);
+  color: var(--profile-text-tertiary);
+}
+
+.profile-btn-secondary:hover {
+  background-color: var(--profile-bg-tertiary);
+}
+
+/* Info boxes */
+.profile-info-box {
+  background-color: var(--profile-accent-light);
+  border-color: var(--profile-accent-border);
+}
+
+.profile-info-box-text {
+  color: var(--profile-warning-text);
+}
+
+.profile-info-box-text-light {
+  color: var(--profile-warning-text-light);
+}
+
+/* Action bar */
+.profile-action-bar {
+  background-color: var(--profile-bg-tertiary);
+  border-color: var(--profile-border-primary);
+}
+
+/* Smooth transitions */
+.profile-transition {
+  transition: all 0.2s ease-in-out;
+}

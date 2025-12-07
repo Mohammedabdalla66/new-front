@@ -1,0 +1,181 @@
+{
+    "scanned_files": 21,
+    "converted_files": 20,
+    "flagged_files": 1,
+    "files": [
+        {
+            "path": "src/data/mockData.ts",
+            "status": "ok",
+            "notes": [
+                "Simple data export file, converted successfully"
+            ]
+        },
+        {
+            "path": "src/App.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple component with imports, converted successfully"
+            ]
+        },
+        {
+            "path": "src/main.tsx",
+            "status": "ok",
+            "notes": [
+                "Entry point file, converted successfully",
+                "Removed non-null assertion operator"
+            ]
+        },
+        {
+            "path": "src/contexts/LanguageContext.tsx",
+            "status": "ok",
+            "notes": [
+                "Complex context file with interfaces, converted successfully",
+                "Removed TypeScript interfaces and type annotations"
+            ]
+        },
+        {
+            "path": "src/components/Hero.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple functional component, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/components/Header.tsx",
+            "status": "ok",
+            "notes": [
+                "Component with props interface, converted successfully",
+                "Added JSDoc comment for props",
+                "Removed interface and type annotations"
+            ]
+        },
+        {
+            "path": "src/components/Footer.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple functional component, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/components/HowItWorks.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple functional component, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/components/FeaturedServices.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple functional component, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/components/StatsSection.tsx",
+            "status": "ok",
+            "notes": [
+                "Component with useRef and useState hooks, converted successfully",
+                "Removed generic type parameters from useState and useRef"
+            ]
+        },
+        {
+            "path": "src/components/Testimonials.tsx",
+            "status": "ok",
+            "notes": [
+                "Component with state management, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/components/TopAccountants.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple functional component, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/components/WhyChooseUs.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple functional component, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/components/CTASection.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple functional component, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/components/AddProjectModal.tsx",
+            "status": "ok",
+            "notes": [
+                "Complex component with props interface and form handling, converted successfully",
+                "Added JSDoc comment for props",
+                "Removed interface and type annotations"
+            ]
+        },
+        {
+            "path": "src/pages/HomePage.tsx",
+            "status": "ok",
+            "notes": [
+                "Page component with state management, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/pages/ServicesPage.tsx",
+            "status": "ok",
+            "notes": [
+                "Complex page component with filtering logic, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/pages/AccountantsPage.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple page component, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/pages/ProjectsPage.tsx",
+            "status": "ok",
+            "notes": [
+                "Simple page component, converted successfully",
+                "Removed React.FC type annotation"
+            ]
+        },
+        {
+            "path": "src/pages/ContactPage.tsx",
+            "status": "ok",
+            "notes": [
+                "Complex page component with form handling, converted successfully",
+                "Removed React.FC type annotation and form event types"
+            ]
+        },
+        {
+            "path": "src/vite-env.d.ts",
+            "status": "manual-review-required",
+            "notes": [
+                "TypeScript declaration file - should be removed or converted to .js if needed",
+                "Contains Vite client type references"
+            ]
+        }
+    ],
+    "git_suggested_message": "chore: convert TSX/TS → JSX/JS (automated) — review required for 1 files",
+    "commands_to_run": [
+        "npm run build",
+        "npm test"
+    ],
+    "timestamp": "2025-01-27T10:30:00.000Z"
+}
