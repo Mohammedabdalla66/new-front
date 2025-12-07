@@ -47,6 +47,11 @@ uploadApi.interceptors.response.use(
       localStorage.removeItem('user');
       window.location.href = '/auth/login';
     }
+    // Handle rate limiting (429) - prevent retries
+    if (error.response?.status === 429) {
+      console.warn('Rate limit exceeded (429). Request blocked to prevent further rate limiting.');
+      return Promise.reject(error);
+    }
     return Promise.reject(error);
   }
 );
@@ -214,6 +219,12 @@ api.interceptors.response.use(
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
       window.location.href = '/auth/login';
+    }
+    // Handle rate limiting (429) - prevent retries
+    if (error.response?.status === 429) {
+      console.warn('Rate limit exceeded (429). Request blocked to prevent further rate limiting.');
+      // Don't retry 429 errors - reject immediately
+      return Promise.reject(error);
     }
     return Promise.reject(error);
   }

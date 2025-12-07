@@ -38,10 +38,13 @@ const AdminDashboard = () => {
   const error = useSelector(selectDashboardError);
 
   useEffect(() => {
+    // Fetch dashboard data only once on mount
+    // The Redux thunks have built-in guards to prevent duplicate concurrent requests
     dispatch(fetchDashboard());
     dispatch(fetchRecentActivity());
     dispatch(fetchPendingItems());
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - only run once on mount
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);

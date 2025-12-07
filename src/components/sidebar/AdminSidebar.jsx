@@ -51,19 +51,19 @@ export default function AdminSidebar({
     },
     {
       icon: FileCheck,
-      label: "Pending Requests",
+      label: t("pendingRequests"),
       path: "/admin/requests/pending",
       active: location.pathname === "/admin/requests/pending",
     },
     {
       icon: ClipboardList,
-      label: "Proposals",
+      label: t("proposals"),
       path: "/admin/proposals",
       active: location.pathname === "/admin/proposals",
     },
     {
       icon: Package,
-      label: "In-Progress Orders",
+      label: t("inProgressOrders"),
       path: "/admin/orders/in-progress",
       active: location.pathname === "/admin/orders/in-progress",
     },
@@ -95,7 +95,11 @@ export default function AdminSidebar({
 
   const handleNavigation = (path) => {
     navigate(path);
-    onMobileClose();
+    // Never close sidebar for settings route - keep it open like other menu items
+    // Only close mobile sidebar for other routes
+    if (path !== "/admin/settings" && window.innerWidth < 768) {
+      onMobileClose();
+    }
   };
 
   const handleLogout = () => {

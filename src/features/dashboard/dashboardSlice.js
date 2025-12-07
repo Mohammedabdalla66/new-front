@@ -2,6 +2,31 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { adminAPI } from '../../services/adminApi';
 import api from '../../services/api';
 
+// Request deduplication: Track in-flight requests to prevent duplicates
+const inFlightRequests = new Map();
+
+// Helper to create a deduplicated request
+const deduplicatedRequest = async (key, requestFn) => {
+  // If request is already in flight, return the existing promise
+  if (inFlightRequests.has(key)) {
+    return inFlightRequests.get(key);
+  }
+  
+  // Create new request
+  const promise = requestFn()
+    .then((result) => {
+      inFlightRequests.delete(key);
+      return result;
+    })
+    .catch((error) => {
+      inFlightRequests.delete(key);
+      throw error;
+    });
+  
+  inFlightRequests.set(key, promise);
+  return promise;
+};
+
 // Helper function to get total counts
 const getTotalCounts = async () => {
   try {
@@ -104,190 +129,228 @@ const getRequestsByService = async () => {
 export const fetchDashboard = createAsyncThunk(
   'dashboard/fetchDashboard',
   async (_, { rejectWithValue }) => {
-    try {
-      // Get today's report
-      const today = new Date().toISOString().split('T')[0];
-      const dailyReportResponse = await adminAPI.dailyReport(today);
-      const dailyData = dailyReportResponse.data.data || {};
-      
-      // Get total counts
-      const { totalServiceProviders, totalClients } = await getTotalCounts();
-      
-      // Get total revenue from all completed transactions
-      const transactionsResponse = await adminAPI.listTransactions({
-        status: 'completed',
-        page: 1,
-        limit: 1000, // Get a large number to calculate total
-      });
-      const totalRevenue = transactionsResponse.data.data?.reduce(
-        (sum, t) => sum + (t.amount || 0),
-        0
-      ) || 0;
-      
-      // Get pending transactions count
-      const pendingTxnsResponse = await adminAPI.listTransactions({
-        status: 'pending',
-        page: 1,
-        limit: 1,
-      });
-      const pendingTransactions = pendingTxnsResponse.data.meta?.total || 0;
-      
-      // Get revenue series
-      const revenueSeries = await getRevenueSeries();
-      
-      // Get requests by service
-      const requestsByService = await getRequestsByService();
-      
-      return {
-        stats: {
-          totalServiceProviders,
-          activeClients: totalClients,
-          totalRevenue,
-          pendingTransactions,
-        },
-        revenueSeries,
-        requestsByService,
-      };
-    } catch (error) {
-      console.error('Error fetching dashboard:', error);
-      return rejectWithValue(error.response?.data?.message || error.message || 'Failed to fetch dashboard data');
-    }
+    // Request deduplication is handled by deduplicatedRequest
+    const requestKey = 'fetchDashboard';
+    return deduplicatedRequest(requestKey, async () => {
+      try {
+        // Get today's report
+        const today = new Date().toISOString().split('T')[0];
+        const dailyReportResponse = await adminAPI.dailyReport(today);
+        const dailyData = dailyReportResponse.data.data || {};
+        
+        // Get total counts
+        const { totalServiceProviders, totalClients } = await getTotalCounts();
+        
+        // Get total revenue from all completed transactions
+        const transactionsResponse = await adminAPI.listTransactions({
+          status: 'completed',
+          page: 1,
+          limit: 1000, // Get a large number to calculate total
+        });
+        const totalRevenue = transactionsResponse.data.data?.reduce(
+          (sum, t) => sum + (t.amount || 0),
+          0
+        ) || 0;
+        
+        // Get pending transactions count
+        const pendingTxnsResponse = await adminAPI.listTransactions({
+          status: 'pending',
+          page: 1,
+          limit: 1,
+        });
+        const pendingTransactions = pendingTxnsResponse.data.meta?.total || 0;
+        
+        // Get revenue series
+        const revenueSeries = await getRevenueSeries();
+        
+        // Get requests by service
+        const requestsByService = await getRequestsByService();
+        
+        return {
+          stats: {
+            totalServiceProviders,
+            activeClients: totalClients,
+            totalRevenue,
+            pendingTransactions,
+          },
+          revenueSeries,
+          requestsByService,
+        };
+      } catch (error) {
+        // Don't retry on 429 errors
+        if (error.response?.status === 429) {
+          console.error('Rate limit exceeded while fetching dashboard. Please wait before retrying.');
+          return rejectWithValue('Too many requests. Please wait a moment and try again.');
+        }
+        console.error('Error fetching dashboard:', error);
+        return rejectWithValue(error.response?.data?.message || error.message || 'Failed to fetch dashboard data');
+      }
+    });
   }
 );
 
 export const fetchRecentActivity = createAsyncThunk(
   'dashboard/fetchRecentActivity',
   async (_, { rejectWithValue }) => {
-    try {
-      const activities = [];
-      
-      // Get recent requests
+    // Request deduplication is handled by deduplicatedRequest
+    const requestKey = 'fetchRecentActivity';
+    return deduplicatedRequest(requestKey, async () => {
       try {
-        const requestsResponse = await api.get('/admin/requests?limit=5');
-        const requests = requestsResponse.data || [];
-        requests.forEach(req => {
-          activities.push({
-            id: `request-${req._id}`,
-            type: 'request',
-            message: `New request: ${req.title}`,
-            timestamp: req.createdAt,
-            status: req.status || 'pending',
-            userOrFirm: req.client?.name || 'Unknown Client',
-            action: 'New Request',
-            amount: req.budget || null,
+        const activities = [];
+        
+        // Get recent requests
+        try {
+          const requestsResponse = await api.get('/admin/requests?limit=5');
+          const requests = requestsResponse.data || [];
+          requests.forEach(req => {
+            activities.push({
+              id: `request-${req._id}`,
+              type: 'request',
+              message: `New request: ${req.title}`,
+              timestamp: req.createdAt,
+              status: req.status || 'pending',
+              userOrFirm: req.client?.name || 'Unknown Client',
+              action: 'New Request',
+              amount: req.budget || null,
+            });
           });
-        });
-      } catch (error) {
-        console.error('Error fetching recent requests:', error);
-      }
-      
-      // Get recent transactions
-      try {
-        const txnsResponse = await adminAPI.listTransactions({
-          page: 1,
-          limit: 5,
-          sort: '-createdAt',
-        });
-        const txns = txnsResponse.data.data || [];
-        txns.forEach(txn => {
-          activities.push({
-            id: `transaction-${txn._id}`,
-            type: txn.type === 'payment' || txn.type === 'deposit' ? 'payment' : 'transaction',
-            message: `${txn.type === 'payment' ? 'Payment' : 'Transaction'}: ${txn.amount?.toFixed(2)} OMR`,
-            timestamp: txn.createdAt,
-            status: txn.status,
-            userOrFirm: txn.owner?.name || 'Unknown',
-            action: `${txn.type} ${txn.status}`,
-            amount: txn.amount,
+        } catch (error) {
+          // Don't fail entire request if one sub-request fails
+          if (error.response?.status === 429) {
+            console.warn('Rate limit exceeded while fetching recent requests');
+          } else {
+            console.error('Error fetching recent requests:', error);
+          }
+        }
+        
+        // Get recent transactions
+        try {
+          const txnsResponse = await adminAPI.listTransactions({
+            page: 1,
+            limit: 5,
+            sort: '-createdAt',
           });
-        });
-      } catch (error) {
-        console.error('Error fetching recent transactions:', error);
-      }
-      
-      // Get pending service providers
-      try {
-        const spResponse = await adminAPI.listServiceProviders({
-          status: 'pending',
-          page: 1,
-          limit: 3,
-        });
-        const serviceProviders = spResponse.data.data || [];
-        serviceProviders.forEach(sp => {
-          activities.push({
-            id: `sp-${sp._id}`,
-            type: 'service_provider_request',
-            message: `New service provider registration: ${sp.name}`,
-            timestamp: sp.createdAt,
+          const txns = txnsResponse.data.data || [];
+          txns.forEach(txn => {
+            activities.push({
+              id: `transaction-${txn._id}`,
+              type: txn.type === 'payment' || txn.type === 'deposit' ? 'payment' : 'transaction',
+              message: `${txn.type === 'payment' ? 'Payment' : 'Transaction'}: ${txn.amount?.toFixed(2)} OMR`,
+              timestamp: txn.createdAt,
+              status: txn.status,
+              userOrFirm: txn.owner?.name || 'Unknown',
+              action: `${txn.type} ${txn.status}`,
+              amount: txn.amount,
+            });
+          });
+        } catch (error) {
+          if (error.response?.status === 429) {
+            console.warn('Rate limit exceeded while fetching recent transactions');
+          } else {
+            console.error('Error fetching recent transactions:', error);
+          }
+        }
+        
+        // Get pending service providers
+        try {
+          const spResponse = await adminAPI.listServiceProviders({
             status: 'pending',
-            userOrFirm: sp.name,
-            action: 'Registration Request',
-            amount: null,
+            page: 1,
+            limit: 3,
           });
-        });
+          const serviceProviders = spResponse.data.data || [];
+          serviceProviders.forEach(sp => {
+            activities.push({
+              id: `sp-${sp._id}`,
+              type: 'service_provider_request',
+              message: `New service provider registration: ${sp.name}`,
+              timestamp: sp.createdAt,
+              status: 'pending',
+              userOrFirm: sp.name,
+              action: 'Registration Request',
+              amount: null,
+            });
+          });
+        } catch (error) {
+          if (error.response?.status === 429) {
+            console.warn('Rate limit exceeded while fetching pending service providers');
+          } else {
+            console.error('Error fetching pending service providers:', error);
+          }
+        }
+        
+        // Sort by timestamp (most recent first) and limit to 10
+        return activities
+          .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+          .slice(0, 10);
       } catch (error) {
-        console.error('Error fetching pending service providers:', error);
+        if (error.response?.status === 429) {
+          console.error('Rate limit exceeded while fetching recent activity');
+          return rejectWithValue('Too many requests. Please wait a moment and try again.');
+        }
+        console.error('Error fetching recent activity:', error);
+        return rejectWithValue(error.response?.data?.message || error.message || 'Failed to fetch recent activity');
       }
-      
-      // Sort by timestamp (most recent first) and limit to 10
-      return activities
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-        .slice(0, 10);
-    } catch (error) {
-      console.error('Error fetching recent activity:', error);
-      return rejectWithValue(error.response?.data?.message || error.message || 'Failed to fetch recent activity');
-    }
+    });
   }
 );
 
 export const fetchPendingItems = createAsyncThunk(
   'dashboard/fetchPendingItems',
   async (_, { rejectWithValue }) => {
-    try {
-      // Get pending service providers
-      const spResponse = await adminAPI.listServiceProviders({
-        status: 'pending',
-        page: 1,
-        limit: 10,
-      });
-      const serviceProviders = spResponse.data.data || [];
-      
-      const pendingServiceProviders = serviceProviders.map(sp => ({
-        id: sp._id,
-        name: sp.name,
-        email: sp.email,
-        phone: sp.phone || '',
-        submittedAt: sp.createdAt,
-        documents: sp.documents || [],
-        status: 'pending',
-      }));
-      
-      // Get pending transactions
-      const txnsResponse = await adminAPI.listTransactions({
-        status: 'pending',
-        page: 1,
-        limit: 10,
-      });
-      const transactions = txnsResponse.data.data || [];
-      
-      const pendingTransactions = transactions.map(txn => ({
-        id: txn._id,
-        clientName: txn.owner?.name || 'Unknown',
-        serviceName: txn.description || 'Service',
-        amount: txn.amount || 0,
-        serviceProviderName: 'N/A', // Transaction doesn't have direct service provider link
-        submittedAt: txn.createdAt,
-        status: txn.status,
-      }));
-      
-      return {
-        serviceProviders: pendingServiceProviders,
-        transactions: pendingTransactions,
-      };
-    } catch (error) {
-      console.error('Error fetching pending items:', error);
-      return rejectWithValue(error.response?.data?.message || error.message || 'Failed to fetch pending items');
-    }
+    // Request deduplication is handled by deduplicatedRequest
+    const requestKey = 'fetchPendingItems';
+    return deduplicatedRequest(requestKey, async () => {
+      try {
+        // Get pending service providers
+        const spResponse = await adminAPI.listServiceProviders({
+          status: 'pending',
+          page: 1,
+          limit: 10,
+        });
+        const serviceProviders = spResponse.data.data || [];
+        
+        const pendingServiceProviders = serviceProviders.map(sp => ({
+          id: sp._id,
+          name: sp.name,
+          email: sp.email,
+          phone: sp.phone || '',
+          submittedAt: sp.createdAt,
+          documents: sp.documents || [],
+          status: 'pending',
+        }));
+        
+        // Get pending transactions
+        const txnsResponse = await adminAPI.listTransactions({
+          status: 'pending',
+          page: 1,
+          limit: 10,
+        });
+        const transactions = txnsResponse.data.data || [];
+        
+        const pendingTransactions = transactions.map(txn => ({
+          id: txn._id,
+          clientName: txn.owner?.name || 'Unknown',
+          serviceName: txn.description || 'Service',
+          amount: txn.amount || 0,
+          serviceProviderName: 'N/A', // Transaction doesn't have direct service provider link
+          submittedAt: txn.createdAt,
+          status: txn.status,
+        }));
+        
+        return {
+          serviceProviders: pendingServiceProviders,
+          transactions: pendingTransactions,
+        };
+      } catch (error) {
+        if (error.response?.status === 429) {
+          console.error('Rate limit exceeded while fetching pending items');
+          return rejectWithValue('Too many requests. Please wait a moment and try again.');
+        }
+        console.error('Error fetching pending items:', error);
+        return rejectWithValue(error.response?.data?.message || error.message || 'Failed to fetch pending items');
+      }
+    });
   }
 );
 

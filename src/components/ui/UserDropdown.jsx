@@ -226,7 +226,7 @@ const UserDropdown = ({ user, className = "" }) => {
             <span>{t("dashboard") || (language === "ar" ? "لوحة التحكم" : "Dashboard")}</span>
           </Link>
 
-          <Link
+          {/* <Link
             to={getProfileRoute()}
             onClick={(e) => {
               e.stopPropagation();
@@ -250,7 +250,7 @@ const UserDropdown = ({ user, className = "" }) => {
           >
             <Settings className="h-4 w-4" />
             <span>{t("settings") || (language === "ar" ? "الإعدادات" : "Settings")}</span>
-          </Link>
+          </Link> */}
 
           {/* Logout */}
           <button

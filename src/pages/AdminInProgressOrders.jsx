@@ -14,9 +14,11 @@ import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { toast } from 'react-hot-toast';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const AdminInProgressOrders = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -237,10 +239,10 @@ const AdminInProgressOrders = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
-                  In-Progress Orders
+                  {t('inProgressOrders')}
                 </h1>
                 <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-                  Manage and monitor all ongoing service orders
+                  {t('manageAndMonitorOrders')}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -286,7 +288,7 @@ const AdminInProgressOrders = () => {
             ) : orders.length === 0 ? (
               <Card>
                 <CardContent className="p-12 text-center">
-                  <p className="text-neutral-600 dark:text-neutral-400">No in-progress orders found</p>
+                  <p className="text-neutral-600 dark:text-neutral-400">{t('noInProgressOrdersFound')}</p>
                 </CardContent>
               </Card>
             ) : viewMode === 'table' ? (

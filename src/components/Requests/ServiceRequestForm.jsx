@@ -433,7 +433,7 @@ export const ServiceRequestForm = () => {
           {/* Legal Form and Business Activity */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 {t("legalFormLabel")}
               </label>
               <select
@@ -449,7 +449,7 @@ export const ServiceRequestForm = () => {
               </select>
             </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               {t("businessActivityLabel")}
             </label>
               <select
@@ -481,7 +481,7 @@ export const ServiceRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("estimatedRevenueLabel")}
               </label>
               <input
@@ -493,7 +493,7 @@ export const ServiceRequestForm = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("estimatedExpensesLabel")}
               </label>
               <input
