@@ -34,18 +34,18 @@ const HelpSupportPage = () => {
       questions: [
         {
           id: 1,
-          question: t("faqQ1"),
-          answer: t("faqA1"),
+          question: t("providerFaqQ1"),
+          answer: t("providerFaqA1"),
         },
         {
           id: 2,
-          question: t("faqQ2"),
-          answer: t("faqA2"),
+          question: t("providerFaqQ2"),
+          answer: t("providerFaqA2"),
         },
         {
           id: 3,
-          question: t("faqQ3"),
-          answer: t("faqA3"),
+          question: t("providerFaqQ3"),
+          answer: t("providerFaqA3"),
         },
       ],
     },
@@ -56,18 +56,18 @@ const HelpSupportPage = () => {
       questions: [
         {
           id: 4,
-          question: t("faqQ4"),
-          answer: t("faqA4"),
+          question: t("providerFaqQ4"),
+          answer: t("providerFaqA4"),
         },
         {
           id: 5,
-          question: t("faqQ5"),
-          answer: t("faqA5"),
+          question: t("providerFaqQ5"),
+          answer: t("providerFaqA5"),
         },
         {
           id: 6,
-          question: t("faqQ6"),
-          answer: t("faqA6"),
+          question: t("providerFaqQ6"),
+          answer: t("providerFaqA6"),
         },
       ],
     },
@@ -78,18 +78,18 @@ const HelpSupportPage = () => {
       questions: [
         {
           id: 7,
-          question: t("faqQ7"),
-          answer: t("faqA7"),
+          question: t("providerFaqQ7"),
+          answer: t("providerFaqA7"),
         },
         {
           id: 8,
-          question: t("faqQ8"),
-          answer: t("faqA8"),
+          question: t("providerFaqQ8"),
+          answer: t("providerFaqA8"),
         },
         {
           id: 9,
-          question: t("faqQ9"),
-          answer: t("faqA9"),
+          question: t("providerFaqQ9"),
+          answer: t("providerFaqA9"),
         },
       ],
     },
@@ -100,18 +100,18 @@ const HelpSupportPage = () => {
       questions: [
         {
           id: 10,
-          question: t("faqQ10"),
-          answer: t("faqA10"),
+          question: t("providerFaqQ10"),
+          answer: t("providerFaqA10"),
         },
         {
           id: 11,
-          question: t("faqQ11"),
-          answer: t("faqA11"),
+          question: t("providerFaqQ11"),
+          answer: t("providerFaqA11"),
         },
         {
           id: 12,
-          question: t("faqQ12"),
-          answer: t("faqA12"),
+          question: t("providerFaqQ12"),
+          answer: t("providerFaqA12"),
         },
       ],
     },

@@ -7,6 +7,7 @@ import ServicesPage from './pages/ServicesPage';
 import FaqPage from './pages/FaqPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ContactPage from './pages/ContactPage';
+import TermsPrivacyPage from './pages/TermsPrivacyPage';
 
 // Auth
 import LoginPage from './pages/auth/LoginPage';
@@ -65,6 +66,7 @@ function App() {
       <Route path="/FAQ" element={<FaqPage />} />
       <Route path="/projects" element={<ProjectsPage />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/terms" element={<TermsPrivacyPage />} />
       <Route path='/ProfileForm' element={<ProfileForm />} />
 
       {/* Auth */}
@@ -106,8 +108,7 @@ function App() {
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
-
-      );
+  );
 }
 
 export default App;

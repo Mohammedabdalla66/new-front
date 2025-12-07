@@ -27,7 +27,7 @@ export const ServiceRequestForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Pre-fill form when editing
+  // Pre-fill form when editing or when service is preselected from Hero search
   useEffect(() => {
     if (isEditMode && editRequest) {
       setTitle(editRequest.title || "");
@@ -39,8 +39,11 @@ export const ServiceRequestForm = () => {
       setRegisteredCapital(editRequest.registeredCapital || "");
       setEstimatedRevenue(editRequest.estimatedRevenue || "");
       setEstimatedExpenses(editRequest.estimatedExpenses || "");
+    } else if (location.state?.preselectedService) {
+      // Pre-fill service title when coming from Hero search
+      setTitle(location.state.preselectedService);
     }
-  }, [isEditMode, editRequest]);
+  }, [isEditMode, editRequest, location.state]);
 
   // Legal form options
   const LEGAL_FORM_OPTIONS = [

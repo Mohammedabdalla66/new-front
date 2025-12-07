@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
 
 const LanguageContext = createContext(undefined);
 
@@ -113,25 +113,49 @@ const translations = {
     // FAQ
     faqTitle: "هل لديك أسئلة ؟ اليك إجابات لأكثر الأسئلة شيوعا",
     faqQ1: "كم يستغرق الوقت للحصول على العروض؟",
-    faqA1: "عادة ما تستغرق العروض من 24 إلى 48 ساعة بعد نشر مشروعك.",
-    faqQ2: "ما هي تكلفة الخدمة للعميل؟",
+    faqA1: "المنصه تتيح الصلاحيات لجميع مزودي الخدمة المسجلين لديها وتعمل علي التواصل المباشر معهم لضمان إعطاء عروض أسعار في أقصر مدة",
+    faqQ2: "هل الخدمة مجانية؟",
     faqA2: "الخدمة مجانية حالياً للعملاء.",
     faqQ3: "كيف نضمن جودة مكاتب التدقيق؟",
-    faqA3: "نعمل فقط مع مكاتب مسجلة ومعتمدة في هيئة الخدمات المالية.",
+    faqA3: "جميع المكاتب المسجلة لدي المنصة هي مكاتب تدقيق حسابات مسجلة ومرخصة ومعتدة من قبل هيئة الخدمات المالية في سلطنة عمان",
     faqQ4: "كيف نضمن أمان الدفع؟",
-    faqA4: "نستخدم نظام ضمان حيث تبقى الأموال في الحساب حتى اكتمال المشروع.",
+    faqA4: "الدفع آمن حيث أن المنصة ترتبط بأحد الشركات المحلية والمرخصة من قبل البنك المركزي العماني",
     faqQ5: "ماذا يحدث بعد قبول عرض السعر؟",
-    faqA5: "يتم إنشاء عقد وتبدأ عملية التواصل والدفع الآمن.",
+    faqA5: "بعد نشر مشروعك سيبقي معلقا بانتظار المراجعة من قبل الدعم الفني لموقع المنصة وبعدها إما تتم الكوافقة عليه فيصلك إشعار بالموافقة ثم يظهرإشعار لجميع المكاتب المسجلو للتقدم بعروضهم عليه ز أو يتم رفضه مع ذكر الأسباب التي ÷دت لذلك لكي تقوم بتعديله و إرساله من جديد للمراجعة والقبول",
     
     // Footer
     aboutUs: "عن الموقع",
-    privacyPolicy: "سياسة الخصوصية",
+    FAQ: "الأسئلة الشائعة",
     terms: "الشروط",
     support: "الدعم",
     partners: "الشركاء",
     quickLinks: "روابط سريعة",
     contactUs: "تواصل معنا",
     allRightsReserved: "جميع الحقوق محفوظة.",
+    
+    // Terms & Privacy Policy
+    termsDefinitionsTitle: "التعريفات والمصطلحات الرئيسية",
+    termsDefinitionsContent: "المنصة: [منصة حسابي]، مشغل السوق الإلكتروني.\nالمستخدم/صاحب البيانات: الأفراد أو الكيانات الذين يستخدمون المنصة كمقدمي خدمة أو متلقين.\nالخدمة: جميع الخدمات المحاسبية والمالية المقدمة من خلال المنصة.\nمزود الخدمة/المحاسب: محترف يقدم خدمات عبر المنصة.\nالبيانات الشخصية: أي بيانات تحدد شخصاً طبيعياً أو تجعله قابلاً للتحديد، مثل الاسم، البريد الإلكتروني,\nرقم الهوية المدنية، العنوان، البيانات المالية، أو البيانات الحساسة (مثل البيانات الصحية أو المالية السرية).\nالبيانات الحساسة: تشمل أصولاً مالية، سجلات ضريبية، أو معلومات صحية مرتبطة بالخدمات.\nمعالجة البيانات: أي عملية على البيانات مثل الجمع، التخزين، التحليل، أو النقل.",
+    termsUserResponsibilitiesTitle: "الأساس القانوني والامتثال للقانون العُماني",
+    termsUserResponsibilitiesContent: "تلتزم المنصة بأحكام قانون حماية البيانات الشخصية في سلطنة عُمان (المتطلبات الإجرائية، إخطار انتهاكات البيانات،\n حقوق المكفولين، إلخ). تفرض القاعدة الطبيعية إشعارات محددة عن خروقات البيانات وإجراءات سحب الموافقات \nوحقوق الوصول والتصحيح. وفقاً للمادة/التطبيقات المنصوص عليها في القانون، على المتحكم بالإبلاغ عن خروقات \nخطيرة للجهات المختصة والمتضررين خلال إطار زمني محدد",
+    termsAccountSecurityTitle: "جمع البيانات",
+    termsAccountSecurityContent: "لإنشاء حساب، يجب أن تكون بالغاً قانونياً وتوفر معلومات دقيقة.\nأنت مسؤول عن الحفاظ على أمان حسابك وإبلاغنا فوراً عن أي استخدام غير مصرح به.\nنحتفظ بالحق في تعليق أو إغلاق أي حساب ينتهك هذه الشروط.\nيجب عليك استخدام كلمة مرور قوية وتغييرها بانتظام.",
+    termsPaymentsTitle: "المدفوعات والرسوم والفواتير",
+    termsPaymentsContent: "جميع الأسعار معروضة بالريال العماني (OMR) ما لم يُذكر خلاف ذلك.\nالمنصة قد تفرض رسوم خدمة على المعاملات المالية.\nيتم معالجة المدفوعات من خلال شركات محلية مرخصة من قبل البنك المركزي العماني.\nجميع المدفوعات نهائية ولا يمكن استردادها إلا وفقاً لسياسة الاسترداد الخاصة بنا.\nأنت مسؤول عن دفع جميع الرسوم والضرائب المطبقة.",
+    termsServiceAvailabilityTitle: "توفر الخدمة والقيود",
+    termsServiceAvailabilityContent: "نحتفظ بالحق في تعديل أو تعليق أو إيقاف أي جزء من الخدمة في أي وقت.\nلا نضمن أن الخدمة ستكون متاحة بشكل مستمر أو خالية من الأخطاء.\nقد نحد من الوصول إلى الخدمة لأسباب الصيانة أو التحديثات.\nنحتفظ بالحق في رفض تقديم الخدمة لأي مستخدم لأي سبب من الأسباب.",
+    termsIntellectualPropertyTitle: "حقوق الملكية الفكرية",
+    termsIntellectualPropertyContent: "جميع المحتوى على المنصة، بما في ذلك النصوص والصور والشعارات، محمي بحقوق الطبع والنشر.\nلا يجوز لك نسخ أو توزيع أو تعديل أي محتوى من المنصة دون إذن كتابي.\nالمحتوى الذي تقدمه يبقى ملكك، ولكنك تمنحنا ترخيصاً لاستخدامه في إطار الخدمة.\nنحترم حقوق الملكية الفكرية للآخرين ونطلب منك أن تفعل الشيء نفسه.",
+    privacyDataCollectionTitle: "جمع البيانات واستخدامها",
+    privacyDataCollectionContent: "نجمع المعلومات التي تقدمها لنا مباشرة عند التسجيل أو استخدام الخدمة.\nنجمع تلقائياً معلومات تقنية مثل عنوان IP ونوع المتصفح وبيانات الاستخدام.\nنستخدم بياناتك لتقديم وتحسين خدماتنا والتواصل معك.\nنستخدم بياناتك للامتثال للالتزامات القانونية وحماية حقوقنا.",
+    privacyCookiesTitle: "ملفات تعريف الارتباط وتقنيات التتبع",
+    privacyCookiesContent: "نستخدم ملفات تعريف الارتباط لتذكر تفضيلاتك وتحسين تجربتك.\nنستخدم ملفات تعريف الارتباط الضرورية لتشغيل الموقع بشكل صحيح.\nنستخدم ملفات تعريف الارتباط التحليلية لفهم كيفية استخدامك للمنصة.\nيمكنك إدارة تفضيلات ملفات تعريف الارتباط من خلال إعدادات المتصفح الخاص بك.",
+    privacyDataSharingTitle: "مشاركة البيانات الشخصية مع أطراف ثالثة",
+    privacyDataSharingContent: "قد نشارك بياناتك مع مقدمي الخدمات الذين يساعدوننا في تشغيل المنصة.\nنشارك البيانات فقط مع الأطراف التي تلتزم بمعايير الخصوصية الصارمة.\nقد نكشف عن بياناتك إذا كان ذلك مطلوباً بموجب القانون.\nلا نبيع بياناتك الشخصية لأطراف ثالثة لأغراض التسويق.",
+    privacyDataSecurityTitle: "أمان البيانات والحماية",
+    privacyDataSecurityContent: "نستخدم تقنيات تشفير متقدمة لحماية بياناتك أثناء النقل والتخزين.\nنطبق تدابير أمنية صارمة للحد من الوصول غير المصرح به إلى بياناتك.\nنقوم بمراجعة وتحسين إجراءات الأمان لدينا بانتظام.\nعلى الرغم من جهودنا، لا يمكن ضمان الأمان المطلق للبيانات عبر الإنترنت.",
+    privacyUserRightsTitle: "حقوق المستخدم بموجب قوانين حماية البيانات",
+    privacyUserRightsContent: "لديك الحق في الوصول إلى بياناتك الشخصية التي نحتفظ بها.\nلديك الحق في تصحيح أي بيانات غير دقيقة أو غير مكتملة.\nلديك الحق في طلب حذف بياناتك في ظروف معينة.\nلديك الحق في الاعتراض على معالجة بياناتك لأغراض معينة.\nلديك الحق في نقل بياناتك إلى خدمة أخرى.",
 
     // Modal
     addProjectTitle: "إضافة مشروع جديد",
@@ -422,48 +446,48 @@ const translations = {
     faqCategoryPayments: "المدفوعات والفواتير",
     faqCategoryAccount: "الحساب والأمان",
 
-    // FAQ Questions - Getting Started
-    faqQ1: "كيف أنشئ عرض مشروعي الأول؟",
-    faqA1:
+    // FAQ Questions - Getting Started (Service Provider)
+    providerFaqQ1: "كيف أنشئ عرض مشروعي الأول؟",
+    providerFaqA1:
       'لإنشاء عرض مشروعك الأول، اذهب إلى صفحة "تصفح المشاريع"، ابحث عن مشروع يناسب مهاراتك، وانقر على "التقدم للمشروع". املأ نموذج العرض بمنهجك والجدول الزمني والتسعير.',
-    faqQ2: "ما المعلومات التي يجب أن أدرجها في ملفي الشخصي؟",
-    faqA2:
+    providerFaqQ2: "ما المعلومات التي يجب أن أدرجها في ملفي الشخصي؟",
+    providerFaqA2:
       "يجب أن يتضمن ملفك الشخصي لقبك المهني وخبرتك ومهاراتك وشهاداتك وسيرة ذاتية مقنعة تسلط الضوء على خبرتك. ارفع عينات من أعمالك ودراسات الحالة لعرض قدراتك.",
-    faqQ3: "كيف أحدد معدل الساعة الخاص بي؟",
-    faqA3:
+    providerFaqQ3: "كيف أحدد معدل الساعة الخاص بي؟",
+    providerFaqA3:
       "يمكنك تحديد معدل الساعة الخاص بك في إعدادات ملفك الشخصي. ضع في اعتبارك خبرتك وأسعار السوق وتعقيد المشاريع عند تحديد تسعيرك.",
 
-    // FAQ Questions - Projects & Proposals
-    faqQ4: "كم من الوقت لديه العملاء للرد على عرضي؟",
-    faqA4:
+    // FAQ Questions - Projects & Proposals (Service Provider)
+    providerFaqQ4: "كم من الوقت لديه العملاء للرد على عرضي؟",
+    providerFaqA4:
       'عادة ما يكون لدى العملاء 7-14 يومًا للرد على العروض. يمكنك التحقق من حالة عروضك في قسم "طلباتي" في لوحة التحكم الخاصة بك.',
-    faqQ5: "هل يمكنني سحب عرض بعد إرساله؟",
-    faqA5:
+    providerFaqQ5: "هل يمكنني سحب عرض بعد إرساله؟",
+    providerFaqA5:
       'نعم، يمكنك سحب عرض قبل أن يرد العميل. اذهب إلى "طلباتي"، ابحث عن العرض، وانقر على "سحب".',
-    faqQ6: "ماذا يحدث إذا لم يرد العميل على عرضي؟",
-    faqA6:
+    providerFaqQ6: "ماذا يحدث إذا لم يرد العميل على عرضي؟",
+    providerFaqA6:
       "إذا لم يرد العميل خلال الإطار الزمني المحدد، ستنتهي صلاحية العرض تلقائيًا ويمكنك التقدم لمشاريع أخرى.",
 
-    // FAQ Questions - Payments & Billing
-    faqQ7: "كيف أحصل على أجر المشاريع المكتملة؟",
-    faqA7:
+    // FAQ Questions - Payments & Billing (Service Provider)
+    providerFaqQ7: "كيف أحصل على أجر المشاريع المكتملة؟",
+    providerFaqA7:
       "بمجرد اكتمال المشروع وموافقة العميل عليه، يتم معالجة الدفع تلقائيًا إلى محفظتك. يمكنك بعد ذلك سحب الأموال إلى حسابك المصرفي.",
-    faqQ8: "ما هي رسوم المنصة؟",
-    faqA8:
+    providerFaqQ8: "ما هي رسوم المنصة؟",
+    providerFaqA8:
       "رسوم منصتنا هي 10% من كل مشروع مكتمل. وهذا يغطي معالجة المدفوعات وحل النزاعات وصيانة المنصة.",
-    faqQ9: "كم من الوقت يستغرق استلام المدفوعات؟",
-    faqA9:
+    providerFaqQ9: "كم من الوقت يستغرق استلام المدفوعات؟",
+    providerFaqA9:
       "عادة ما تتم معالجة المدفوعات خلال 24-48 ساعة بعد اكتمال المشروع وموافقة العميل.",
 
-    // FAQ Questions - Account & Security
-    faqQ10: "كيف أتحقق من CaHup؟",
-    faqA10:
+    // FAQ Questions - Account & Security (Service Provider)
+    providerFaqQ10: "كيف أتحقق من CaHup؟",
+    providerFaqA10:
       "للتحقق من حسابك، ارفع بطاقة هوية صادرة عن الحكومة وإثبات أوراق اعتمادك المهنية. عادة ما يستغرق التحقق من 1-3 أيام عمل.",
-    faqQ11: "هل يمكنني تغيير عنوان بريدي الإلكتروني؟",
-    faqA11:
+    providerFaqQ11: "هل يمكنني تغيير عنوان بريدي الإلكتروني؟",
+    providerFaqA11:
       "نعم، يمكنك تغيير عنوان بريدك الإلكتروني في إعدادات حسابك. ستحتاج إلى التحقق من عنوان البريد الإلكتروني الجديد قبل أن يصبح نشطًا.",
-    faqQ12: "كيف أحذف CaHup؟",
-    faqA12:
+    providerFaqQ12: "كيف أحذف CaHup؟",
+    providerFaqA12:
       "لحذف حسابك، اتصل بفريق الدعم لدينا. يرجى ملاحظة أن هذا الإجراء لا يمكن التراجع عنه وستفقد الوصول إلى جميع بياناتك.",
 
     // Client Dashboard
@@ -1213,15 +1237,15 @@ const translations = {
     // FAQ
     faqTitle: "Do you have questions? Here are answers to the most common questions",
     faqQ1: "How long does it take to receive offers?",
-    faqA1: "Offers usually take 24 to 48 hours after publishing your project.",
-    faqQ2: "What is the service cost for clients?",
+    faqA1: "The platform grants permissions to all registered service providers and works on direct communication with them to ensure price offers are given in the shortest time.",
+    faqQ2: "Is the service free?",
     faqA2: "The service is currently free for clients.",
     faqQ3: "How do we ensure the quality of auditing offices?",
-    faqA3: "We only work with offices registered and accredited with the Financial Services Authority.",
+    faqA3: "All offices registered on the platform are registered, licensed, and accredited auditing offices by the Financial Services Authority in the Sultanate of Oman.",
     faqQ4: "How do we ensure payment security?",
-    faqA4: "We use an escrow system where funds remain in the account until project completion.",
+    faqA4: "Payment is secure as the platform is connected to a local company licensed by the Central Bank of Oman.",
     faqQ5: "What happens after accepting a price offer?",
-    faqA5: "A contract is created and the communication and secure payment process begins.",
+    faqA5: "After publishing your project, it will remain pending awaiting review by the platform's technical support. After that, either it will be approved and you will receive a notification of approval, then a notification will appear to all registered offices to submit their offers on it, or it will be rejected with the reasons that led to this so that you can modify it and resubmit it for review and approval.",
     
     // Footer
     aboutUs: "About Us",
@@ -1232,6 +1256,30 @@ const translations = {
     quickLinks: "Quick Links",
     contactUs: "Contact Us",
     allRightsReserved: "All rights reserved.",
+    
+    // Terms & Privacy Policy
+    termsDefinitionsTitle: "Definitions & Key Terms",
+    termsDefinitionsContent: "Platform: Refers to the CaHup website and its services.\nUser: Any person who uses the platform's services.\nService: All accounting and financial services provided through the platform.\nPersonal Data: Any information that can be used to identify a user.",
+    termsUserResponsibilitiesTitle: "User Responsibilities & Acceptable Use",
+    termsUserResponsibilitiesContent: "You are responsible for maintaining the confidentiality of your account information and password.\nYou must use the platform only for lawful and legitimate purposes.\nYou are prohibited from using the platform for any illegal or fraudulent activity.\nYou must provide accurate and correct information when creating your account or requesting services.\nYou are responsible for all activities that occur under your account.",
+    termsAccountSecurityTitle: "Account Creation, Login, and Security",
+    termsAccountSecurityContent: "To create an account, you must be of legal age and provide accurate information.\nYou are responsible for maintaining the security of your account and must notify us immediately of any unauthorized use.\nWe reserve the right to suspend or close any account that violates these terms.\nYou must use a strong password and change it regularly.",
+    termsPaymentsTitle: "Payments, Fees, and Billing",
+    termsPaymentsContent: "All prices are displayed in Omani Rial (OMR) unless otherwise stated.\nThe platform may charge service fees on financial transactions.\nPayments are processed through local companies licensed by the Central Bank of Oman.\nAll payments are final and non-refundable except in accordance with our refund policy.\nYou are responsible for paying all applicable fees and taxes.",
+    termsServiceAvailabilityTitle: "Service Availability & Limitations",
+    termsServiceAvailabilityContent: "We reserve the right to modify, suspend, or discontinue any part of the service at any time.\nWe do not guarantee that the service will be continuously available or error-free.\nWe may limit access to the service for maintenance or update purposes.\nWe reserve the right to refuse service to any user for any reason.",
+    termsIntellectualPropertyTitle: "Intellectual Property Rights",
+    termsIntellectualPropertyContent: "All content on the platform, including text, images, and logos, is protected by copyright.\nYou may not copy, distribute, or modify any content from the platform without written permission.\nContent you provide remains yours, but you grant us a license to use it within the service.\nWe respect the intellectual property rights of others and ask that you do the same.",
+    privacyDataCollectionTitle: "Data Collection & Use",
+    privacyDataCollectionContent: "We collect information you provide directly when registering or using the service.\nWe automatically collect technical information such as IP address, browser type, and usage data.\nWe use your data to provide and improve our services and communicate with you.\nWe use your data to comply with legal obligations and protect our rights.",
+    privacyCookiesTitle: "Cookies & Tracking Technologies",
+    privacyCookiesContent: "We use cookies to remember your preferences and improve your experience.\nWe use essential cookies for the website to function properly.\nWe use analytical cookies to understand how you use the platform.\nYou can manage your cookie preferences through your browser settings.",
+    privacyDataSharingTitle: "Sharing Personal Data with Third Parties",
+    privacyDataSharingContent: "We may share your data with service providers who help us operate the platform.\nWe only share data with parties that adhere to strict privacy standards.\nWe may disclose your data if required by law.\nWe do not sell your personal data to third parties for marketing purposes.",
+    privacyDataSecurityTitle: "Data Security & Protection",
+    privacyDataSecurityContent: "We use advanced encryption technologies to protect your data during transmission and storage.\nWe apply strict security measures to limit unauthorized access to your data.\nWe regularly review and improve our security procedures.\nDespite our efforts, absolute security of data over the internet cannot be guaranteed.",
+    privacyUserRightsTitle: "User Rights under Data Protection Laws",
+    privacyUserRightsContent: "You have the right to access your personal data that we hold.\nYou have the right to correct any inaccurate or incomplete data.\nYou have the right to request deletion of your data under certain circumstances.\nYou have the right to object to processing of your data for certain purposes.\nYou have the right to transfer your data to another service.",
 
     // Modal
     addProjectTitle: "Add New Project",
@@ -1416,47 +1464,48 @@ const translations = {
     faqCategoryAccount: "Account & Security",
 
     // FAQ Questions - Getting Started
-    faqQ1: "How do I create my first project proposal?",
-    faqA1:
+    // FAQ Questions - Getting Started (Service Provider)
+    providerFaqQ1: "How do I create my first project proposal?",
+    providerFaqA1:
       'To create your first project proposal, go to the "Browse Projects" page, find a project that matches your skills, and click "Apply for Project". Fill out the proposal form with your approach, timeline, and pricing.',
-    faqQ2: "What information should I include in my profile?",
-    faqA2:
+    providerFaqQ2: "What information should I include in my profile?",
+    providerFaqA2:
       "Your profile should include your professional title, experience, skills, certifications, and a compelling bio that highlights your expertise. Upload work samples and case studies to showcase your capabilities.",
-    faqQ3: "How do I set my hourly rate?",
-    faqA3:
+    providerFaqQ3: "How do I set my hourly rate?",
+    providerFaqA3:
       "You can set your hourly rate in your profile settings. Consider your experience, market rates, and the complexity of projects when determining your pricing.",
 
-    // FAQ Questions - Projects & Proposals
-    faqQ4: "How long do clients have to respond to my proposal?",
-    faqA4:
+    // FAQ Questions - Projects & Proposals (Service Provider)
+    providerFaqQ4: "How long do clients have to respond to my proposal?",
+    providerFaqA4:
       'Clients typically have 7-14 days to respond to proposals. You can check the status of your proposals in the "My Requests" section of your dashboard.',
-    faqQ5: "Can I withdraw a proposal after submitting it?",
-    faqA5:
+    providerFaqQ5: "Can I withdraw a proposal after submitting it?",
+    providerFaqA5:
       'Yes, you can withdraw a proposal before the client responds. Go to "My Requests", find the proposal, and click "Withdraw".',
-    faqQ6: "What happens if a client doesn't respond to my proposal?",
-    faqA6:
+    providerFaqQ6: "What happens if a client doesn't respond to my proposal?",
+    providerFaqA6:
       "If a client doesn't respond within the specified timeframe, the proposal will automatically expire and you can apply to other projects.",
 
-    // FAQ Questions - Payments & Billing
-    faqQ7: "How do I get paid for completed projects?",
-    faqA7:
+    // FAQ Questions - Payments & Billing (Service Provider)
+    providerFaqQ7: "How do I get paid for completed projects?",
+    providerFaqA7:
       "Once a project is completed and approved by the client, payment is automatically processed to your wallet. You can then withdraw funds to your bank account.",
-    faqQ8: "What are the platform fees?",
-    faqA8:
+    providerFaqQ8: "What are the platform fees?",
+    providerFaqA8:
       "Our platform fee is 10% of each completed project. This covers payment processing, dispute resolution, and platform maintenance.",
-    faqQ9: "How long does it take to receive payments?",
-    faqA9:
+    providerFaqQ9: "How long does it take to receive payments?",
+    providerFaqA9:
       "Payments are typically processed within 24-48 hours after project completion and client approval.",
 
-    // FAQ Questions - Account & Security
-    faqQ10: "How do I verify my account?",
-    faqA10:
+    // FAQ Questions - Account & Security (Service Provider)
+    providerFaqQ10: "How do I verify my account?",
+    providerFaqA10:
       "To verify your account, upload a government-issued ID and proof of your professional credentials. Verification typically takes 1-3 business days.",
-    faqQ11: "Can I change my email address?",
-    faqA11:
+    providerFaqQ11: "Can I change my email address?",
+    providerFaqA11:
       "Yes, you can change your email address in your account settings. You'll need to verify the new email address before it becomes active.",
-    faqQ12: "How do I delete my account?",
-    faqA12:
+    providerFaqQ12: "How do I delete my account?",
+    providerFaqA12:
       "To delete your account, contact our support team. Please note that this action is irreversible and you'll lose access to all your data.",
 
     // Client Dashboard
@@ -2071,7 +2120,10 @@ export const LanguageProvider = ({ children }) => {
     }
   });
 
-  const toggleLanguage = () => {
+  // Ensure language is valid, fallback to "en" if not
+  const validLanguage = translations[language] ? language : "en";
+
+  const toggleLanguage = useCallback(() => {
     setLanguage((prev) => {
       const newLang = prev === "ar" ? "en" : "ar";
       try {
@@ -2079,30 +2131,38 @@ export const LanguageProvider = ({ children }) => {
       } catch {}
       return newLang;
     });
-  };
+  }, []);
 
-  const t = (key) => {
+  const t = useCallback((key) => {
     try {
-      if (!translations[language]) {
-        console.warn(`Language "${language}" not found, falling back to "en"`);
+      const lang = translations[validLanguage] ? validLanguage : "en";
+      if (!translations[lang]) {
+        console.warn(`Language "${lang}" not found, falling back to "en"`);
         return translations.en?.[key] || key;
       }
-      return translations[language][key] || key;
+      return translations[lang][key] || key;
     } catch (error) {
       console.error('Error in translation function:', error);
       return key;
     }
-  };
+  }, [validLanguage]);
 
-  const dir = language === "ar" ? "rtl" : "ltr";
+  const dir = validLanguage === "ar" ? "rtl" : "ltr";
 
   useEffect(() => {
     document.documentElement.setAttribute("dir", dir);
-    document.documentElement.setAttribute("lang", language);
-  }, [language, dir]);
+    document.documentElement.setAttribute("lang", validLanguage);
+  }, [validLanguage, dir]);
+
+  const contextValue = useMemo(() => ({
+    language: validLanguage,
+    toggleLanguage,
+    t,
+    dir,
+  }), [validLanguage, toggleLanguage, t, dir]);
 
   return (
-    <LanguageContext.Provider value={{ language, toggleLanguage, t, dir }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );

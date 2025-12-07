@@ -66,21 +66,21 @@ const WhyChooseUs = () => {
   ];
 
   return (
-    <section className="py-16 bg-[#1976D2] text-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-12">{t("whyChooseUsTitle")}</h2>
+    <section className="py-12 sm:py-16 bg-[#1976D2] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-8 sm:mb-12 text-center">{t("whyChooseUsTitle")}</h2>
 
-          <div className="grid grid-cols-2 gap-8 text-right rtl:text-right">
+          <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 ${language === "ar" ? "text-right" : "text-left"}`}>
             {benefits.map((benefit, index) => {
               const IconComponent = benefit.icon;
               return (
-                <div key={index} className="flex items-start gap-4">
+                <div key={index} className={`flex items-start gap-4 ${language === "ar" ? "flex-row-reverse" : ""}`}>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold mb-2">{t(benefit.titleKey)}</h3>
-                    <p className="text-blue-100">{t(benefit.descKey)}</p>
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2">{t(benefit.titleKey)}</h3>
+                    <p className="text-blue-100 text-sm sm:text-base">{t(benefit.descKey)}</p>
                   </div>
-                  <div className="w-16 h-16 bg-[#FF6B35] rounded-full flex items-center justify-center flex-shrink-0">
-                    <IconComponent size={32} />
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#FF6B35] rounded-full flex items-center justify-center flex-shrink-0">
+                    <IconComponent size={28} />
                   </div>
                 </div>
               );

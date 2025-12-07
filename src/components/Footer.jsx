@@ -1,17 +1,42 @@
 import React from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import CaHupLogo from "./CaHupLogo";
 import { Facebook, Linkedin, Twitter, Mail, Phone } from "lucide-react";
+import { scrollToSection } from "../utils/scrollUtils";
 
 const Footer = () => {
   const { t, language } = useLanguage();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const footerLinks = [
-    { key: "aboutUs", href: "/about" },
-    { key: "privacyPolicy", href: "/privacy" },
+    { key: "aboutUs", href: "/services" },
+    { key: "FAQ", href: "#FAQ" },
     { key: "terms", href: "/terms" },
-    { key: "support", href: "/support" },
+    { key: "support", href: "/contact" },
   ];
+
+  const handleLinkClick = (e, href) => {
+    // Prevent default anchor behavior
+    e.preventDefault();
+    
+    // Check if we're on the homepage (where sections exist)
+    const isHomePage = location.pathname === "/";
+    
+    if (href.startsWith("#")) {
+      // If we're on homepage, scroll directly
+      if (isHomePage) {
+        scrollToSection(href, {
+          offset: 80, // Adjust for fixed header height
+          behavior: 'smooth',
+        });
+      } else {
+        // Navigate to homepage first, then scroll after navigation
+        navigate("/", { state: { scrollTo: href } });
+      }
+    }
+  };
 
   const socialLinks = [
     { icon: Facebook, href: "#", color: "hover:text-blue-500" },
@@ -22,12 +47,7 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white">
       {/* Partners/Supporters Section */}
-      <div className="bg-gray-800 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-         
-        </div>
-      </div>
-
+    
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-4 gap-8">
@@ -69,12 +89,22 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.map((link) => (
                 <li key={link.key}>
-                  <a
-                    href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    {t(link.key)}
-                  </a>
+                  {link.href.startsWith("#") ? (
+                    <a
+                      href={link.href}
+                      onClick={(e) => handleLinkClick(e, link.href)}
+                      className="text-gray-400 hover:text-white transition-colors cursor-pointer"
+                    >
+                      {t(link.key)}
+                    </a>
+                  ) : (
+                    <Link
+                      to={link.href}
+                      className="text-gray-400 hover:text-white transition-colors"
+                    >
+                      {t(link.key)}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
@@ -99,9 +129,7 @@ const Footer = () => {
         </div>
 
         {/* Additional Partners at bottom */}
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-wrap items-center justify-center gap-6 opacity-60">
-         <img src="" alt="" />
-        </div>
+       
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>

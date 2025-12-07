@@ -29,18 +29,18 @@ const FAQPage = () => {
       questions: [
         {
           id: 1,
-          questionKey: "faqQ1",
-          answerKey: "faqA1",
+          questionKey: "providerFaqQ1",
+          answerKey: "providerFaqA1",
         },
         {
           id: 2,
-          questionKey: "faqQ2",
-          answerKey: "faqA2",
+          questionKey: "providerFaqQ2",
+          answerKey: "providerFaqA2",
         },
         {
           id: 3,
-          questionKey: "faqQ3",
-          answerKey: "faqA3",
+          questionKey: "providerFaqQ3",
+          answerKey: "providerFaqA3",
         },
       ],
     },
@@ -51,18 +51,18 @@ const FAQPage = () => {
       questions: [
         {
           id: 4,
-          questionKey: "faqQ4",
-          answerKey: "faqA4",
+          questionKey: "providerFaqQ4",
+          answerKey: "providerFaqA4",
         },
         {
           id: 5,
-          questionKey: "faqQ5",
-          answerKey: "faqA5",
+          questionKey: "providerFaqQ5",
+          answerKey: "providerFaqA5",
         },
         {
           id: 6,
-          questionKey: "faqQ6",
-          answerKey: "faqA6",
+          questionKey: "providerFaqQ6",
+          answerKey: "providerFaqA6",
         },
       ],
     },
@@ -73,18 +73,18 @@ const FAQPage = () => {
       questions: [
         {
           id: 7,
-          questionKey: "faqQ7",
-          answerKey: "faqA7",
+          questionKey: "providerFaqQ7",
+          answerKey: "providerFaqA7",
         },
         {
           id: 8,
-          questionKey: "faqQ8",
-          answerKey: "faqA8",
+          questionKey: "providerFaqQ8",
+          answerKey: "providerFaqA8",
         },
         {
           id: 9,
-          questionKey: "faqQ9",
-          answerKey: "faqA9",
+          questionKey: "providerFaqQ9",
+          answerKey: "providerFaqA9",
         },
       ],
     },
@@ -95,18 +95,18 @@ const FAQPage = () => {
       questions: [
         {
           id: 10,
-          questionKey: "faqQ10",
-          answerKey: "faqA10",
+          questionKey: "providerFaqQ10",
+          answerKey: "providerFaqA10",
         },
         {
           id: 11,
-          questionKey: "faqQ11",
-          answerKey: "faqA11",
+          questionKey: "providerFaqQ11",
+          answerKey: "providerFaqA11",
         },
         {
           id: 12,
-          questionKey: "faqQ12",
-          answerKey: "faqA12",
+          questionKey: "providerFaqQ12",
+          answerKey: "providerFaqA12",
         },
       ],
     },
