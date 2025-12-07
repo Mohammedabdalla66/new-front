@@ -1,0 +1,1 @@
+// This file is intentionally empty - converted from TypeScript to JavaScript
