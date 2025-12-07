@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "../contexts/LanguageContext";
 import CaHupLogo from "./CaHupLogo";
-import { Facebook, Linkedin, Twitter, Mail, Phone } from "lucide-react";
+import { Facebook, Twitter, Instagram, Mail, Phone } from "lucide-react";
 import { scrollToSection } from "../utils/scrollUtils";
 
 const Footer = () => {
@@ -20,10 +20,10 @@ const Footer = () => {
   const handleLinkClick = (e, href) => {
     // Prevent default anchor behavior
     e.preventDefault();
-    
+
     // Check if we're on the homepage (where sections exist)
     const isHomePage = location.pathname === "/";
-    
+
     if (href.startsWith("#")) {
       // If we're on homepage, scroll directly
       if (isHomePage) {
@@ -39,15 +39,15 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Facebook, href: "#", color: "hover:text-blue-500" },
-    { icon: Linkedin, href: "#", color: "hover:text-blue-600" },
-    { icon: Twitter, href: "#", color: "hover:text-blue-400" },
+    { icon: Facebook, href: "https://www.facebook.com/share/1ACtkoWCpq/", color: "hover:text-blue-500" },
+    { icon: Twitter, href: "https://x.com/cahub7782", color: "hover:text-blue-400" }, // X (Twitter)
+    { icon: Instagram, href: "https://www.instagram.com/cahub.om?igsh=bmdwaDBxZzc3Mjkz&utm_source=qr", color: "hover:text-pink-500" },
   ];
 
   return (
     <footer className="bg-gray-900 text-white">
       {/* Partners/Supporters Section */}
-    
+
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-4 gap-8">
@@ -116,20 +116,28 @@ const Footer = () => {
               {t("contactUs")}
             </h3>
             <div className="space-y-2">
-              <div className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400">
+              <a
+                href="mailto:Care@CAhub.om"
+                className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400 hover:text-white transition-colors"
+              >
                 <Mail className="h-4 w-4" />
-                <span>info@CaHup.com</span>
-              </div>
-              <div className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400">
+                <span>Care@CAhub.om</span>
+              </a>
+              <a
+                href="https://wa.me/96899337448"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400 hover:text-white transition-colors"
+              >
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
-              </div>
+                <span>+96899337448</span>
+              </a>
             </div>
           </div>
         </div>
 
         {/* Additional Partners at bottom */}
-       
+
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>

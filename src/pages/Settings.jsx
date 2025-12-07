@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { NotificationSettings } from '../components/Settings/NotificationSettings.jsx';
 import { SecuritySettings } from '../components/Settings/SecuritySettings.jsx';
-import { Bell, Shield, CreditCard, Database, Moon, Sun, Globe } from 'lucide-react';
+import { Bell, Shield, CreditCard, Database, Moon, Sun, Globe , ChevronRight,   Building2} from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext.jsx';
-
+import Navbar from "../components/Layout/Navbar";
+import AdminSidebar from "../components/sidebar/AdminSidebar";
 const mockNotificationSettings = {
   emailNotifications: true,
   smsNotifications: false,
@@ -13,6 +14,9 @@ const mockNotificationSettings = {
 };
 
 export const Settings = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
   const { t, language, toggleLanguage } = useLanguage();
   const [activeSection, setActiveSection] = useState('notifications');
   const [notificationSettings, setNotificationSettings] = useState(mockNotificationSettings);
@@ -41,6 +45,46 @@ export const Settings = () => {
   ];
 
   return (
+
+
+     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={closeSidebar}
+          role="presentation"
+        />
+      )}
+      <AdminSidebar isMobileOpen={isSidebarOpen} onMobileClose={closeSidebar} />
+
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Navbar onToggleSidebar={toggleSidebar} />
+
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-7xl mx-auto space-y-6">
+            {/* Page Header */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 text-sm text-neutral-600 dark:text-neutral-400">
+                <span>{t("dashboard")}</span>
+                <ChevronRight className="w-4 h-4" />
+                <span className="text-neutral-900 dark:text-white font-medium">
+                  {t("serviceProviders")}
+                </span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
+                  <Building2 className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
+                    {t("serviceProviders")}
+                  </h1>
+                  <p className="text-neutral-600 dark:text-neutral-400">
+                    {t("manageServiceProvidersInfo")}
+                  </p>
+                </div>
+              </div>
+            </div>
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('settings')}</h1>
@@ -137,6 +181,10 @@ export const Settings = () => {
             </div>
           )}
         </div>
+      </div>
+    </div>
+             </div>
+        </main>
       </div>
     </div>
   );
