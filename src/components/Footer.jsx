@@ -119,11 +119,11 @@ const Footer = () => {
             <div className="space-y-2">
               <div className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400">
                 <Mail className="h-4 w-4" />
-                <span>info@CaHup.com</span>
+                <span>Care@CAhub.om</span>
               </div>
               <div className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400">
                 <Phone className="h-4 w-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+96899337448</span>
               </div>
             </div>
           </div>

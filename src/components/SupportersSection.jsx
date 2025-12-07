@@ -54,7 +54,7 @@ const SupportersSection = () => {
     </div>
     <div className={`fixed bottom-4 sm:bottom-8 ${language === "ar" ? "left-4 sm:left-8" : "right-4 sm:right-8"} z-50`}>
         <a
-          href="https://wa.me/+201129028280"
+          href="https://wa.me/+96899337448"
           className="w-12 h-12 sm:w-16 sm:h-16 bg-green-500 rounded-full flex items-center justify-center shadow-2xl hover:bg-green-600 transition-colors"
           target="_blank"
           rel="noopener noreferrer"
