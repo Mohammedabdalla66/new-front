@@ -1,36 +1,8 @@
-import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
-import { FileText, Users, Shield, CheckCircle, FileCheck, CreditCard } from "lucide-react";
+import { FileText, FileCheck, CreditCard, BadgePercent } from "lucide-react";
 
 const HowItWorks = () => {
   const { t } = useLanguage();
-
-  const steps = [
-    {
-      icon: FileText,
-      titleKey: "step1",
-      bgColor: "bg-blue-100",
-      iconColor: "text-blue-600",
-    },
-    {
-      icon: Users,
-      titleKey: "step2",
-      bgColor: "bg-green-100",
-      iconColor: "text-green-600",
-    },
-    {
-      icon: Shield,
-      titleKey: "step3",
-      bgColor: "bg-purple-100",
-      iconColor: "text-purple-600",
-    },
-    {
-      icon: CheckCircle,
-      titleKey: "step4",
-      bgColor: "bg-orange-100",
-      iconColor: "text-orange-600",
-    },
-  ];
 
   const newSteps = [
     {
@@ -38,7 +10,7 @@ const HowItWorks = () => {
       titleKey: "step1New",
     },
     {
-      icon: CheckCircle,
+      icon: BadgePercent,
       titleKey: "step2New",
     },
     {
@@ -52,25 +24,26 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section className="py-12 sm:py-16 bg-gray-50">
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1976D2] mb-8 sm:mb-12">{t("howItWorks")}</h2>
+    <section className="py-3 sm:py-4 bg-[#D5ECFF]">
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-[#1976D2] mb-8 sm:mb-12">{t("howItWorks")}</h2>
+      {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"> */}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-        {newSteps.map((step, index) => {
-          const IconComponent = step.icon;
-          return (
-            <div key={index} className="bg-white p-6 sm:p-8 rounded-lg shadow-md hover:shadow-xl transition-shadow">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <IconComponent className="text-[#1976D2]" size={32} />
+      <div className="max-w-7xl mx-auto px-4 pb-6 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {newSteps.map((step, index) => {
+            const IconComponent = step.icon;
+            return (
+              <div key={index} className="flex flex-col items-center text-center">
+                <div className="mb-4 p-4 bg-white/50 rounded-full">
+                  <IconComponent className="text-[#2176B9]" size={40} />
+                </div>
+                <h4 className="text-[#2176B9] font-medium text-lg">{t(step.titleKey)}</h4>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-[#1976D2] mb-2">{t(step.titleKey)}</h3>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
   );
 };
 

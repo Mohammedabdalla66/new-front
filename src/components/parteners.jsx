@@ -1,55 +1,30 @@
 import React from "react";
 import { useLanguage } from "../contexts/LanguageContext";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 // import firstChoice from "../assets/Screenshot 2025-12-05 001556.png";
 
-const SupportersSection = () => {
+const PartenersSection = () => {
   const { t, language } = useLanguage();
-  const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const supporters = [
     {
       name: "FinTech Gate",
-      imageUrl: "./supporter1.png",
+      imageUrl: "./partener1.png",
       alt: "FinTech Gate"
     },
     {
       name: "Partner 2",
-      imageUrl: "./supporter2.png",
+      imageUrl: "./partener2.png",
       alt: "Partner 2"
     },
     {
       name: "Muscat Audit",
-      imageUrl: "./supporter4.png",
+      imageUrl: "./partener3.png",
       alt: "Muscat Audit"
-    },
-    {
-      name: "First Choice",
-      imageUrl: "./supporter5.png",
-      alt: "First Choice"
     },
   ];
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % supporters.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + supporters.length) % supporters.length);
-  };
-
-  // Get visible supporters (shows 3 at a time)
-  const getVisibleSupporters = () => {
-    const visible = [];
-    for (let i = 0; i < 3; i++) {
-      visible.push(supporters[(currentIndex + i) % supporters.length]);
-    }
-    return visible;
-  };
-
   return (
-    <section className="py-12 bg-white">
-      <div className="w-full py-4 bg-[#EFF8FF] mb-8"></div>
+    <section className="py-1 bg-white">
       <div className={`fixed bottom-4 sm:bottom-8 ${language === "ar" ? "left-4 sm:left-8" : "right-4 sm:right-8"} z-50`}>
         <a
           href="https://wa.me/+96899337448"
@@ -64,42 +39,26 @@ const SupportersSection = () => {
         </a>
       </div>
       <div className="flex flex-col lg:flex-row gap-x-3 px-4 md:px-20 lg:px-40 items-center">
-        <h3 className="font-bold text-3xl md:text-5xl text-[#2176B9] mt-6 border-e-0 lg:border-e-2 lg:pe-6 border-[#707070] mb-6 lg:mb-0 whitespace-nowrap">{t("supporters") || "الداعمون"}</h3>
-        <div className="max-w-7xl mx-auto px-4 w-full">
-          <div className="flex items-center justify-center gap-4">
-            <button
-              onClick={prevSlide}
-              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0"
-              aria-label="Previous"
-            >
-              <ChevronRight className={`w-6 h-6 text-[#2176B9] ${language === "en" ? "rotate-180" : ""}`} />
-            </button>
-
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 lg:gap-8 items-center justify-items-center w-full">
-              {getVisibleSupporters().map((supporter, index) => (
-                <div
-                  key={`${index}-${supporter.name}`}
-                  className="hover:opacity-100 transition-all duration-300 cursor-pointer p-2 flex items-center justify-center w-full"
-                >
-                  <img
-                    src={supporter.imageUrl}
-                    alt={supporter.alt || supporter.name}
-                    className="h-12 sm:h-16 lg:h-20 object-contain mx-auto max-w-full"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={nextSlide}
-              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors flex-shrink-0"
-              aria-label="Next"
-            >
-              <ChevronLeft className={`w-6 h-6 text-[#2176B9] ${language === "en" ? "rotate-180" : ""}`} />
-            </button>
+        <h3 className="font-bold text-3xl md:text-5xl text-[#2176B9] mt-6 lg:mt-0 border-e-0 lg:border-e-2 lg:pe-6 border-[#707070] mb-6 lg:mb-0 whitespace-nowrap">
+          {t("partners")}
+        </h3>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-center justify-items-center">
+            {supporters.slice(0, 3).map((supporter, index) => (
+              <div
+                key={index}
+                className=" hover:opacity-100 hover:grayscale-0 transition-all duration-300 cursor-pointer p-4 flex items-center justify-center w-full"
+              >
+                <img
+                  src={supporter.imageUrl}
+                  alt={supporter.alt || supporter.name}
+                  className="h-12 sm:h-16 lg:h-20 object-contain mx-auto max-w-full"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                  }}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -118,4 +77,4 @@ const SupportersSection = () => {
   );
 };
 
-export default SupportersSection;
+export default PartenersSection;

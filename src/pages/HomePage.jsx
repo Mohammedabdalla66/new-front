@@ -11,6 +11,7 @@ import SupportersSection from "../components/SupportersSection";
 import Footer from "../components/Footer";
 import AddProjectModal from "../components/AddProjectModal";
 import { scrollToSection } from "../utils/scrollUtils";
+import PartenersSection from "../components/parteners";
 
 const HomePage = () => {
   const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
@@ -42,6 +43,7 @@ const HomePage = () => {
         <SupportersSection />
       </main>
       <Footer />
+      <PartenersSection />
 
       <AddProjectModal
         isOpen={isAddProjectModalOpen}
