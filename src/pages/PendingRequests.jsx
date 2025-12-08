@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   FileText,
   Search,
@@ -13,7 +14,8 @@ import {
   Loader2,
   Clock,
   Download,
-  X
+  X,
+  ArrowLeft
 } from 'lucide-react';
 import Navbar from '../components/Layout/Navbar';
 import AdminSidebar from '../components/sidebar/AdminSidebar';
@@ -34,10 +36,18 @@ import { toast } from 'react-toastify';
 
 const PendingRequests = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const language = i18n.language || 'en';
+  // Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   // Data
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Mobile sidebar handlers
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -260,20 +270,42 @@ const PendingRequests = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Navbar />
-      <div className="flex">
-        <AdminSidebar />
-        <main className="flex-1 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={closeSidebar}
+          role="presentation"
+        />
+      )}
+      <AdminSidebar isMobileOpen={isSidebarOpen} onMobileClose={closeSidebar} />
+      
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Navbar onToggleSidebar={toggleSidebar} />
+        
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-7xl mx-auto">
-            {/* Header */}
+            {/* Header with Back Button */}
             <div className="mb-6">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                {t("pendingRequests")}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                {t("reviewApproveRejectRequests")}
-              </p>
+              <div className="flex items-center gap-3 mb-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/admin')}
+                  className="md:hidden"
+                  aria-label="Go back"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+                    {t("pendingRequests")}
+                  </h1>
+                  <p className="text-sm md:text-base text-gray-600 dark:text-gray-400">
+                    {t("reviewApproveRejectRequests")}
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Filters */}
@@ -311,84 +343,166 @@ const PendingRequests = () => {
                     </p>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>{t("title")}</TableHead>
-                          <TableHead>{t("client")}</TableHead>
-                          <TableHead>{t("budget")}</TableHead>
-                          <TableHead>{t("deadline")}</TableHead>
-                          <TableHead>{t("submitted")}</TableHead>
-                          <TableHead>{t("attachments")}</TableHead>
-                          <TableHead className="text-right">{t("actions")}</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredRequests.map((request) => (
-                          <TableRow key={request.id}>
-                            <TableCell>
-                              <div className="font-medium text-gray-900 dark:text-white">
-                                {getServiceTitleLabel(request.title, language || 'en')}
+                  <>
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>{t("title")}</TableHead>
+                            <TableHead>{t("client")}</TableHead>
+                            <TableHead>{t("budget")}</TableHead>
+                            <TableHead>{t("deadline")}</TableHead>
+                            <TableHead>{t("submitted")}</TableHead>
+                            <TableHead>{t("attachments")}</TableHead>
+                            <TableHead className="text-right">{t("actions")}</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredRequests.map((request) => (
+                            <TableRow key={request.id}>
+                              <TableCell>
+                                <div className="font-medium text-gray-900 dark:text-white">
+                                  {getServiceTitleLabel(request.title, language || 'en')}
+                                </div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
+                                  {request.description}
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <div className="text-sm">
+                                  <div className="font-medium">{request.clientName}</div>
+                                  <div className="text-gray-500 dark:text-gray-400 text-xs">
+                                    {request.clientEmail}
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>{formatCurrency(request.budget)}</TableCell>
+                              <TableCell>{formatDate(request.deadline)}</TableCell>
+                              <TableCell>{formatDate(request.createdAt)}</TableCell>
+                              <TableCell>
+                                {request.attachments.length > 0 ? (
+                                  <Badge variant="secondary">
+                                    {request.attachments.length} {t("files")}
+                                  </Badge>
+                                ) : (
+                                  <span className="text-gray-400">{t("none")}</span>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end gap-2">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handleView(request)}
+                                  >
+                                    <Eye className="w-4 h-4 mr-1" />
+                                    {t("view")}
+                                  </Button>
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    className="bg-green-600 hover:bg-green-700"
+                                    onClick={() => handleApprove(request)}
+                                  >
+                                    <CheckCircle className="w-4 h-4 mr-1" />
+                                    {t("approve")}
+                                  </Button>
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={() => handleReject(request)}
+                                  >
+                                    <XCircle className="w-4 h-4 mr-1" />
+                                    {t("reject")}
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                    
+                    {/* Mobile Card View */}
+                    <div className="md:hidden space-y-4">
+                      {filteredRequests.map((request) => (
+                        <Card key={request.id}>
+                          <CardContent className="p-4">
+                            <div className="space-y-3">
+                              <div>
+                                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                                  {getServiceTitleLabel(request.title, language || 'en')}
+                                </h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                                  {request.description}
+                                </p>
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
-                                {request.description}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <div className="text-sm">
-                                <div className="font-medium">{request.clientName}</div>
-                                <div className="text-gray-500 dark:text-gray-400 text-xs">
-                                  {request.clientEmail}
+                              
+                              <div className="space-y-2 text-sm">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">{t("client")}:</span>
+                                  <span className="font-medium text-gray-900 dark:text-white">{request.clientName}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">{t("budget")}:</span>
+                                  <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(request.budget)}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">{t("deadline")}:</span>
+                                  <span className="font-medium text-gray-900 dark:text-white">{formatDate(request.deadline)}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-gray-500 dark:text-gray-400">{t("attachments")}:</span>
+                                  <span className="font-medium text-gray-900 dark:text-white">
+                                    {request.attachments.length > 0 ? (
+                                      <Badge variant="secondary">
+                                        {request.attachments.length} {t("files")}
+                                      </Badge>
+                                    ) : (
+                                      <span className="text-gray-400">{t("none")}</span>
+                                    )}
+                                  </span>
                                 </div>
                               </div>
-                            </TableCell>
-                            <TableCell>{formatCurrency(request.budget)}</TableCell>
-                            <TableCell>{formatDate(request.deadline)}</TableCell>
-                            <TableCell>{formatDate(request.createdAt)}</TableCell>
-                            <TableCell>
-                              {request.attachments.length > 0 ? (
-                                <Badge variant="secondary">
-                                  {request.attachments.length} {t("files")}
-                                </Badge>
-                              ) : (
-                                <span className="text-gray-400">{t("none")}</span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex justify-end gap-2">
+                              
+                              <div className="flex flex-col gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={() => handleView(request)}
+                                  className="w-full"
                                 >
-                                  <Eye className="w-4 h-4 mr-1" />
+                                  <Eye className="w-4 h-4 mr-2" />
                                   {t("view")}
                                 </Button>
-                                <Button
-                                  variant="default"
-                                  size="sm"
-                                  className="bg-green-600 hover:bg-green-700"
-                                  onClick={() => handleApprove(request)}
-                                >
-                                  <CheckCircle className="w-4 h-4 mr-1" />
-                                  {t("approve")}
-                                </Button>
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={() => handleReject(request)}
-                                >
-                                  <XCircle className="w-4 h-4 mr-1" />
-                                  {t("reject")}
-                                </Button>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="default"
+                                    size="sm"
+                                    className="flex-1 bg-green-600 hover:bg-green-700"
+                                    onClick={() => handleApprove(request)}
+                                  >
+                                    <CheckCircle className="w-4 h-4 mr-1" />
+                                    {t("approve")}
+                                  </Button>
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    className="flex-1"
+                                    onClick={() => handleReject(request)}
+                                  >
+                                    <XCircle className="w-4 h-4 mr-1" />
+                                    {t("reject")}
+                                  </Button>
+                                </div>
                               </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
@@ -421,7 +535,7 @@ const PendingRequests = () => {
                       {selectedRequest.description}
                     </p>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         {t("client")}
@@ -466,7 +580,7 @@ const PendingRequests = () => {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   {t("companyInformation") || "Company Information"}
                 </h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {t("legalFormLabel") || "Legal Form"}

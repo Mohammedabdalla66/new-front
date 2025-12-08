@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   Building2, 
   Search, 
@@ -12,7 +13,8 @@ import {
   Mail,
   Loader2,
   CheckCircle,
-  XCircle
+  XCircle,
+  ArrowLeft
 } from 'lucide-react';
 import Navbar from '../components/Layout/Navbar';
 import AdminSidebar from '../components/sidebar/AdminSidebar';
@@ -28,6 +30,12 @@ import AlertDialog from '../components/ui/alert-dialog';
 import { adminAPI } from '../services/api';
 
 const Firms = () => {
+  const navigate = useNavigate();
+  // Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
+  
   const [firms, setFirms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -226,12 +234,19 @@ const Firms = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
-      <AdminSidebar />
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={closeSidebar}
+          role="presentation"
+        />
+      )}
+      <AdminSidebar isMobileOpen={isSidebarOpen} onMobileClose={closeSidebar} />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
+        <Navbar onToggleSidebar={toggleSidebar} />
         
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-7xl mx-auto space-y-6">
         {/* Page Header with Breadcrumb */}
         <div className="space-y-2">

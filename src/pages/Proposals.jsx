@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   FileText,
   Search,
@@ -11,7 +12,8 @@ import {
   Calendar,
   User,
   Loader2,
-  Clock
+  Clock,
+  ArrowLeft
 } from 'lucide-react';
 import Navbar from '../components/Layout/Navbar';
 import AdminSidebar from '../components/sidebar/AdminSidebar';
@@ -30,7 +32,13 @@ import { useTranslation } from 'react-i18next';
 
 const Proposals = () => {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const language = i18n.language || 'en';
+  // Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
+  
   // Data
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -184,12 +192,19 @@ const Proposals = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
-      <AdminSidebar />
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={closeSidebar}
+          role="presentation"
+        />
+      )}
+      <AdminSidebar isMobileOpen={isSidebarOpen} onMobileClose={closeSidebar} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
+        <Navbar onToggleSidebar={toggleSidebar} />
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Page Header with Breadcrumb */}
             <div className="space-y-2">
@@ -198,13 +213,22 @@ const Proposals = () => {
                 <ChevronRight className="w-4 h-4" />
                 <span className="text-neutral-900 dark:text-white font-medium">{t("proposals")}</span>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/admin')}
+                  className="md:hidden"
+                  aria-label="Go back"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
                 <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
                   <FileText className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">{t("proposalManagement")}</h1>
-                  <p className="text-neutral-600 dark:text-neutral-400">{t("reviewApproveRejectProposals")}</p>
+                  <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white">{t("proposalManagement")}</h1>
+                  <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">{t("reviewApproveRejectProposals")}</p>
                 </div>
               </div>
             </div>
@@ -253,83 +277,153 @@ const Proposals = () => {
                     <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
                   </div>
                 ) : (
-                  <div className="rounded-md border">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>{t("request")}</TableHead>
-                          <TableHead>{t("serviceProvider")}</TableHead>
-                          <TableHead>{t("price")}</TableHead>
-                          <TableHead>{t("duration")}</TableHead>
-                          <TableHead>{t("status")}</TableHead>
-                          <TableHead>{t("submitted")}</TableHead>
-                          <TableHead className="text-right">{t("actions")}</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredProposals.length === 0 ? (
+                  <>
+                    {/* Desktop Table View */}
+                    <div className="hidden md:block rounded-md border">
+                      <Table>
+                        <TableHeader>
                           <TableRow>
-                            <TableCell colSpan={7} className="text-center py-8 text-neutral-500">
-                              {statusFilter === 'pending' ? t("noPendingProposals") : t("noProposalsFound")}
-                            </TableCell>
+                            <TableHead>{t("request")}</TableHead>
+                            <TableHead>{t("serviceProvider")}</TableHead>
+                            <TableHead>{t("price")}</TableHead>
+                            <TableHead>{t("duration")}</TableHead>
+                            <TableHead>{t("status")}</TableHead>
+                            <TableHead>{t("submitted")}</TableHead>
+                            <TableHead className="text-right">{t("actions")}</TableHead>
                           </TableRow>
-                        ) : (
-                          filteredProposals.map((proposal, index) => (
-                            <motion.tr
-                              key={proposal.id}
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.3, delay: index * 0.06 }}
-                              className="border-b hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
-                            >
-                              <TableCell className="font-medium max-w-xs truncate">
-                                {proposal.requestTitleDisplay || proposal.requestTitle}
+                        </TableHeader>
+                        <TableBody>
+                          {filteredProposals.length === 0 ? (
+                            <TableRow>
+                              <TableCell colSpan={7} className="text-center py-8 text-neutral-500">
+                                {statusFilter === 'pending' ? t("noPendingProposals") : t("noProposalsFound")}
                               </TableCell>
-                              <TableCell>
-                                <div className="flex flex-col">
-                                  <span className="text-sm font-medium">{proposal.serviceProviderName}</span>
-                                  <span className="text-xs text-neutral-500">{proposal.serviceProviderEmail}</span>
-                                </div>
-                              </TableCell>
-                              <TableCell>{formatCurrency(proposal.price)}</TableCell>
-                              <TableCell>{proposal.durationDays} {t("days")}</TableCell>
-                              <TableCell>
-                                <Badge
-                                  variant={
-                                    proposal.status === 'active'
-                                      ? 'success'
-                                      : proposal.status === 'pending'
-                                      ? 'warning'
-                                      : 'secondary'
-                                  }
-                                >
-                                  {t(proposal.status.toLowerCase())}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>{formatDate(proposal.createdAt)}</TableCell>
-                              <TableCell className="text-right">
-                                <div className="flex items-center justify-end space-x-2">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-8 w-8 p-0"
-                                    onClick={() => openView(proposal)}
-                                    aria-label={t("viewDetails")}
+                            </TableRow>
+                          ) : (
+                            filteredProposals.map((proposal, index) => (
+                              <motion.tr
+                                key={proposal.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: index * 0.06 }}
+                                className="border-b hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
+                              >
+                                <TableCell className="font-medium max-w-xs truncate">
+                                  {proposal.requestTitleDisplay || proposal.requestTitle}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex flex-col">
+                                    <span className="text-sm font-medium">{proposal.serviceProviderName}</span>
+                                    <span className="text-xs text-neutral-500">{proposal.serviceProviderEmail}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell>{formatCurrency(proposal.price)}</TableCell>
+                                <TableCell>{proposal.durationDays} {t("days")}</TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant={
+                                      proposal.status === 'active'
+                                        ? 'success'
+                                        : proposal.status === 'pending'
+                                        ? 'warning'
+                                        : 'secondary'
+                                    }
                                   >
-                                    <Eye className="w-4 h-4" />
-                                  </Button>
-                                  {proposal.status === 'pending' && (
-                                    <>
-                                    </>
-                                  )}
+                                    {t(proposal.status.toLowerCase())}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>{formatDate(proposal.createdAt)}</TableCell>
+                                <TableCell className="text-right">
+                                  <div className="flex items-center justify-end space-x-2">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0"
+                                      onClick={() => openView(proposal)}
+                                      aria-label={t("viewDetails")}
+                                    >
+                                      <Eye className="w-4 h-4" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </motion.tr>
+                            ))
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                    
+                    {/* Mobile Card View */}
+                    <div className="md:hidden space-y-4">
+                      {filteredProposals.length === 0 ? (
+                        <div className="text-center py-8 text-neutral-500">
+                          {statusFilter === 'pending' ? t("noPendingProposals") : t("noProposalsFound")}
+                        </div>
+                      ) : (
+                        filteredProposals.map((proposal) => (
+                          <Card key={proposal.id}>
+                            <CardContent className="p-4">
+                              <div className="space-y-3">
+                                <div>
+                                  <h3 className="font-semibold text-neutral-900 dark:text-white mb-1">
+                                    {proposal.requestTitleDisplay || proposal.requestTitle}
+                                  </h3>
                                 </div>
-                              </TableCell>
-                            </motion.tr>
-                          ))
-                        )}
-                      </TableBody>
-                    </Table>
-                  </div>
+                                
+                                <div className="space-y-2 text-sm">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-neutral-500 dark:text-neutral-400">{t("serviceProvider")}:</span>
+                                    <div className="text-right">
+                                      <span className="font-medium text-neutral-900 dark:text-white">{proposal.serviceProviderName}</span>
+                                      <div className="text-xs text-neutral-500">{proposal.serviceProviderEmail}</div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-neutral-500 dark:text-neutral-400">{t("price")}:</span>
+                                    <span className="font-medium text-neutral-900 dark:text-white">{formatCurrency(proposal.price)}</span>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-neutral-500 dark:text-neutral-400">{t("duration")}:</span>
+                                    <span className="font-medium text-neutral-900 dark:text-white">{proposal.durationDays} {t("days")}</span>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-neutral-500 dark:text-neutral-400">{t("status")}:</span>
+                                    <Badge
+                                      variant={
+                                        proposal.status === 'active'
+                                          ? 'success'
+                                          : proposal.status === 'pending'
+                                          ? 'warning'
+                                          : 'secondary'
+                                      }
+                                    >
+                                      {t(proposal.status.toLowerCase())}
+                                    </Badge>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-neutral-500 dark:text-neutral-400">{t("submitted")}:</span>
+                                    <span className="font-medium text-neutral-900 dark:text-white">{formatDate(proposal.createdAt)}</span>
+                                  </div>
+                                </div>
+                                
+                                <div className="flex flex-col gap-2 pt-2 border-t border-neutral-200 dark:border-neutral-700">
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => openView(proposal)}
+                                    className="w-full"
+                                  >
+                                    <Eye className="w-4 h-4 mr-2" />
+                                    {t("viewDetails")}
+                                  </Button>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))
+                      )}
+                    </div>
+                  </>
                 )}
               </CardContent>
             </Card>
@@ -428,24 +522,24 @@ const Proposals = () => {
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between gap-2 pt-2">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-2">
                       <div className="text-sm text-neutral-500" />
                       {selectedProposal.status === 'pending' ? (
-                        <div className="flex items-center gap-2">
-                          <Button variant="destructive" onClick={() => openRejectDialog(selectedProposal)}>
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                          <Button variant="destructive" onClick={() => openRejectDialog(selectedProposal)} className="w-full sm:w-auto">
                             <XCircle className="w-4 h-4 mr-2" />
                             {t("reject")}
                           </Button>
-                          <Button onClick={() => approveProposal(selectedProposal)}>
+                          <Button onClick={() => approveProposal(selectedProposal)} className="w-full sm:w-auto">
                             <CheckCircle className="w-4 h-4 mr-2" />
                             {t("approve")}
                           </Button>
-                          <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
+                          <Button variant="outline" onClick={() => setViewDialogOpen(false)} className="w-full sm:w-auto">
                             {t("close")}
                           </Button>
                         </div>
                       ) : (
-                        <Button variant="outline" onClick={() => setViewDialogOpen(false)}>
+                        <Button variant="outline" onClick={() => setViewDialogOpen(false)} className="w-full sm:w-auto">
                           {t("close")}
                         </Button>
                       )}
@@ -487,18 +581,19 @@ const Proposals = () => {
                     </div>
                   )}
                 </div>
-                <div className="flex items-center justify-end gap-2 pt-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
                   <Button variant="outline" onClick={() => {
                     setRejectDialogOpen(false);
                     setRejectionReason('');
                     setProposalToReject(null);
-                  }}>
+                  }} className="w-full sm:w-auto">
                     {t("cancel")}
                   </Button>
                   <Button 
                     variant="destructive" 
                     onClick={rejectProposal}
                     disabled={!rejectionReason.trim()}
+                    className="w-full sm:w-auto"
                   >
                     <XCircle className="w-4 h-4 mr-2" />
                     {t("rejectProposalButton")}

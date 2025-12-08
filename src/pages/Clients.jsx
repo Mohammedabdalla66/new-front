@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   Users,
   Search,
@@ -10,7 +11,8 @@ import {
   ChevronRight,
   Phone,
   Mail,
-  Loader2
+  Loader2,
+  ArrowLeft
 } from 'lucide-react';
 import Navbar from '../components/Layout/Navbar';
 import AdminSidebar from '../components/sidebar/AdminSidebar';
@@ -28,6 +30,11 @@ import { useTranslation } from 'react-i18next';
 
 const Clients = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  // Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
   
   // Helper function to translate status
   const translateStatus = (status) => {
@@ -274,12 +281,19 @@ const Clients = () => {
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 flex">
-      <AdminSidebar />
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden"
+          onClick={closeSidebar}
+          role="presentation"
+        />
+      )}
+      <AdminSidebar isMobileOpen={isSidebarOpen} onMobileClose={closeSidebar} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
+        <Navbar onToggleSidebar={toggleSidebar} />
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Page Header with Breadcrumb */}
             <div className="space-y-2">
@@ -288,13 +302,22 @@ const Clients = () => {
                 <ChevronRight className="w-4 h-4" />
                 <span className="text-neutral-900 dark:text-white font-medium">{t("clients")}</span>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/admin')}
+                  className="md:hidden"
+                  aria-label="Go back"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
                 <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
                   <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">{t("clients")}</h1>
-                  <p className="text-neutral-600 dark:text-neutral-400">{t("manageClientAccountsDetails")}</p>
+                  <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white">{t("clients")}</h1>
+                  <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">{t("manageClientAccountsDetails")}</p>
                 </div>
               </div>
             </div>

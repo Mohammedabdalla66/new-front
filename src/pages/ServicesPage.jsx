@@ -49,9 +49,7 @@ const ServicesPage = () => {
               "Liquidity Management",
               "Investment Evaluation",
             ],
-      price:
-        language === "ar" ? "يبدأ من 300 ريال عماني" : "Starting from 300 OMR",
-      duration: language === "ar" ? "3-7 أيام عمل" : "3-7 business days",
+     
       popular: true,
     },
     {
@@ -109,9 +107,7 @@ const ServicesPage = () => {
               "Fair Value",
               "Certified Valuation Reports",
             ],
-      price:
-        language === "ar" ? "يبدأ من 800 ريال عماني" : "Starting from 800 OMR",
-      duration: language === "ar" ? "10-15 يوم عمل" : "10-15 business days",
+    
       popular: true,
     },
     {
@@ -569,20 +565,20 @@ const ServicesPage = () => {
                   </div>
 
                   <div className="border-t pt-6 mt-auto">
-                    <div className="flex justify-between items-center mb-4">
-                      <div>
+                     <div className="flex justify-between items-center mb-4">
+                      {/* <div>
                         <p className="text-sm text-gray-500">{t("price")}</p>
                         <p className="font-bold text-blue-600">
                           {service.price}
                         </p>
-                      </div>
-                      <div className="text-right">
+                      </div> */}
+                      {/* <div className="text-right">
                         <p className="text-sm text-gray-500">{t("duration")}</p>
                         <p className="font-medium text-gray-900 flex items-center space-x-1 space-x-reverse">
                           <Clock className="w-4 h-4" />
                           <span>{service.duration}</span>
                         </p>
-                      </div>
+                      </div>  */}
                     </div>
 
                     <button 

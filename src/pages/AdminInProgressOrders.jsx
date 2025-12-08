@@ -4,13 +4,14 @@ import {
   Search, Filter, RefreshCw, Eye, AlertTriangle, CheckCircle, 
   XCircle, Clock, MessageSquare, FileText, DollarSign, User, 
   Building2, Calendar, TrendingUp, Shield, Send, Ban, 
-  PlayCircle, CheckCircle2, FileDown, AlertCircle, Info
+  PlayCircle, CheckCircle2, FileDown, AlertCircle, Info, ArrowLeft
 } from 'lucide-react';
 import { adminAPI } from '../services/api';
 import { socket } from '../services/socket';
 import Navbar from '../components/Layout/Navbar';
 import AdminSidebar from '../components/sidebar/AdminSidebar';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { toast } from 'react-hot-toast';
@@ -233,17 +234,28 @@ const AdminInProgressOrders = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
-                  {t('inProgressOrders')}
-                </h1>
-                <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-                  {t('manageAndMonitorOrders')}
-                </p>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/admin')}
+                  className="md:hidden"
+                  aria-label="Go back"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </Button>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white">
+                    {t('inProgressOrders')}
+                  </h1>
+                  <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400 mt-1">
+                    {t('manageAndMonitorOrders')}
+                  </p>
+                </div>
               </div>
               <div className="flex items-center gap-2">
                 <button
